@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { createPluginHost } from "../src/host"
 import type { Plugin, PluginHooks } from "../src/types"
@@ -69,7 +69,7 @@ describe("PluginHost", () => {
 
   it("should validate plugin dependencies", async () => {
     const host = createPluginHost()
-    const plugin = createTestPlugin("dependent", undefined, ["missing-dep")
+    const plugin = createTestPlugin("dependent", undefined, ["missing-dep"])
 
     await expect(host.register(plugin)).rejects.toThrow()
   })

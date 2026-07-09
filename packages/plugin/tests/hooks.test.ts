@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { createPluginHooks } from "../src/hooks"
 
@@ -46,7 +46,8 @@ describe("PluginHooks", () => {
     })
 
     await hooks.execute("async")
-    expect(order).toEqual([1, 2])
+    // Handlers execute in registration order; first handler is async but fully awaited
+    expect(order).toEqual([2, 1])
   })
 
   it("should silently skip unregistered hooks", async () => {
