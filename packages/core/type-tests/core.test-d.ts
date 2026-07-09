@@ -1,8 +1,8 @@
-import { expectType, expectError } from "tsd"
+import { expectError, expectType } from "tsd"
 
-import { vibe } from "../src/vibe"
-import type { SystemConfig, SystemInfo } from "../src/types"
 import type { System } from "../src/system"
+import type { SystemInfo } from "../src/types"
+import { vibe } from "../src/vibe"
 
 const system = vibe.system({ name: "test" })
 expectType<System>(system)

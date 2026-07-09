@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { LogLevel } from "../src/log-level"
 import { createConsoleTransport } from "../src/transports/console"

@@ -5,20 +5,13 @@ export interface ConsoleTransportOptions {
   colorize?: boolean
 }
 
-export function createConsoleTransport(
-  options?: ConsoleTransportOptions,
-): Transport {
+export function createConsoleTransport(_options?: ConsoleTransportOptions): Transport {
   return {
     log(entry: LogEntry) {
       const level = logLevelToString(entry.level)
       const prefix = `[${entry.timestamp}] [${level.toUpperCase()}]`
-      const correlation = entry.correlationId
-        ? ` [correlation: ${entry.correlationId}]`
-        : ""
-      const metaStr =
-        Object.keys(entry.meta).length > 0
-          ? ` ${JSON.stringify(entry.meta)}`
-          : ""
+      const correlation = entry.correlationId ? ` [correlation: ${entry.correlationId}]` : ""
+      const metaStr = Object.keys(entry.meta).length > 0 ? ` ${JSON.stringify(entry.meta)}` : ""
 
       const formatted = `${prefix}${correlation} ${entry.message}${metaStr}`
 

@@ -1,4 +1,4 @@
-import { expectType, expectError } from "tsd"
+import { expectError, expectType } from "tsd"
 
 import { createToken } from "../src/token"
 import type { ServiceToken } from "../src/token"

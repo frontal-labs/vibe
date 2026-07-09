@@ -1,12 +1,13 @@
-import { LogLevel } from "./log-level"
 import { getCorrelationId } from "./context"
+import { LogLevel } from "./log-level"
 import { createConsoleTransport } from "./transports/console"
-import type { Logger, LoggerOptions, LogMeta, LogEntry, Transport } from "./types"
+import type { LogEntry, LogMeta, Logger, LoggerOptions, Transport } from "./types"
 
 export function createLogger(options?: LoggerOptions): Logger {
   const level = options?.level ?? LogLevel.Info
-  const transports: Transport[] =
-    options?.transports?.length ? options.transports : [createConsoleTransport()]
+  const transports: Transport[] = options?.transports?.length
+    ? options.transports
+    : [createConsoleTransport()]
   const defaultMeta: LogMeta = options?.defaultMeta ?? {}
 
   function shouldLog(entryLevel: LogLevel): boolean {

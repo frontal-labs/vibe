@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import { ContextStore } from "../src/context-store"
 
@@ -56,15 +56,17 @@ describe("ContextStore", () => {
   it("should propagate exceptions from within run", async () => {
     const store = new ContextStore<string>()
     const error = new Error("test error")
-    await expect(store.run("val", () => Promise.reject(error))).rejects.toThrow(
-      error,
-    )
+    await expect(store.run("val", () => Promise.reject(error))).rejects.toThrow(error)
   })
 
   it("should propagate synchronous exceptions from within run", async () => {
     const store = new ContextStore<string>()
     const error = new Error("sync error")
-    await expect(store.run("val", () => { throw error })).rejects.toThrow(error)
+    await expect(
+      store.run("val", () => {
+        throw error
+      }),
+    ).rejects.toThrow(error)
   })
 
   it("should handle concurrent runs", async () => {

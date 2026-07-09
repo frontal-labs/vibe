@@ -1,8 +1,8 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 
+import type { Plugin, PluginHooks } from "@vibe/plugin"
 import { createSystem } from "../src/system"
 import { vibe } from "../src/vibe"
-import type { Plugin, PluginHooks } from "@vibe/plugin"
 
 function createTestPlugin(name: string, setupFn?: (hooks: PluginHooks) => void): Plugin {
   return {

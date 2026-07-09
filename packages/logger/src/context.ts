@@ -11,9 +11,6 @@ export function getCorrelationId(): string | undefined {
   return logContextStore.get()?.correlationId
 }
 
-export function runWithLogContext<R>(
-  context: LogContext,
-  fn: () => R | Promise<R>,
-): Promise<R> {
+export function runWithLogContext<R>(context: LogContext, fn: () => R | Promise<R>): Promise<R> {
   return logContextStore.run(context, fn)
 }

@@ -1,7 +1,7 @@
 import { diCircularDependency, diResolutionFailed } from "@vibe/errors"
 
-import type { Container, Factory, Registration, ServiceScope } from "./types"
 import type { ServiceToken } from "./token"
+import type { Container, Factory, Registration, ServiceScope } from "./types"
 
 export function createContainer(parent?: Container): Container {
   const registrations = new Map<string, Registration>()
@@ -13,6 +13,10 @@ export function createContainer(parent?: Container): Container {
     return token as unknown as string
   }
 
+  function getRegistration<T>(key: string): Registration<T> | undefined {
+    return registrations.get(key) as Registration<T> | undefined
+  }
+
   function register<T>(
     token: ServiceToken<T>,
     factory: Factory<T>,
@@ -20,19 +24,15 @@ export function createContainer(parent?: Container): Container {
   ): void {
     const key = getTokenKey(token)
     if (registrations.has(key)) {
-      throw diResolutionFailed(
-        `Token "${key}" is already registered`,
-      )
+      throw diResolutionFailed(`Token "${key}" is already registered`)
     }
-    registrations.set(key, { factory, scope: scope })
+    registrations.set(key, { factory: factory as Factory<unknown>, scope })
   }
 
   function registerInstance<T>(token: ServiceToken<T>, instance: T): void {
     const key = getTokenKey(token)
     if (registrations.has(key)) {
-      throw diResolutionFailed(
-        `Token "${key}" is already registered`,
-      )
+      throw diResolutionFailed(`Token "${key}" is already registered`)
     }
     registrations.set(key, {
       factory: () => instance,
@@ -45,20 +45,16 @@ export function createContainer(parent?: Container): Container {
     const key = getTokenKey(token)
 
     if (resolving.has(key)) {
-      throw diCircularDependency(
-        `Circular dependency detected for token "${key}"`,
-      )
+      throw diCircularDependency(`Circular dependency detected for token "${key}"`)
     }
 
-    const registration = registrations.get(key)
+    const registration = getRegistration<T>(key)
 
     if (!registration) {
       if (parent) {
         return parent.resolve(token)
       }
-      throw diResolutionFailed(
-        `No registration found for token "${key}"`,
-      )
+      throw diResolutionFailed(`No registration found for token "${key}"`)
     }
 
     const scope = registration.scope
@@ -91,7 +87,6 @@ export function createContainer(parent?: Container): Container {
       }
     }
 
-    // transient
     resolving.add(key)
     try {
       return registration.factory(container)
