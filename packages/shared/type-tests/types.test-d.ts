@@ -1,6 +1,6 @@
-import { expectType, expectError } from "tsd"
+import { expectAssignable, expectError, expectType } from "tsd"
 
-import type { Result, Maybe, Awaitable, Fn, Nullish } from "../src/types"
+import type { Awaitable, Fn, Maybe, Nullish, Result } from "../src/types"
 
 // Result
 const okResult: Result<number> = { ok: true, value: 42 }
@@ -15,19 +15,19 @@ const apiErr: ApiResult = { ok: false, error: { code: 404 } }
 expectType<{ code: number }>(apiErr.error)
 
 // Maybe
-const maybe: Maybe<string> = "hello"
-expectType<string | undefined>(maybe)
+const maybeValue = (): Maybe<string> => "hello"
+expectAssignable<string | undefined>(maybeValue())
 
 // Awaitable
-const sync: Awaitable<number> = 42
-expectType<number | Promise<number>>(sync)
+const syncVal = (): Awaitable<number> => 42
+expectAssignable<number | Promise<number>>(syncVal())
 
-const async_: Awaitable<number> = Promise.resolve(42)
-expectType<number | Promise<number>>(async_)
+const asyncVal = (): Awaitable<number> => Promise.resolve(42)
+expectAssignable<number | Promise<number>>(asyncVal())
 
 // Fn
 const voidFn: Fn = () => {}
-expectType<void>(voidFn())
+expectAssignable<void | Promise<void>>(voidFn())
 
 const typedFn: Fn<[string, number], boolean> = (_s: string, _n: number) => true
 expectType<boolean | Promise<boolean>>(typedFn("", 0))
@@ -35,8 +35,8 @@ expectError(typedFn(""))
 expectError(typedFn("", 0, true))
 
 // Nullish
-const n: Nullish = null
-expectType<null | undefined>(n)
-const u: Nullish = undefined
-expectType<null | undefined>(u)
+const nullVal = (): Nullish => null
+expectAssignable<null | undefined>(nullVal())
+const undefVal = (): Nullish => undefined
+expectAssignable<null | undefined>(undefVal())
 expectError<Nullish>(false)

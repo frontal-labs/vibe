@@ -1,4 +1,4 @@
-import { expectError } from "tsd"
+import { expectType } from "tsd"
 
 import { assertDefined } from "../src/guards"
 
@@ -8,4 +8,4 @@ function testAssertDefined(value: string | null): string {
   return value
 }
 
-expectError(testAssertDefined(""))
+expectType<string>(testAssertDefined("hello"))

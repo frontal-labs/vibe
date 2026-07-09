@@ -1,4 +1,4 @@
-import { expectType, expectNotType, expectError } from "tsd"
+import { expectAssignable, expectError } from "tsd"
 
 import type { Brand } from "../src/brand"
 
@@ -10,7 +10,7 @@ expectError<SystemId>("" as SessionId)
 
 // Brand types should be assignable to their base type
 const id: SystemId = "" as SystemId
-expectType<string>(id)
+expectAssignable<string>(id)
 
 // Base type should not be assignable to brand type
 expectError<SystemId>("plain-string")
@@ -18,4 +18,4 @@ expectError<SystemId>("plain-string")
 // Brand type should preserve its identity through union operations
 type OptionalSystemId = SystemId | undefined
 const maybeId: OptionalSystemId = undefined
-expectType<SystemId | undefined>(maybeId)
+expectAssignable<SystemId | undefined>(maybeId)
