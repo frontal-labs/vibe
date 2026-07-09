@@ -26,6 +26,9 @@
     "@vibe/lifecycle": "workspace:*",
     "@vibe/shared": "workspace:*"
   },
+  "tsd": {
+    "directory": "type-tests"
+  },
   "devDependencies": {
     "tsd": "^0.31.2",
     "tsup": "^8.3.5",

@@ -13,7 +13,6 @@
         "noUselessSwitchCase": "error",
         "noUselessTernary": "error",
         "useArrowFunction": "error",
-        "useLiteralEnumMembers": "error",
         "useOptionalChain": "error"
       },
       "correctness": {
