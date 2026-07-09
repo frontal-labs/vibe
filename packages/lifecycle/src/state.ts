@@ -38,35 +38,15 @@ const TRANSITIONS: Record<LifecycleEvent, Record<LifecycleState, LifecycleState>
   },
 }
 
-export function transitionState(
-  current: LifecycleState,
-  event: LifecycleEvent,
-): LifecycleState {
+export function transitionState(current: LifecycleState, event: LifecycleEvent): LifecycleState {
   return TRANSITIONS[event][current]
 }
 
-export function isValidTransition(
-  current: LifecycleState,
-  event: LifecycleEvent,
-): boolean {
+export function isValidTransition(current: LifecycleState, event: LifecycleEvent): boolean {
   const next = TRANSITIONS[event][current]
-  return next !== current || current === getInitialTarget(event, current)
-}
-
-function getInitialTarget(
-  event: LifecycleEvent,
-  current: LifecycleState,
-): LifecycleState | undefined {
-  switch (event) {
-    case "init":
-      return current === "created" ? "initializing" : undefined
-    case "start":
-      return current === "created" || current === "initializing"
-        ? "ready"
-        : undefined
-    case "stop":
-      return current !== "stopped" && current !== "stopping" ? "stopping" : undefined
-  }
+  if (next !== current) return true
+  // Idempotent: calling start when already ready, or stop when already stopped
+  return (event === "start" && current === "ready") || (event === "stop" && current === "stopped")
 }
 
 export type LifecycleHandler = () => void | Promise<void>

@@ -1,11 +1,6 @@
-import { assertDefined } from "@vibe/shared"
 import { lifecycleError } from "@vibe/errors"
 
-import type {
-  LifecycleEvent,
-  LifecycleHandler,
-  LifecycleState,
-} from "./state"
+import type { LifecycleEvent, LifecycleHandler, LifecycleState } from "./state"
 import { isValidTransition, transitionState } from "./state"
 
 interface HandlerEntry {
@@ -62,9 +57,13 @@ export function createLifecycle(initialState: LifecycleState = "created"): Lifec
 
   async function executeEvent(event: LifecycleEvent): Promise<void> {
     if (!isValidTransition(currentState, event)) {
-      throw lifecycleError(
-        `Cannot ${event} from state "${currentState}"`,
-      )
+      throw lifecycleError(`Cannot ${event} from state "${currentState}"`)
+    }
+
+    const next = transitionState(currentState, event)
+    // Idempotent: skip handlers if state won't change
+    if (next === currentState) {
+      return
     }
 
     const before = getBeforeHandlers(event)
@@ -72,11 +71,15 @@ export function createLifecycle(initialState: LifecycleState = "created"): Lifec
       await entry.handler()
     }
 
-    currentState = transitionState(currentState, event)
+    currentState = next
 
     const after = getAfterHandlers(event)
     for (const handler of after) {
       await handler()
+    }
+
+    if (event === "stop" && currentState === "stopping") {
+      currentState = "stopped"
     }
   }
 
@@ -109,11 +112,7 @@ export function createLifecycle(initialState: LifecycleState = "created"): Lifec
     get state(): LifecycleState {
       return currentState
     },
-    onBefore(
-      event: LifecycleEvent,
-      handler: LifecycleHandler,
-      options?: { priority?: number },
-    ) {
+    onBefore(event: LifecycleEvent, handler: LifecycleHandler, options?: { priority?: number }) {
       addHandler(event, handler, "before", options?.priority)
     },
     onAfter(event: LifecycleEvent, handler: LifecycleHandler) {
