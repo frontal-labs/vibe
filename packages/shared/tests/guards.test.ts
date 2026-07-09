@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 
 import {
   assertDefined,
@@ -118,6 +118,7 @@ describe("isPromise", () => {
   })
 
   it("should return true for thenables", () => {
+    // biome-ignore lint/suspicious/noThenProperty: intentionally creating a thenable for test
     expect(isPromise({ then: () => {} })).toBe(true)
   })
 

@@ -4,10 +4,7 @@ export function assertNever(value: never, message?: string): never {
   throw new TypeError(message ?? `Unexpected value: ${String(value)}`)
 }
 
-export function assertDefined<T>(
-  value: T,
-  message?: string,
-): asserts value is NonNullable<T> {
+export function assertDefined<T>(value: T, message?: string): asserts value is NonNullable<T> {
   if (value === null || value === undefined) {
     throw new TypeError(message ?? "Expected value to be defined")
   }
@@ -30,14 +27,10 @@ export function isError(value: unknown): value is Error {
 }
 
 export function isPromise(value: unknown): value is Promise<unknown> {
-  return (
-    isObject(value) &&
-    typeof (value as Record<string, unknown>).then === "function"
-  )
+  // biome-ignore lint/complexity/useLiteralKeys: TS4111 requires bracket access for index signatures
+  return isObject(value) && typeof (value as Record<string, unknown>)["then"] === "function"
 }
 
-export function isFunction(
-  value: unknown,
-): value is (...args: unknown[]) => unknown {
+export function isFunction(value: unknown): value is (...args: unknown[]) => unknown {
   return typeof value === "function"
 }
