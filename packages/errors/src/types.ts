@@ -6,8 +6,8 @@ export interface ErrorSerialized {
   readonly code: ErrorCode
   readonly fatal: boolean
   readonly retryable: boolean
-  readonly stack?: string
-  readonly cause?: ErrorSerialized
+  readonly stack: string | undefined
+  readonly cause: ErrorSerialized | undefined
 }
 
 export interface ErrorFactoryOptions {

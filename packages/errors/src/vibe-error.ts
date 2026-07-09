@@ -7,7 +7,7 @@ export class VibeError extends Error {
   readonly code: ErrorCode
   readonly fatal: boolean
   readonly retryable: boolean
-  override readonly cause?: Error
+  override readonly cause: Error | undefined
 
   constructor(options: ErrorFactoryOptions) {
     super(options.message, options.cause ? { cause: options.cause } : undefined)
@@ -25,21 +25,26 @@ export class VibeError extends Error {
       code: this.code,
       fatal: this.fatal,
       retryable: this.retryable,
-      stack: this.stack,
+      stack: this.stack ?? undefined,
       cause: this.cause ? serializeError(this.cause) : undefined,
     }
   }
 
   static fromJSON(data: ErrorSerialized): VibeError {
-    const error = new VibeError({
+    const opts: ErrorFactoryOptions = {
       message: data.message,
       code: data.code,
       fatal: data.fatal,
       retryable: data.retryable,
-      cause: data.cause ? VibeError.fromJSON(data.cause) : undefined,
-    })
+    }
+    if (data.cause) {
+      opts.cause = VibeError.fromJSON(data.cause)
+    }
+    const error = new VibeError(opts)
     error.name = data.name
-    error.stack = data.stack
+    if (data.stack) {
+      error.stack = data.stack
+    }
     return error
   }
 
@@ -58,6 +63,7 @@ function serializeError(error: Error): ErrorSerialized {
     code: "VIBE_INTERNAL_ERROR" as ErrorCode,
     fatal: false,
     retryable: false,
-    stack: error.stack,
+    stack: error.stack ?? undefined,
+    cause: undefined,
   }
 }

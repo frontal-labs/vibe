@@ -11,6 +11,8 @@ const serialized: ErrorSerialized = {
   code: "VIBE_INTERNAL_ERROR" as ErrorCode,
   fatal: false,
   retryable: false,
+  stack: undefined,
+  cause: undefined,
 }
 expectType<string>(serialized.message)
 expectType<ErrorCode>(serialized.code)

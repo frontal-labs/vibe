@@ -9,7 +9,7 @@ export interface LogEntry {
   readonly message: string
   readonly meta: LogMeta
   readonly timestamp: string
-  readonly correlationId?: string
+  readonly correlationId: string | undefined
 }
 
 export interface Logger {
