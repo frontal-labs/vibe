@@ -27,10 +27,7 @@ export function providerAuthError(message: string, cause?: Error): ProviderAuthE
   return new ProviderAuthError(message, cause)
 }
 
-export function providerRateLimitError(
-  message: string,
-  cause?: Error,
-): ProviderRateLimitError {
+export function providerRateLimitError(message: string, cause?: Error): ProviderRateLimitError {
   return new ProviderRateLimitError(message, cause)
 }
 
@@ -42,11 +39,7 @@ export function toolError(message: string, cause?: Error): ToolError {
   return new ToolError(message, cause)
 }
 
-export function timeoutError(
-  message: string,
-  timeoutMs: number,
-  cause?: Error,
-): TimeoutError {
+export function timeoutError(message: string, timeoutMs: number, cause?: Error): TimeoutError {
   return new TimeoutError(message, timeoutMs, cause)
 }
 
@@ -66,10 +59,7 @@ export function diResolutionFailed(message: string, cause?: Error): DiResolution
   return new DiResolutionError(message, cause)
 }
 
-export function diCircularDependency(
-  message: string,
-  cause?: Error,
-): DiCircularDependencyError {
+export function diCircularDependency(message: string, cause?: Error): DiCircularDependencyError {
   return new DiCircularDependencyError(message, cause)
 }
 
@@ -77,9 +67,6 @@ export function pluginConflictError(message: string, cause?: Error): PluginConfl
   return new PluginConflictError(message, cause)
 }
 
-export function pluginNotFoundError(
-  message: string,
-  cause?: Error,
-): PluginNotFoundError {
+export function pluginNotFoundError(message: string, cause?: Error): PluginNotFoundError {
   return new PluginNotFoundError(message, cause)
 }
