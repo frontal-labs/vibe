@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/core",
+  "name": "@vibe/runtime",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -22,20 +22,16 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/di": "workspace:*",
     "@vibe/errors": "workspace:*",
     "@vibe/lifecycle": "workspace:*",
-    "@vibe/logger": "workspace:*",
-    "@vibe/plugin": "workspace:*",
-    "@vibe/runtime": "workspace:*",
     "@vibe/shared": "workspace:*"
-  },
-  "tsd": {
-    "directory": "type-tests"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
     "tsup": "^8.3.5",
     "vitest": "^2.1.8"
+  },
+  "tsd": {
+    "directory": "type-tests"
   }
 }

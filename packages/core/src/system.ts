@@ -1,8 +1,9 @@
 import { createContainer, createToken } from "@vibe/di"
 import { notImplementedError } from "@vibe/errors"
 import { createLifecycle } from "@vibe/lifecycle"
-import { createLogger, type Logger, LogLevel } from "@vibe/logger"
-import { createPluginHost, type PluginHost } from "@vibe/plugin"
+import { LogLevel, type Logger, createLogger } from "@vibe/logger"
+import { type PluginHost, createPluginHost } from "@vibe/plugin"
+import { type Runtime, createRuntime } from "@vibe/runtime"
 import { VERSION } from "@vibe/shared"
 
 import type { SystemConfig, SystemInfo } from "./types"
@@ -12,6 +13,7 @@ export interface System {
   readonly info: SystemInfo
   readonly logger: Logger
   readonly plugins: PluginHost
+  readonly runtime: Runtime
   init(): Promise<void>
   start(): Promise<void>
   stop(timeoutMs?: number): Promise<void>
@@ -31,6 +33,7 @@ export function createSystem(config: SystemConfig): System {
     defaultMeta: { system: config.name },
   })
   const plugins = createPluginHost()
+  const runtime = createRuntime()
 
   container.registerInstance(containerToken, container)
   container.registerInstance(loggerToken, logger)
@@ -98,6 +101,10 @@ export function createSystem(config: SystemConfig): System {
 
     get plugins() {
       return plugins
+    },
+
+    get runtime() {
+      return runtime
     },
 
     async init() {

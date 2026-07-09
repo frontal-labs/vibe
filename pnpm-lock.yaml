@@ -20,6 +20,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^19.6.0
         version: 19.8.1
+      '@types/node':
+        specifier: ^26.1.1
+        version: 26.1.1
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -53,6 +56,9 @@ importers:
       '@vibe/plugin':
         specifier: workspace:*
         version: link:../plugin
+      '@vibe/runtime':
+        specifier: workspace:*
+        version: link:../runtime
       '@vibe/shared':
         specifier: workspace:*
         version: link:../shared
@@ -141,6 +147,28 @@ importers:
         version: 2.1.9(@types/node@26.1.1)
 
   packages/plugin:
+    dependencies:
+      '@vibe/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@vibe/lifecycle':
+        specifier: workspace:*
+        version: link:../lifecycle
+      '@vibe/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      tsd:
+        specifier: ^0.31.2
+        version: 0.31.2
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.16)(typescript@5.9.3)(yaml@2.9.0)
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@26.1.1)
+
+  packages/runtime:
     dependencies:
       '@vibe/errors':
         specifier: workspace:*
