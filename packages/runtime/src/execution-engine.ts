@@ -202,7 +202,7 @@ export function createExecutionEngine(): ExecutionEngine {
 
     const policy: RetryPolicy = retry ? { ...defaultRetryPolicy(), ...retry } : defaultRetryPolicy()
 
-    const progressEvents: Array<unknown> = []
+    const progressEvents: unknown[] = []
 
     let currentAttempt = 0
 

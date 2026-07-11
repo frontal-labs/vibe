@@ -121,8 +121,8 @@ describe("ExecutionEngine", () => {
       },
     })
 
-    const types: Array<string> = []
-    const values: Array<unknown> = []
+    const types: string[] = []
+    const values: unknown[] = []
     for await (const event of engine.stream(tid("streaming"), {})) {
       types.push(event.type)
       if (event.type === "progress") {
