@@ -1,0 +1,63 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Vibe",
+  "scopeName": "source.vibe",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#declarations" },
+    { "include": "#keywords" },
+    { "include": "#strings" },
+    { "include": "#numbers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        { "name": "comment.line.documentation.vibe", "match": "///.*$" },
+        { "name": "comment.line.double-slash.vibe", "match": "//.*$" },
+        { "name": "comment.block.vibe", "begin": "/\\*", "end": "\\*/" }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "\\b(agent|tool|model|memory|plugin)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.declaration.vibe" },
+            "2": { "name": "entity.name.type.vibe" }
+          }
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.vibe",
+          "match": "\\b(agent|tool|model|memory|plugin|config|use|import|export|on|with)\\b"
+        },
+        { "name": "support.constant.model.vibe", "match": "\\bclaude-[a-z0-9-]+\\b" }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.triple.vibe",
+          "begin": "\"\"\"",
+          "end": "\"\"\"",
+          "patterns": [{ "name": "meta.template.expression.vibe", "begin": "\\$\\{", "end": "\\}" }]
+        },
+        {
+          "name": "string.quoted.double.vibe",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "name": "constant.character.escape.vibe", "match": "\\\\." },
+            { "name": "meta.template.expression.vibe", "begin": "\\$\\{", "end": "\\}" }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [{ "name": "constant.numeric.vibe", "match": "\\b[0-9][0-9_]*\\b" }]
+    }
+  }
+}
