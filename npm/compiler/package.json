@@ -1,0 +1,16 @@
+{
+  "name": "@vibe/compiler",
+  "version": "0.0.0",
+  "description": "In-process Vibe compiler for JS tooling (napi addon).",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "optionalDependencies": {
+    "@vibe/compiler-darwin-arm64": "0.0.0",
+    "@vibe/compiler-darwin-x64": "0.0.0",
+    "@vibe/compiler-linux-x64-gnu": "0.0.0",
+    "@vibe/compiler-linux-arm64-gnu": "0.0.0",
+    "@vibe/compiler-win32-x64": "0.0.0"
+  }
+}

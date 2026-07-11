@@ -1,0 +1,12 @@
+{
+  "name": "@vibe/plugin-build",
+  "version": "0.0.0",
+  "description": "esbuild/Vite/tsup plugin that compiles .vibe files.",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "peerDependencies": {
+    "@vibe/compiler": "0.0.0"
+  }
+}

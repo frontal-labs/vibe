@@ -1,0 +1,18 @@
+{
+  "name": "vibe",
+  "version": "0.0.0",
+  "description": "The Vibe language CLI (prebuilt binary launcher).",
+  "bin": {
+    "vibe": "index.js"
+  },
+  "files": [
+    "index.js"
+  ],
+  "optionalDependencies": {
+    "@vibe/cli-darwin-arm64": "0.0.0",
+    "@vibe/cli-darwin-x64": "0.0.0",
+    "@vibe/cli-linux-x64-gnu": "0.0.0",
+    "@vibe/cli-linux-arm64-gnu": "0.0.0",
+    "@vibe/cli-win32-x64": "0.0.0"
+  }
+}
