@@ -1,0 +1,7 @@
+{
+  "name": "@vibe/biome-config",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "main": "biome.json"
+}

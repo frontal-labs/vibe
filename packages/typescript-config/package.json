@@ -1,0 +1,14 @@
+{
+  "name": "@vibe/typescript-config",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base": "./tsconfig.base.json",
+    "./library": "./tsconfig.library.json",
+    "./react": "./tsconfig.react.json",
+    "./node": "./tsconfig.node.json",
+    "./nextjs": "./tsconfig.nextjs.json",
+    "./worker": "./tsconfig.worker.json"
+  }
+}

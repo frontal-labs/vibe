@@ -1,0 +1,24 @@
+{
+  "extends": "./packages/typescript-config/tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@vibe/core": ["./packages/core/src"],
+      "@vibe/core/*": ["./packages/core/src/*"],
+      "@vibe/di": ["./packages/di/src"],
+      "@vibe/di/*": ["./packages/di/src/*"],
+      "@vibe/errors": ["./packages/errors/src"],
+      "@vibe/errors/*": ["./packages/errors/src/*"],
+      "@vibe/lifecycle": ["./packages/lifecycle/src"],
+      "@vibe/lifecycle/*": ["./packages/lifecycle/src/*"],
+      "@vibe/logger": ["./packages/logger/src"],
+      "@vibe/logger/*": ["./packages/logger/src/*"],
+      "@vibe/plugin": ["./packages/plugin/src"],
+      "@vibe/plugin/*": ["./packages/plugin/src/*"],
+      "@vibe/runtime": ["./packages/runtime/src"],
+      "@vibe/runtime/*": ["./packages/runtime/src/*"],
+      "@vibe/shared": ["./packages/shared/src"],
+      "@vibe/shared/*": ["./packages/shared/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build", ".next", "coverage", "target"]
+}
