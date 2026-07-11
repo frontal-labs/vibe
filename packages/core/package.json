@@ -22,13 +22,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@vibe/agent": "workspace:*",
     "@vibe/di": "workspace:*",
     "@vibe/errors": "workspace:*",
     "@vibe/lifecycle": "workspace:*",
     "@vibe/logger": "workspace:*",
+    "@vibe/memory": "workspace:*",
+    "@vibe/model": "workspace:*",
     "@vibe/plugin": "workspace:*",
     "@vibe/runtime": "workspace:*",
-    "@vibe/shared": "workspace:*"
+    "@vibe/shared": "workspace:*",
+    "@vibe/tools": "workspace:*"
   },
   "tsd": {
     "directory": "type-tests"

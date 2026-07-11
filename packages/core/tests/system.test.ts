@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { createFakeProvider } from "@vibe/model"
 import type { Plugin, PluginHooks } from "@vibe/plugin"
 import { createSystem } from "../src/system"
 import { vibe } from "../src/vibe"
@@ -58,11 +59,19 @@ describe("System", () => {
     expect(system.plugins.getPlugin("test-plugin")).toBeDefined()
   })
 
-  it("should throw NotImplementedError on ask", async () => {
+  it("should throw a config error on ask without a provider", async () => {
     const system = vibe.system({ name: "test" })
     await system.start()
 
-    await expect(system.ask("Hello")).rejects.toThrow()
+    await expect(system.ask("Hello")).rejects.toThrow(/provider/i)
+  })
+
+  it("should answer via ask() when a provider is configured", async () => {
+    const provider = createFakeProvider([{ content: [{ type: "text", text: "hi there" }] }])
+    const system = vibe.system({ name: "test", provider })
+    await system.start()
+
+    expect(await system.ask("Hello")).toBe("hi there")
   })
 
   it("should support stop with timeout", async () => {

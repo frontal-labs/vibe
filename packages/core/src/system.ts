@@ -1,10 +1,14 @@
+import { type Agent, type AgentConfig, type AgentResult, createAgent } from "@vibe/agent"
 import { createContainer, createToken } from "@vibe/di"
-import { notImplementedError } from "@vibe/errors"
+import { configError } from "@vibe/errors"
 import { createLifecycle } from "@vibe/lifecycle"
 import { LogLevel, type Logger, createLogger } from "@vibe/logger"
+import { type Memory, createInMemoryMemory } from "@vibe/memory"
+import { type ModelProvider, modelProviderToken } from "@vibe/model"
 import { type PluginHost, createPluginHost } from "@vibe/plugin"
 import { type Runtime, createRuntime } from "@vibe/runtime"
 import { VERSION } from "@vibe/shared"
+import { type ToolRegistry, createToolRegistry } from "@vibe/tools"
 
 import type { SystemConfig, SystemInfo } from "./types"
 
@@ -17,13 +21,18 @@ export interface System {
   init(): Promise<void>
   start(): Promise<void>
   stop(timeoutMs?: number): Promise<void>
+  /** One-shot: run the default agent to completion and return its text. */
   ask(prompt: string): Promise<string>
+  /** Build a custom agent bound to this system's provider (unless overridden). */
+  agent(config?: Partial<AgentConfig>): Agent
 }
 
 export const containerToken = createToken("system.container")
 export const loggerToken = createToken<Logger>("system.logger")
 export const lifecycleToken = createToken("system.lifecycle")
 export const pluginHostToken = createToken<PluginHost>("system.plugins")
+export const toolRegistryToken = createToken<ToolRegistry>("system.tools")
+export const memoryToken = createToken<Memory>("system.memory")
 
 export function createSystem(config: SystemConfig): System {
   const container = createContainer()
@@ -34,11 +43,27 @@ export function createSystem(config: SystemConfig): System {
   })
   const plugins = createPluginHost()
   const runtime = createRuntime()
+  const toolRegistry = createToolRegistry(config.tools ?? [])
+  const memory = createInMemoryMemory()
 
   container.registerInstance(containerToken, container)
   container.registerInstance(loggerToken, logger)
   container.registerInstance(lifecycleToken, lifecycle)
   container.registerInstance(pluginHostToken, plugins)
+  container.registerInstance(toolRegistryToken, toolRegistry)
+  container.registerInstance(memoryToken, memory)
+  if (config.provider) {
+    container.registerInstance(modelProviderToken, config.provider)
+  }
+
+  function requireProvider(): ModelProvider {
+    if (!config.provider) {
+      throw configError(
+        "No model provider configured. Pass `provider` to vibe.system({ ... }) to use ask()/agent().",
+      )
+    }
+    return config.provider
+  }
 
   const startTime = Date.now()
 
@@ -120,10 +145,20 @@ export function createSystem(config: SystemConfig): System {
       await lifecycle.stop(timeoutMs)
     },
 
-    async ask(_prompt: string): Promise<string> {
-      throw notImplementedError(
-        "ask() is not yet implemented. Use system.ask() after Phase 4 (Models) is complete.",
-      )
+    agent(overrides: Partial<AgentConfig> = {}): Agent {
+      return createAgent({
+        provider: overrides.provider ?? requireProvider(),
+        model: overrides.model ?? config.model,
+        system: overrides.system ?? config.system,
+        effort: overrides.effort ?? config.effort,
+        maxTokens: overrides.maxTokens,
+        tools: overrides.tools ?? toolRegistry,
+      })
+    },
+
+    async ask(prompt: string): Promise<string> {
+      const result: AgentResult = await system.agent().run({ text: prompt })
+      return result.text
     },
   }
 
