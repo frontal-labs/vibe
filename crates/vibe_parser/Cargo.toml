@@ -1,0 +1,16 @@
+[package]
+name = "vibe_parser"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Recursive-descent parser: tokens -> AST."
+
+[dependencies]
+vibe_ast = { path = "../vibe_ast" }
+vibe_lexer = { path = "../vibe_lexer" }
+vibe_diagnostics = { path = "../vibe_diagnostics" }
+vibe_span = { path = "../vibe_span" }
+
+[dev-dependencies]
+insta = { workspace = true }

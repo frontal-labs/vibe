@@ -1,0 +1,8 @@
+---
+source: crates/vibe_checker/src/tests.rs
+expression: render(&diags(src))
+---
+VB2200 Error 20..39 only one `config` block is allowed per project
+VB3010 Warning 45..51 tool `Orphan` is never used by any agent
+VB2001 Error 91..107 unknown model `claude-sonet-4-6`  [help: did you mean `claude-sonnet-4-6`?]
+VB2100 Error 112..117 no tool, sub-agent, or plugin named `Ghost` is in scope

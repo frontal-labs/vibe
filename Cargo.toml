@@ -1,0 +1,29 @@
+# Vibe language toolchain — Rust Cargo workspace.
+# Coexists with the bun/Turborepo TypeScript workspace (packages/).
+# See docs/language/05-rust-implementation.md and docs/plan/05-language-implementation-plan.md.
+
+[workspace]
+resolver = "2"
+members = ["crates/*", "benchmarks"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.95"
+license = "Apache-2.0"
+repository = "https://github.com/vibe-lang/vibe"
+authors = ["Vibe contributors"]
+
+# Shared dependency versions. Crates opt in with `foo = { workspace = true }`.
+[workspace.dependencies]
+insta = "1"
+clap = { version = "4", features = ["derive"] }
+notify = "6"
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

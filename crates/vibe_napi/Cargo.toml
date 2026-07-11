@@ -1,0 +1,25 @@
+[package]
+name = "vibe_napi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Node bindings (napi-rs) exposing the Vibe compiler to JavaScript."
+
+[lib]
+# `cdylib` for the `.node` addon; `rlib` so the pure API is usable/testable.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+vibe_compiler = { path = "../vibe_compiler" }
+napi = { version = "2", default-features = false, features = ["napi4"], optional = true }
+napi-derive = { version = "2", optional = true }
+
+[build-dependencies]
+napi-build = "2"
+
+[features]
+# The `#[napi]` FFI surface is opt-in so the default `cargo build`/`test` (and the
+# workspace CI) don't need to link Node's N-API symbols. Build the addon with:
+#   cargo build -p vibe_napi --features node --release
+node = ["dep:napi", "dep:napi-derive"]

@@ -1,0 +1,18 @@
+[package]
+name = "vibe_benchmarks"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Criterion benchmarks for the Vibe compiler (the R11 perf gate)."
+publish = false
+
+[dependencies]
+vibe_compiler = { path = "../crates/vibe_compiler" }
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "compile"
+harness = false

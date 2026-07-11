@@ -1,0 +1,21 @@
+[package]
+name = "vibe_lsp"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "The Vibe language server."
+
+[dependencies]
+vibe_compiler = { path = "../vibe_compiler" }
+vibe_parser = { path = "../vibe_parser" }
+vibe_binder = { path = "../vibe_binder" }
+vibe_checker = { path = "../vibe_checker" }
+vibe_fmt = { path = "../vibe_fmt" }
+vibe_span = { path = "../vibe_span" }
+tower-lsp = "0.20"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "io-std"] }
+
+[[bin]]
+name = "vibe-lsp"
+path = "src/main.rs"

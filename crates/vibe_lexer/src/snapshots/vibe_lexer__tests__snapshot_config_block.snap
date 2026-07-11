@@ -1,0 +1,13 @@
+---
+source: crates/vibe_lexer/src/tests.rs
+expression: "render(\"config { name \\\"support-bot\\\" ; provider anthropic }\")"
+---
+Keyword(Config)      0..6   "config"
+LBrace               7..8   "{"
+Ident                9..13  "name"
+Str                 14..27  "\"support-bot\""
+Semi                28..29  ";"
+Ident               30..38  "provider"
+Ident               39..48  "anthropic"
+RBrace              49..50  "}"
+Eof                 50..50  ""

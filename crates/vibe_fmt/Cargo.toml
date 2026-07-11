@@ -1,0 +1,12 @@
+[package]
+name = "vibe_fmt"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Canonical .vibe formatter (the vibe fmt engine)."
+
+[dependencies]
+vibe_ast = { path = "../vibe_ast" }
+vibe_parser = { path = "../vibe_parser" }
+vibe_span = { path = "../vibe_span" }

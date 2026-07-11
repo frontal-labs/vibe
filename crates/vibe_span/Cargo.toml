@@ -1,0 +1,9 @@
+[package]
+name = "vibe_span"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Source files, spans, and positions for the Vibe compiler."
+
+[dependencies]

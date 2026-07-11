@@ -1,0 +1,183 @@
+---
+source: crates/vibe_parser/src/tests.rs
+expression: p.file
+---
+File {
+    decls: [
+        Import(
+            ImportDecl {
+                span: Span {
+                    lo: 0,
+                    hi: 25,
+                },
+            },
+        ),
+        Config(
+            ConfigDecl {
+                fields: [
+                    Field {
+                        key: Ident {
+                            text: "name",
+                            span: Span {
+                                lo: 36,
+                                hi: 40,
+                            },
+                        },
+                        value: Str(
+                            Span {
+                                lo: 41,
+                                hi: 46,
+                            },
+                        ),
+                        span: Span {
+                            lo: 36,
+                            hi: 46,
+                        },
+                    },
+                    Field {
+                        key: Ident {
+                            text: "provider",
+                            span: Span {
+                                lo: 49,
+                                hi: 57,
+                            },
+                        },
+                        value: Word(
+                            Ident {
+                                text: "anthropic",
+                                span: Span {
+                                    lo: 58,
+                                    hi: 67,
+                                },
+                            },
+                        ),
+                        span: Span {
+                            lo: 49,
+                            hi: 67,
+                        },
+                    },
+                ],
+                span: Span {
+                    lo: 27,
+                    hi: 69,
+                },
+            },
+        ),
+        Tool(
+            ToolDecl {
+                doc: Some(
+                    Span {
+                        lo: 71,
+                        hi: 92,
+                    },
+                ),
+                exported: false,
+                name: Ident {
+                    text: "GetOrder",
+                    span: Span {
+                        lo: 98,
+                        hi: 106,
+                    },
+                },
+                params: [
+                    Param {
+                        name: Ident {
+                            text: "orderId",
+                            span: Span {
+                                lo: 107,
+                                hi: 114,
+                            },
+                        },
+                        ty: TsSpan(
+                            Span {
+                                lo: 116,
+                                hi: 122,
+                            },
+                        ),
+                        desc: None,
+                        span: Span {
+                            lo: 107,
+                            hi: 122,
+                        },
+                    },
+                ],
+                ret: Some(
+                    TsSpan(
+                        Span {
+                            lo: 127,
+                            hi: 138,
+                        },
+                    ),
+                ),
+                body: TsSpan(
+                    Span {
+                        lo: 140,
+                        hi: 165,
+                    },
+                ),
+                span: Span {
+                    lo: 93,
+                    hi: 166,
+                },
+            },
+        ),
+        Agent(
+            AgentDecl {
+                doc: None,
+                exported: false,
+                name: Ident {
+                    text: "Support",
+                    span: Span {
+                        lo: 174,
+                        hi: 181,
+                    },
+                },
+                members: [
+                    Model(
+                        Ident {
+                            text: "claude-opus-4-8",
+                            span: Span {
+                                lo: 192,
+                                hi: 207,
+                            },
+                        },
+                    ),
+                    Field(
+                        Field {
+                            key: Ident {
+                                text: "system",
+                                span: Span {
+                                    lo: 210,
+                                    hi: 216,
+                                },
+                            },
+                            value: Str(
+                                Span {
+                                    lo: 217,
+                                    hi: 230,
+                                },
+                            ),
+                            span: Span {
+                                lo: 210,
+                                hi: 230,
+                            },
+                        },
+                    ),
+                    Use(
+                        Ident {
+                            text: "GetOrder",
+                            span: Span {
+                                lo: 237,
+                                hi: 245,
+                            },
+                        },
+                    ),
+                ],
+                span: Span {
+                    lo: 168,
+                    hi: 247,
+                },
+            },
+        ),
+    ],
+}

@@ -1,0 +1,15 @@
+[package]
+name = "vibe_compiler"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "The compiler facade: lex -> parse -> bind -> check -> emit."
+
+[dependencies]
+vibe_parser = { path = "../vibe_parser" }
+vibe_binder = { path = "../vibe_binder" }
+vibe_checker = { path = "../vibe_checker" }
+vibe_emit = { path = "../vibe_emit" }
+vibe_diagnostics = { path = "../vibe_diagnostics" }
+vibe_span = { path = "../vibe_span" }

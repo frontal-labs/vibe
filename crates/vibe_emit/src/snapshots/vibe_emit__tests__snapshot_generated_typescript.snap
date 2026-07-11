@@ -1,0 +1,29 @@
+---
+source: crates/vibe_emit/src/tests.rs
+expression: compile(CANONICAL).typescript
+---
+import { z } from "zod"
+import { defineTool } from "@vibe/tools"
+import { createAgent } from "@vibe/agent"
+import { defineConfig } from "@vibe/config"
+
+import { db } from "./db"
+export const config = defineConfig({
+  name: `support-bot`,
+  provider: "anthropic"
+})
+
+const GetOrder = defineTool({
+  name: "GetOrder",
+  description: "Look up an order.",
+  schema: z.object({ orderId: z.string().describe("the order id") }),
+  async execute({ orderId }, _ctx): Promise<OrderStatus> {
+ return db.find(orderId) 
+  },
+})
+
+const Support = createAgent({
+  model: "claude-opus-4-8",
+  system: `Be concise. Use tools.`,
+  tools: [GetOrder]
+})

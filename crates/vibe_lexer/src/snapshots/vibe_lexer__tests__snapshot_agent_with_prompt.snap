@@ -1,0 +1,15 @@
+---
+source: crates/vibe_lexer/src/tests.rs
+expression: render(src)
+---
+Keyword(Agent)       0..5   "agent"
+Ident                6..13  "Support"
+LBrace              14..15  "{"
+Keyword(Model)      18..23  "model"
+Ident               24..39  "claude-opus-4-8"
+Ident               42..48  "system"
+Str                 49..62  "\"Be concise.\""
+Keyword(Use)        65..68  "use"
+Ident               69..77  "GetOrder"
+RBrace              78..79  "}"
+Eof                 79..79  ""
