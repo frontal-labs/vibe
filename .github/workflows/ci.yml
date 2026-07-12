@@ -2,44 +2,98 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
+    tags: ["v*"]
   pull_request:
-    branches: [main]
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BUN_VERSION: "1.3.3"
+  NODE_VERSION: "22"
+  CI: true
 
 jobs:
   quality:
+    name: Quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v1
         with:
-          version: 9
-
+          bun-version: ${{ env.BUN_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "pnpm"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: bun
+      - run: bun install --frozen-lockfile
+      - run: bun lint
+      - run: bun format:check
+      - run: bun typecheck
 
-      - run: pnpm install --frozen-lockfile
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    needs: [quality]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: bun
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - run: bun test:types
 
-      - name: Lint
-        run: pnpm lint
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    needs: [quality]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: bun
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - run: bun install --frozen-lockfile
+      - run: bun build
 
-      - name: Format check
-        run: pnpm format:check
-
-      - name: Type check
-        run: pnpm typecheck
-
-      - name: Build
-        run: pnpm build
-
-      - name: Unit tests
-        run: pnpm test
-
-      - name: Type tests
-        run: pnpm test:types
-
-      - name: Dead code detection
-        run: pnpm knip
+  rust:
+    name: Rust (language toolchain)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        run: rustup show # honors rust-toolchain.toml (channel + rustfmt, clippy)
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --workspace
+      - name: Benchmarks build
+        run: cargo bench --workspace --no-run # perf gate compiles; runs on release
+      - name: Node addon builds
+        run: cargo build -p vibe_napi --features node
