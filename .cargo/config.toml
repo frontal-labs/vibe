@@ -1,0 +1,4 @@
+# Cargo configuration for the Vibe language toolchain.
+[alias]
+# `cargo xtask -- <args>` runs the vibe CLI from source.
+xtask = "run --package vibe_cli --"
