@@ -1,0 +1,10 @@
+config { name "{{name}}" ; provider anthropic }
+
+/// Greet someone by name.
+tool Greet(name: string) -> string { return `Hello, ${name}!` }
+
+agent Assistant {
+  model claude-opus-4-8
+  system "You are the {{name}} assistant. Use tools when helpful."
+  use Greet
+}

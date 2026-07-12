@@ -1,0 +1,19 @@
+{
+  "name": "@example/http-server",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Serve an agent over HTTP + SSE",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vibe/adapters": "workspace:*",
+    "@vibe/agent": "workspace:*",
+    "@vibe/model": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

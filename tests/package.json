@@ -1,0 +1,13 @@
+{
+  "name": "@vibe/integration-tests",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Cross-package end-to-end integration tests.",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}

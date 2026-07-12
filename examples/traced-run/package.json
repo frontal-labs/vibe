@@ -1,0 +1,19 @@
+{
+  "name": "@example/traced-run",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Trace an agent run into spans",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vibe/agent": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/tracing": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

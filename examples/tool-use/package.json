@@ -1,0 +1,20 @@
+{
+  "name": "@example/tool-use",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Agent that calls a typed tool",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vibe/agent": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/tools": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
