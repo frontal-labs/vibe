@@ -40,7 +40,10 @@
   "packageManager": "bun@1.3.3",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "tools/generators",
+    "examples/*",
+    "tests"
   ],
   "engines": {
     "node": ">=20.0.0"
@@ -50,7 +53,7 @@
       "biome check --write",
       "biome format --write"
     ],
-    "*.{json}": [
+    "*.{json,yaml,yml}": [
       "biome format --write"
     ]
   }

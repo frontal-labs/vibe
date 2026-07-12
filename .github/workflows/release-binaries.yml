@@ -30,13 +30,15 @@ jobs:
         run: rustup target add ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
       - name: Build
-        run: cargo build --release -p vibe_cli --target ${{ matrix.target }}
+        # The `vibe` CLI moved to TypeScript (@vibe/cli); the shipped Rust binary is
+        # the language server used by the editor integrations.
+        run: cargo build --release -p vibe_lsp --target ${{ matrix.target }}
       - name: Package
         shell: bash
         run: |
-          BIN="target/${{ matrix.target }}/release/vibe"
+          BIN="target/${{ matrix.target }}/release/vibe-lsp"
           [ "${{ runner.os }}" = "Windows" ] && BIN="$BIN.exe"
-          tar -czf "vibe-${{ matrix.target }}.tar.gz" -C "$(dirname "$BIN")" "$(basename "$BIN")"
+          tar -czf "vibe-lsp-${{ matrix.target }}.tar.gz" -C "$(dirname "$BIN")" "$(basename "$BIN")"
       - uses: actions/upload-artifact@v4
         with:
           name: vibe-${{ matrix.target }}

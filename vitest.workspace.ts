@@ -3,7 +3,11 @@ import { defineWorkspace } from "vitest/config"
 export default defineWorkspace([
   "packages/adapters",
   "packages/agent",
+  "packages/cli",
+  "packages/compiler",
   "packages/core",
+  "packages/deploy",
+  "packages/devtools",
   "packages/di",
   "packages/errors",
   "packages/evals",
@@ -18,4 +22,6 @@ export default defineWorkspace([
   "packages/tools",
   "packages/tracing",
   "packages/typescript-config",
+  "tools/generators",
+  "tests",
 ])
