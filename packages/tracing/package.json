@@ -1,6 +1,39 @@
 {
   "name": "@vibe/tracing",
   "version": "0.0.0",
-  "private": true,
-  "type": "module"
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:types": "tsd",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@vibe/agent": "workspace:*",
+    "@vibe/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@vibe/model": "workspace:*",
+    "tsd": "^0.31.2",
+    "tsup": "^8.3.5",
+    "vitest": "^2.1.8"
+  },
+  "tsd": {
+    "directory": "type-tests"
+  }
 }

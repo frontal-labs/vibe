@@ -84,5 +84,6 @@ export interface McpTool<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
   readonly name: string
   readonly description: string
   readonly schema: Schema
-  readonly execute: (args: z.infer<Schema>, ctx: ToolContext) => Promise<unknown>
+  // biome-ignore lint/suspicious/noExplicitAny: tools stored as McpTool[] erase Schema (z.infer<ZodTypeAny> is unknown in Zod 4); the server validates via schema.parse before execute.
+  readonly execute: (args: any, ctx: ToolContext) => Promise<unknown>
 }

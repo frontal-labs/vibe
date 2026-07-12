@@ -1,30 +1,65 @@
 import { z } from "zod"
+
+import { exec } from "../lib/exec"
 import { resolveWithin } from "../lib/path"
+import { scaffoldAgent, scaffoldPackage } from "../lib/scaffold"
+import { listPackages } from "../lib/workspace"
 import type { McpTool } from "../types"
 
-const listDirTool: McpTool = {
-  name: "list_dir",
-  description: "List the entries of a directory in the workspace.",
-  schema: z.object({
-    path: z
-      .string()
-      .describe("Workspace-relative directory, e.g. 'packages'. Defaults to repo root.")
-      .default("."),
-  }),
-  execute: async ({ path }, ctx) => {
-    const full = resolveWithin(ctx.repoRoot, path)
-    const { readdirSync, statSync } = await import("node:fs")
-    const entries = readdirSync(full).map((name) => {
-      let type = "file"
-      try {
-        if (statSync(`${full}/${name}`).isDirectory()) type = "dir"
-      } catch {
-        type = "unknown"
-      }
-      return { name, type }
-    })
-    return JSON.stringify(entries, null, 2)
+/** `vibe.dev.*` — operate the Vibe monorepo: inspect the graph, scaffold, and run scripts. */
+export const devTools: McpTool[] = [
+  {
+    name: "vibe_dev_info",
+    description:
+      "Summarize the Vibe monorepo: the repo root and every package with its @vibe/* dependencies (the acyclic package graph).",
+    schema: z.object({}),
+    async execute(_args, ctx) {
+      return { repoRoot: ctx.repoRoot, packages: listPackages(ctx.repoRoot) }
+    },
   },
-}
 
-export const devTools: McpTool[] = [listDirTool]
+  {
+    name: "vibe_dev_scaffold_package",
+    description:
+      "Generate a new @vibe/* package following the repo conventions (package.json, tsconfig, tsup, src barrel, type-tests). Returns the created file paths.",
+    schema: z.object({
+      name: z.string().describe("Bare package name, e.g. 'cache' (becomes @vibe/cache)."),
+    }),
+    async execute(args, ctx) {
+      return { created: scaffoldPackage(ctx.repoRoot, args.name) }
+    },
+  },
+
+  {
+    name: "vibe_dev_scaffold_agent",
+    description:
+      "Generate a runnable agent example module under examples/. Returns the created file path.",
+    schema: z.object({
+      name: z.string().describe("Bare agent name, e.g. 'triage'."),
+    }),
+    async execute(args, ctx) {
+      return { created: scaffoldAgent(ctx.repoRoot, args.name) }
+    },
+  },
+
+  {
+    name: "vibe_dev_check",
+    description:
+      "Run a workspace script (build/test/lint/typecheck/ci:check) via bun and return stdout/stderr/exitCode. Use to verify a change is green.",
+    schema: z.object({
+      script: z
+        .string()
+        .default("ci:check")
+        .describe("The bun script to run, e.g. 'test', 'lint', 'typecheck', 'ci:check'."),
+      cwd: z.string().optional().describe("Workspace-relative working directory."),
+      timeoutMs: z.number().int().positive().optional().describe("Kill after this many ms."),
+    }),
+    async execute(args, ctx) {
+      const result = await exec("bun", ["run", args.script], {
+        cwd: resolveWithin(ctx.repoRoot, args.cwd ?? "."),
+        timeoutMs: args.timeoutMs,
+      })
+      return result
+    },
+  },
+]
