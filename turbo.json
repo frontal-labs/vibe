@@ -1,35 +1,55 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "biome.jsonc"],
+  "globalEnv": ["NODE_ENV", "LOG_LEVEL", "CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "inputs": ["src/**", "tsup.config.ts", "tsconfig.json"]
+      "outputs": ["dist/**", ".next/**"],
+      "inputs": [
+        "src/**",
+        "content/**",
+        "tsup.config.ts",
+        "tsconfig.json",
+        "package.json",
+        "next.config.mjs"
+      ],
+      "env": ["NODE_ENV"]
     },
     "dev": {
+      "dependsOn": ["^build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "interactive": true
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": []
+      "inputs": ["src/**", "tests/**", "tsconfig.json"],
+      "outputs": ["coverage/**"]
     },
     "test:types": {
       "dependsOn": ["build"],
+      "inputs": ["src/**", "type-tests/**", "tsconfig.json"],
       "outputs": []
     },
     "typecheck": {
       "dependsOn": ["^build"],
+      "inputs": ["src/**", "tsconfig.json"],
       "outputs": []
     },
     "lint": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "biome.json", "package.json"],
       "outputs": []
     },
     "format:check": {
+      "inputs": ["src/**", "biome.json"],
       "outputs": []
     },
     "clean": {
       "cache": false
-    }
+    },
+    "//#format": {},
+    "//#lint:fix": {}
   }
 }

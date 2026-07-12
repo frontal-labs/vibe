@@ -1,57 +1,57 @@
 {
-	"name": "vibe",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo run dev",
-		"test": "turbo run test",
-		"test:types": "turbo run test:types",
-		"typecheck": "turbo run typecheck",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write .",
-		"format": "biome format --write .",
-		"format:check": "biome format .",
-		"ultracite": "ultracite lint",
-		"ultracite:fix": "ultracite format",
-		"clean": "turbo run clean",
-		"knip": "knip",
-		"prepare": "husky",
-		"changeset": "changeset",
-		"version": "changeset version",
-		"release": "turbo run build && changeset publish",
-		"ci:check": "turbo run lint typecheck build test"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.5.3",
-		"@changesets/cli": "^2.27.10",
-		"@commitlint/cli": "^19.6.0",
-		"@commitlint/config-conventional": "^19.6.0",
-		"@types/node": "^26.1.1",
-		"husky": "^9.1.7",
-		"knip": "^5.37.0",
-		"lint-staged": "^15.2.10",
-		"tsup": "^8.3.0",
-		"turbo": "^2.3.3",
-		"typescript": "^5.6.3",
-		"ultracite": "^5.6.4",
-		"vite": "^6.0.0",
-		"vitest": "^3.0.0"
-	},
-	"packageManager": "bun@1.3.3",
-	"workspaces": [
-		"packages/*",
-		"apps/*"
-	],
-	"engines": {
-		"node": ">=20.0.0"
-	},
-	"lint-staged": {
-		"*.{ts,tsx,mts,cts}": [
-			"biome check --write",
-			"biome format --write"
-		],
-		"*.{json}": [
-			"biome format --write"
-		]
-	}
+  "name": "vibe",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:types": "turbo run test:types",
+    "typecheck": "turbo run typecheck",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "ultracite": "ultracite lint",
+    "ultracite:fix": "ultracite format",
+    "clean": "turbo run clean",
+    "knip": "knip",
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "turbo run build && changeset publish",
+    "ci:check": "turbo run lint typecheck build test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.3",
+    "@changesets/cli": "^2.27.10",
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@types/node": "^26.1.1",
+    "husky": "^9.1.7",
+    "knip": "^5.37.0",
+    "lint-staged": "^15.2.10",
+    "tsup": "^8.3.0",
+    "turbo": "^2.3.3",
+    "typescript": "^5.6.3",
+    "ultracite": "^5.6.4",
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
+  },
+  "packageManager": "bun@1.3.3",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mts,cts}": [
+      "biome check --write",
+      "biome format --write"
+    ],
+    "*.{json}": [
+      "biome format --write"
+    ]
+  }
 }

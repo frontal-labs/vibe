@@ -17,7 +17,9 @@
       "@vibe/runtime": ["./packages/runtime/src"],
       "@vibe/runtime/*": ["./packages/runtime/src/*"],
       "@vibe/shared": ["./packages/shared/src"],
-      "@vibe/shared/*": ["./packages/shared/src/*"]
+      "@vibe/shared/*": ["./packages/shared/src/*"],
+      "@vibe/mcp-server": ["./packages/mcp-server/src"],
+      "@vibe/mcp-server/*": ["./packages/mcp-server/src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "build", ".next", "coverage", "target"]

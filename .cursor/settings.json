@@ -1,9 +1,9 @@
 {
-	"tab.autocomplete": true,
-	"tab.codeGeneration": true,
-	"chat.codeGeneration": true,
-	"editor.codeActionsOnSave": {
-		"source.organizeImports.biome": "explicit",
-		"quickfix.biome": "explicit"
-	}
+  "tab.autocomplete": true,
+  "tab.codeGeneration": true,
+  "chat.codeGeneration": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": "explicit",
+    "quickfix.biome": "explicit"
+  }
 }
