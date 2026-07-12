@@ -1,0 +1,256 @@
+# Contributing to Vibe
+
+Thank you for your interest in contributing to Vibe! We welcome contributions
+from everyone. By participating in this project, you agree to abide by our
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Getting Started
+
+### Fork and Clone
+
+1. Fork the repository on GitHub.
+2. Clone your fork locally:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/vibe.git
+   cd vibe
+   ```
+3. Add the upstream repository as a remote:
+   ```bash
+   git remote add upstream https://github.com/vibeapp/vibe.git
+   ```
+
+### Set Up the Development Environment
+
+1. Install [Bun](https://bun.sh):
+   ```bash
+   curl -fsSL https://bun.sh/install | bash
+   ```
+2. Install project dependencies:
+   ```bash
+   bun install
+   ```
+3. Build all packages:
+   ```bash
+   bun run build
+   ```
+
+### Repository layout: two workspaces
+
+Vibe is split across **two workspaces** in one repo:
+
+- **`packages/*` — TypeScript runtime.** A bun + Turborepo monorepo of `@vibe/*`
+  packages. This is the target the compiler emits onto; the steps above set it up.
+- **`crates/*` — Rust language toolchain.** A Cargo workspace holding the compiler,
+  language server, CLI, and formatter (`vibe_lexer`, `vibe_parser`, `vibe_checker`,
+  `vibe_emit`, `vibe_cli`, `vibe_lsp`, …). It emits TypeScript that runs on the
+  runtime above.
+
+If you're only touching the runtime, the bun setup is all you need. To work on the
+language itself, set up the Rust toolchain below. See
+[The compiler is written in Rust](docs/language/05-rust-implementation.md) for the
+architecture and [docs/contributing/00-contributing.md](docs/contributing/00-contributing.md)
+for the full contributor workflow across both workspaces.
+
+### Rust Toolchain (the language toolchain)
+
+Only needed when working in `crates/*`:
+
+1. Install [rustup](https://rustup.rs/). The repo pins its Rust version via
+   `rust-toolchain.toml` (channel plus the `rustfmt` and `clippy` components), so
+   rustup selects the right toolchain automatically inside the repo.
+2. Build and test the Cargo workspace:
+   ```bash
+   cargo build
+   cargo test
+   ```
+3. Format and lint before pushing (both gate CI):
+   ```bash
+   cargo fmt
+   cargo clippy --all-targets -D warnings
+   ```
+
+A PR that touches `crates/` must have `cargo fmt`, `cargo clippy` (no warnings), and
+`cargo test` green — the Rust analog of the `bun run ci:check` gate.
+
+## Development Workflow
+
+### Branch Naming
+
+Use descriptive branch names with a conventional prefix:
+
+- `feat/` — new features (e.g., `feat/add-system-monitoring`)
+- `fix/` — bug fixes (e.g., `fix/resolve-memory-leak`)
+- `chore/` — maintenance (e.g., `chore/update-dependencies`)
+- `docs/` — documentation (e.g., `docs/add-api-guide`)
+- `refactor/` — code refactoring (e.g., `refactor/extract-parser`)
+
+### Conventional Commits
+
+All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/)
+specification:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `ci`, `style`.
+
+Examples:
+- `feat(core): add lifecycle hook system`
+- `fix(logger): handle edge case in transport`
+- `docs(api): document plugin interface`
+
+### Pull Request Process
+
+1. Create a feature branch from `main`.
+2. Make your changes following the code style guidelines.
+3. Write or update tests as needed.
+4. Run the full test suite locally:
+    ```bash
+    bun test
+    ```
+5. Push your branch and open a pull request.
+6. Ensure all CI checks pass.
+7. Request review from maintainers.
+
+## Code Style
+
+We use [Biome](https://biomejs.dev/) for formatting and linting. Configuration
+is in `biome.json` and `packages/biome-config/biome.json`.
+
+```bash
+# Format code
+bun run lint --fix
+```
+
+Rules:
+- Strict TypeScript mode (`strict: true`)
+- No unused variables or parameters
+- Path aliases defined in `tsconfig.json`
+- Prefer named exports over default exports
+- Use `type` imports for type-only imports
+
+### General Guidelines
+
+- Keep changes focused — one feature or fix per PR.
+- Avoid adding unnecessary dependencies.
+- Write clear, self-documenting code rather than adding comments.
+- Use meaningful variable and function names.
+- Keep functions small and focused on a single responsibility.
+
+## Testing
+
+All packages use [Vitest](https://vitest.dev/).
+
+```bash
+# Run all tests
+bun test
+
+# Run tests for a specific package
+bun test --filter @vibe/core
+
+# Run tests in watch mode
+cd packages/core && bun vitest --watch
+
+# Run with coverage
+bun test -- --coverage
+```
+
+### Test Structure
+
+- Place tests in a `tests/` directory next to the source.
+- Use descriptive test names that explain the expected behavior.
+- Follow the Arrange-Act-Assert pattern.
+
+## Pull Request Requirements
+
+### PR Title Format
+
+PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <description>
+```
+
+### Labels
+
+Every PR must have at least one of these labels:
+- `semver:patch` — bug fixes and minor changes
+- `semver:minor` — new features (backward compatible)
+- `semver:major` — breaking changes
+
+### Review Process
+
+1. At least one maintainer review is required.
+2. All CI checks must pass (lint, test, build, typecheck).
+3. Changes may be requested by reviewers.
+4. Once approved, a maintainer will merge the PR.
+
+## Issue Reporting
+
+### Bug Reports
+
+Open a [bug report](https://github.com/vibeapp/vibe/issues/new?template=bug_report.yml)
+with:
+- A clear, descriptive title
+- Steps to reproduce the behavior
+- Expected vs. actual behavior
+- Environment details (OS, Vibe version, Node version)
+- Minimal reproduction case, if possible
+
+### Feature Requests
+
+Open a [feature request](https://github.com/vibeapp/vibe/issues/new?template=feature_request.yml)
+with:
+- A clear, descriptive title
+- Use case and motivation
+- Proposed solution or API design
+- Alternatives you've considered
+
+### Security Issues
+
+Do **not** open a public issue for security vulnerabilities. Please report
+security issues privately to **security@vibe.dev**. See our
+[Security Policy](SECURITY.md) for details.
+
+## Project Structure
+
+```
+vibe/
+├── packages/         # TypeScript runtime (bun + Turborepo)
+│   ├── core/         # Main system entry point
+│   ├── di/           # Dependency injection container
+│   ├── errors/       # Error types and handling
+│   ├── lifecycle/    # Lifecycle management
+│   ├── logger/       # Logging and telemetry
+│   ├── plugin/       # Plugin system
+│   ├── runtime/      # Runtime execution engine
+│   └── shared/       # Shared utilities
+├── crates/           # Rust language toolchain (Cargo workspace)
+│   ├── vibe_lexer/   # .vibe tokenizer
+│   ├── vibe_parser/  # parser → AST
+│   ├── vibe_checker/ # Vibe semantic analysis
+│   ├── vibe_emit/    # codegen: AST → TypeScript
+│   ├── vibe_compiler/# lex→parse→bind→check→emit library
+│   ├── vibe_cli/     # the `vibe` binary
+│   └── vibe_lsp/     # the language server
+├── docs/             # Documentation
+├── tools/            # Build and development tools
+├── turbo.json        # Turborepo configuration
+├── Cargo.toml        # Cargo workspace root
+└── package.json      # bun workspace root
+```
+
+## Recognition
+
+All contributors will be recognized in our
+[CONTRIBUTORS.md](CONTRIBUTORS.md) file. We value every contribution, whether
+it's code, documentation, bug reports, or community support.
+
+---
+
+Thank you for helping make Vibe better!
