@@ -1,0 +1,30 @@
+%YAML 1.2
+---
+# Minimal Sublime syntax for the Vibe language. Rich diagnostics come from vibe-lsp.
+name: Vibe
+file_extensions: [vibe]
+scope: source.vibe
+contexts:
+  main:
+    - match: '///.*$'
+      scope: comment.line.documentation.vibe
+    - match: '//.*$'
+      scope: comment.line.double-slash.vibe
+    - match: '/\*'
+      push:
+        - meta_scope: comment.block.vibe
+        - match: '\*/'
+          pop: true
+    - match: '\b(agent|tool|model|memory|plugin|config|use|import|export|on|with)\b'
+      scope: keyword.control.vibe
+    - match: '\bclaude-[a-z0-9-]+\b'
+      scope: support.constant.model.vibe
+    - match: '"'
+      push:
+        - meta_scope: string.quoted.double.vibe
+        - match: '\\.'
+          scope: constant.character.escape.vibe
+        - match: '"'
+          pop: true
+    - match: '\b\d+(\.\d+)?\b'
+      scope: constant.numeric.vibe

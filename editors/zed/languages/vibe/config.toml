@@ -1,0 +1,12 @@
+name = "Vibe"
+grammar = "vibe"
+path_suffixes = ["vibe"]
+line_comments = ["// "]
+autoclose_before = ";:.,=}])>"
+
+[brackets]
+"{" = "}"
+"(" = ")"
+"[" = "]"
+"\"" = "\""
+"`" = "`"

@@ -1,0 +1,11 @@
+id = "vibe"
+name = "Vibe"
+description = "Syntax highlighting and LSP for the Vibe agent language."
+version = "0.0.1"
+schema_version = 1
+authors = ["Vibe contributors"]
+repository = "https://github.com/vibe-lang/vibe"
+
+[language_servers.vibe-lsp]
+name = "Vibe Language Server"
+languages = ["Vibe"]

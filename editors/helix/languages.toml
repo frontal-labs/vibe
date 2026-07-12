@@ -1,0 +1,13 @@
+# Add to ~/.config/helix/languages.toml. Requires `vibe-lsp` on $PATH
+# (cargo build -p vibe_lsp --release).
+
+[language-server.vibe-lsp]
+command = "vibe-lsp"
+
+[[language]]
+name = "vibe"
+scope = "source.vibe"
+file-types = ["vibe"]
+comment-token = "//"
+language-servers = ["vibe-lsp"]
+indent = { tab-width = 2, unit = "  " }

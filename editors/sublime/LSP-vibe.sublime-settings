@@ -1,0 +1,10 @@
+{
+  "clients": {
+    "vibe-lsp": {
+      "enabled": true,
+      "command": ["vibe-lsp"],
+      "selector": "source.vibe",
+      "languageId": "vibe"
+    }
+  }
+}
