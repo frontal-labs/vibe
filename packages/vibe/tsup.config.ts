@@ -16,6 +16,8 @@ export default defineConfig({
     "src/adapters.ts",
     "src/tracing.ts",
     "src/evals.ts",
+    "src/deploy.ts",
+    "src/devtools.ts",
   ],
   format: ["esm", "cjs"],
   dts: true,

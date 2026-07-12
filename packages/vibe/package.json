@@ -73,6 +73,16 @@
       "import": "./dist/evals.js",
       "require": "./dist/evals.cjs",
       "types": "./dist/evals.d.ts"
+    },
+    "./deploy": {
+      "import": "./dist/deploy.js",
+      "require": "./dist/deploy.cjs",
+      "types": "./dist/deploy.d.ts"
+    },
+    "./devtools": {
+      "import": "./dist/devtools.js",
+      "require": "./dist/devtools.cjs",
+      "types": "./dist/devtools.d.ts"
     }
   },
   "main": "./dist/index.cjs",
@@ -102,7 +112,9 @@
     "@vibe/di": "workspace:*",
     "@vibe/adapters": "workspace:*",
     "@vibe/tracing": "workspace:*",
-    "@vibe/evals": "workspace:*"
+    "@vibe/evals": "workspace:*",
+    "@vibe/deploy": "workspace:*",
+    "@vibe/devtools": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
