@@ -2,11 +2,11 @@ import type { Message, ModelRequest } from "@vibe/model"
 import { expectAssignable, expectType } from "tsd"
 
 import {
-  type Conversation,
-  type Memory,
   buildRequest,
+  type Conversation,
   createConversation,
   createInMemoryMemory,
+  type Memory,
 } from "../src/index"
 
 const convo = createConversation({ system: "s" })

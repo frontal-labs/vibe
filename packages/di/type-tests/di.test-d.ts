@@ -1,7 +1,6 @@
 import { expectError, expectType } from "tsd"
-
-import { createToken } from "../src/token"
 import type { ServiceToken } from "../src/token"
+import { createToken } from "../src/token"
 import type { Container } from "../src/types"
 
 // ServiceToken should carry the correct type

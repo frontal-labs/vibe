@@ -1,5 +1,5 @@
-import { createSystem } from "./system"
 import type { System } from "./system"
+import { createSystem } from "./system"
 import type { SystemConfig } from "./types"
 
 interface Vibe {

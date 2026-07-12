@@ -2,13 +2,13 @@ import { type Agent, type AgentConfig, type AgentResult, createAgent } from "@vi
 import { createContainer, createToken } from "@vibe/di"
 import { configError } from "@vibe/errors"
 import { createLifecycle } from "@vibe/lifecycle"
-import { LogLevel, type Logger, createLogger } from "@vibe/logger"
-import { type Memory, createInMemoryMemory } from "@vibe/memory"
+import { createLogger, type Logger, LogLevel } from "@vibe/logger"
+import { createInMemoryMemory, type Memory } from "@vibe/memory"
 import { type ModelProvider, modelProviderToken } from "@vibe/model"
-import { type PluginHost, createPluginHost } from "@vibe/plugin"
-import { type Runtime, createRuntime } from "@vibe/runtime"
+import { createPluginHost, type PluginHost } from "@vibe/plugin"
+import { createRuntime, type Runtime } from "@vibe/runtime"
 import { VERSION } from "@vibe/shared"
-import { type ToolRegistry, createToolRegistry } from "@vibe/tools"
+import { createToolRegistry, type ToolRegistry } from "@vibe/tools"
 
 import type { SystemConfig, SystemInfo } from "./types"
 

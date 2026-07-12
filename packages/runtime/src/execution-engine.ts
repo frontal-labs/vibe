@@ -11,14 +11,14 @@ import type {
   ExecutionId,
   ExecutionResult,
   ExecutionState,
+  ResourceManager,
   RetryPolicy,
   Runtime,
+  Scheduler,
   StreamEvent,
   TaskDefinition,
   TaskId,
 } from "./types"
-import type { Scheduler } from "./types"
-import type { ResourceManager } from "./types"
 
 let executionCounter = 0
 

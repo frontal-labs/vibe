@@ -1,20 +1,20 @@
 export type { Brand } from "./brand"
+export { ContextStore } from "./context-store"
+export {
+  assertDefined,
+  assertNever,
+  isDefined,
+  isError,
+  isFunction,
+  isObject,
+  isPromise,
+  isString,
+} from "./guards"
 export type {
-  Result,
-  Maybe,
   Awaitable,
   Fn,
+  Maybe,
   Nullish,
+  Result,
 } from "./types"
-export {
-  assertNever,
-  assertDefined,
-  isDefined,
-  isObject,
-  isString,
-  isError,
-  isPromise,
-  isFunction,
-} from "./guards"
-export { ContextStore } from "./context-store"
 export { VERSION } from "./version"

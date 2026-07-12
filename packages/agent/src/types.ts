@@ -49,5 +49,5 @@ export interface Agent {
   stream(input: AgentInput, options?: RunOptions): AsyncGenerator<AgentEvent, AgentResult>
 }
 
-export type { ContentBlock, Effort } from "@vibe/model"
 export type { Conversation } from "@vibe/memory"
+export type { ContentBlock, Effort } from "@vibe/model"

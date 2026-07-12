@@ -1,8 +1,8 @@
 import { createConversation } from "@vibe/memory"
 import type { Effort, ModelProvider } from "@vibe/model"
 import { DEFAULT_MODEL } from "@vibe/model"
-import { createToolRegistry } from "@vibe/tools"
 import type { Tool, ToolRegistry } from "@vibe/tools"
+import { createToolRegistry } from "@vibe/tools"
 
 import { drain } from "./events"
 import { runLoop } from "./loop"

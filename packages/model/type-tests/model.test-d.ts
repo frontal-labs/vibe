@@ -1,8 +1,12 @@
 import { expectAssignable, expectType } from "tsd"
-
-import { DEFAULT_MODEL, createFakeProvider, toAnthropicParams } from "../src/index"
-import type { AnthropicParams } from "../src/index"
-import type { Effort, ModelProvider, ModelRequest, ModelResponse } from "../src/index"
+import type {
+  AnthropicParams,
+  Effort,
+  ModelProvider,
+  ModelRequest,
+  ModelResponse,
+} from "../src/index"
+import { createFakeProvider, DEFAULT_MODEL, toAnthropicParams } from "../src/index"
 
 expectType<"claude-opus-4-8">(DEFAULT_MODEL)
 

@@ -1,9 +1,8 @@
-import { defineTool } from "@vibe/tools"
 import type { Tool } from "@vibe/tools"
+import { defineTool } from "@vibe/tools"
 import { z } from "zod"
-
-import { createAgent } from "./agent"
 import type { AgentConfig } from "./agent"
+import { createAgent } from "./agent"
 
 export interface DelegateToolConfig extends AgentConfig {
   /** Tool name the coordinator sees. Default `"delegate"`. */

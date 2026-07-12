@@ -1,7 +1,6 @@
 import { expectError, expectType } from "tsd"
-
-import { createCancellationTokenSource, createRuntime } from "../src/index"
 import type { CancellationToken, ExecutionContext, Runtime, TaskDefinition } from "../src/index"
+import { createCancellationTokenSource, createRuntime } from "../src/index"
 
 const runtime = createRuntime()
 expectType<Runtime>(runtime)

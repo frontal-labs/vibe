@@ -1,7 +1,7 @@
 import { expectAssignable, expectType } from "tsd"
 import { z } from "zod"
 
-import { type Tool, type ToolResult, defineTool, runToolCall } from "../src/index"
+import { defineTool, runToolCall, type Tool, type ToolResult } from "../src/index"
 
 const tool = defineTool({
   name: "add",

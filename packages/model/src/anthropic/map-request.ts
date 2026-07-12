@@ -1,5 +1,5 @@
-import { DEFAULT_MODEL } from "../types"
 import type { ContentBlock, Message, ModelRequest, ThinkingConfig, ToolChoice } from "../types"
+import { DEFAULT_MODEL } from "../types"
 
 /**
  * The Anthropic `messages.create` params shape (kept SDK-type-free so this
