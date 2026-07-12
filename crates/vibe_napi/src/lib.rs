@@ -26,6 +26,11 @@ mod node_binding {
     }
 
     #[napi]
+    pub fn format(src: String) -> String {
+        vibe_compiler::format(&src)
+    }
+
+    #[napi]
     pub fn version() -> String {
         super::version().to_string()
     }

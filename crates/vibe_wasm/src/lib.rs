@@ -27,6 +27,11 @@ mod wasm_binding {
     }
 
     #[wasm_bindgen]
+    pub fn format(src: &str) -> String {
+        vibe_compiler::format(src)
+    }
+
+    #[wasm_bindgen]
     pub fn version() -> String {
         super::version().to_string()
     }

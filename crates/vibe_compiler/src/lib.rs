@@ -104,6 +104,12 @@ pub fn check_json(src: &str) -> String {
     )
 }
 
+/// Format `.vibe` source into its canonical shape (idempotent). Invalid source is
+/// returned unchanged. This is the same formatter `vibe fmt` and the LSP use.
+pub fn format(src: &str) -> String {
+    vibe_fmt::format(src)
+}
+
 fn diagnostics_json(src: &str, diagnostics: &[Diagnostic]) -> String {
     let sf = SourceFile::new(SourceId(0), "input.vibe", src);
     let items: Vec<String> = diagnostics

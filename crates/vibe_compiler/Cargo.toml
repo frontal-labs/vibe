@@ -11,5 +11,6 @@ vibe_parser = { path = "../vibe_parser" }
 vibe_binder = { path = "../vibe_binder" }
 vibe_checker = { path = "../vibe_checker" }
 vibe_emit = { path = "../vibe_emit" }
+vibe_fmt = { path = "../vibe_fmt" }
 vibe_diagnostics = { path = "../vibe_diagnostics" }
 vibe_span = { path = "../vibe_span" }

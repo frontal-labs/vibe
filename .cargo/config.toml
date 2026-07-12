@@ -1,4 +1,6 @@
 # Cargo configuration for the Vibe language toolchain.
 [alias]
-# `cargo xtask -- <args>` runs the vibe CLI from source.
-xtask = "run --package vibe_cli --"
+# The `vibe` CLI is now a TypeScript package (`@vibe/cli`) that drives the compiler
+# through the napi addon. `cargo addon` builds that addon for the current platform;
+# `@vibe/compiler` loads it (point `VIBE_NATIVE_ADDON` at the resulting library).
+addon = "build --package vibe_napi --features node --release"
