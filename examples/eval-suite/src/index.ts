@@ -1,11 +1,9 @@
-import { createAgent } from "@vibe/agent"
-import { includes, runEval } from "@vibe/evals"
-import { createFakeProvider } from "@vibe/model"
+import { createAgent } from "vibe/agent"
+import { includes, runEval } from "vibe/evals"
+import { createAnthropicProvider } from "vibe/model"
 
-// A tiny offline eval: does the agent's answer contain the expected keyword?
-const agent = createAgent({
-  provider: createFakeProvider([{ content: [{ type: "text", text: "The capital is Paris." }] }]),
-})
+// A tiny eval: does the agent's answer contain the expected keyword?
+const agent = createAgent({ provider: createAnthropicProvider() })
 
 const report = await runEval({
   cases: [{ name: "capital", input: "Capital of France?", expected: "Paris" }],

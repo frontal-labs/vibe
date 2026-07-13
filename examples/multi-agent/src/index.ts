@@ -1,22 +1,13 @@
-import { createAgent, createDelegateTool } from "@vibe/agent"
-import { createAnthropicProvider, createFakeProvider } from "@vibe/model"
+import { createAgent, createDelegateTool } from "vibe/agent"
+import { createAnthropicProvider } from "vibe/model"
 
-// A worker sub-agent, exposed to the coordinator as a `delegate` tool.
-const workerProvider = process.env.ANTHROPIC_API_KEY
-  ? createAnthropicProvider()
-  : createFakeProvider([{ content: [{ type: "text", text: "42" }] }])
+// A worker sub-agent, exposed to the coordinator as a `delegate` tool. Pair workers
+// with a cheaper model (e.g. `claude-haiku-4-5`) for fan-out.
 const delegate = createDelegateTool({
-  provider: workerProvider,
+  provider: createAnthropicProvider(),
   name: "compute",
   description: "Delegate a computation to a specialized worker.",
 })
 
-const coordinatorProvider = process.env.ANTHROPIC_API_KEY
-  ? createAnthropicProvider()
-  : createFakeProvider([
-      { content: [{ type: "toolUse", id: "d1", name: "compute", input: { task: "6 * 7" } }] },
-      { content: [{ type: "text", text: "The worker computed 42." }] },
-    ])
-
-const coordinator = createAgent({ provider: coordinatorProvider, tools: [delegate] })
+const coordinator = createAgent({ provider: createAnthropicProvider(), tools: [delegate] })
 console.log((await coordinator.run("Compute 6 * 7 using your worker.")).text)

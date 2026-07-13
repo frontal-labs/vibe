@@ -1,10 +1,8 @@
-import { toFetchHandler } from "@vibe/adapters"
-import { createAgent } from "@vibe/agent"
-import { createAnthropicProvider, createFakeProvider } from "@vibe/model"
+import { toFetchHandler } from "vibe/adapters"
+import { createAgent } from "vibe/agent"
+import { createAnthropicProvider } from "vibe/model"
 
-const provider = process.env.ANTHROPIC_API_KEY
-  ? createAnthropicProvider()
-  : createFakeProvider([{ content: [{ type: "text", text: "Hello over HTTP!" }] }])
+const provider = createAnthropicProvider()
 
 const handler = toFetchHandler(createAgent({ provider }))
 const port = Number(process.env.PORT ?? 3000)
@@ -17,7 +15,7 @@ if (bun) {
   console.log(`Listening on http://localhost:${port} (POST { prompt })`)
 } else {
   const { createServer } = await import("node:http")
-  const { toNodeListener } = await import("@vibe/adapters")
+  const { toNodeListener } = await import("vibe/adapters")
   createServer(toNodeListener(createAgent({ provider }))).listen(port, () =>
     console.log(`Listening on http://localhost:${port}`),
   )

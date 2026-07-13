@@ -9,9 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vibe/agent": "workspace:*",
-    "@vibe/model": "workspace:*",
-    "@vibe/tools": "workspace:*",
+    "vibe": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {
