@@ -14,6 +14,7 @@ import {
   ToolError,
   ValidationError,
 } from "./errors"
+import { VibeError } from "./vibe-error"
 
 export function configError(message: string, cause?: Error): ConfigError {
   return new ConfigError(message, cause)
@@ -69,4 +70,33 @@ export function pluginConflictError(message: string, cause?: Error): PluginConfl
 
 export function pluginNotFoundError(message: string, cause?: Error): PluginNotFoundError {
   return new PluginNotFoundError(message, cause)
+}
+
+/** Attach an actionable `hint` to an error and return it (chainable). */
+export function withHint<E extends VibeError>(error: E, hint: string): E {
+  error.hint = hint
+  return error
+}
+
+/** No agent modules were found under `dir` — with a hint on how to add one. */
+export function agentsMissingError(dir: string): ConfigError {
+  return withHint(
+    configError(`No agents found under ${dir}.`),
+    `Add an agent module that default-exports createAgent(...), e.g. ${dir}/assistant.ts.`,
+  )
+}
+
+/**
+ * Render an error as a boxed CLI diagnostic: the message, a `Hint:` line when present, and the
+ * error code. Falls back gracefully for non-Vibe errors. No color codes, so it is safe to pipe.
+ */
+export function formatDiagnostic(error: unknown): string {
+  if (VibeError.isVibeError(error)) {
+    const lines = [`✗ ${error.message}`]
+    if (error.hint) lines.push(`  Hint: ${error.hint}`)
+    lines.push(`  Code: ${error.code}`)
+    return lines.join("\n")
+  }
+  const message = error instanceof Error ? error.message : String(error)
+  return `✗ ${message}`
 }

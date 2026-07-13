@@ -6,6 +6,7 @@ export interface ErrorSerialized {
   readonly code: ErrorCode
   readonly fatal: boolean
   readonly retryable: boolean
+  readonly hint?: string | undefined
   readonly stack: string | undefined
   readonly cause: ErrorSerialized | undefined
 }
@@ -15,5 +16,7 @@ export interface ErrorFactoryOptions {
   code: ErrorCode
   fatal?: boolean
   retryable?: boolean
+  /** An actionable next step surfaced to humans by diagnostic tools. */
+  hint?: string
   cause?: Error
 }

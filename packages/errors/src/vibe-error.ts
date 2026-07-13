@@ -8,6 +8,11 @@ export class VibeError extends Error {
   readonly fatal: boolean
   readonly retryable: boolean
   override readonly cause: Error | undefined
+  /**
+   * An actionable next step for a human ("Did you forget to…?"). Diagnostic-quality tools (the CLI)
+   * render this below the message; it never affects control flow. Set via `withHint`.
+   */
+  hint?: string
 
   constructor(options: ErrorFactoryOptions) {
     super(options.message, options.cause ? { cause: options.cause } : undefined)
@@ -16,6 +21,7 @@ export class VibeError extends Error {
     this.fatal = options.fatal ?? false
     this.retryable = options.retryable ?? false
     this.cause = options.cause
+    this.hint = options.hint
   }
 
   toJSON(): ErrorSerialized {
@@ -25,6 +31,7 @@ export class VibeError extends Error {
       code: this.code,
       fatal: this.fatal,
       retryable: this.retryable,
+      hint: this.hint,
       stack: this.stack ?? undefined,
       cause: this.cause ? serializeError(this.cause) : undefined,
     }
@@ -42,6 +49,7 @@ export class VibeError extends Error {
     }
     const error = new VibeError(opts)
     error.name = data.name
+    error.hint = data.hint
     if (data.stack) {
       error.stack = data.stack
     }

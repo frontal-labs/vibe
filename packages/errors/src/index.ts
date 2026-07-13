@@ -17,10 +17,12 @@ export {
   ValidationError,
 } from "./errors"
 export {
+  agentsMissingError,
   cancelledError,
   configError,
   diCircularDependency,
   diResolutionFailed,
+  formatDiagnostic,
   lifecycleError,
   notImplementedError,
   pluginConflictError,
@@ -31,6 +33,7 @@ export {
   timeoutError,
   toolError,
   validationError,
+  withHint,
 } from "./factories"
 export type { ErrorFactoryOptions, ErrorSerialized } from "./types"
 export { VibeError } from "./vibe-error"

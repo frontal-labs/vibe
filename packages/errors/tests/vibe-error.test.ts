@@ -14,8 +14,10 @@ import {
   ValidationError,
 } from "../src/errors"
 import {
+  agentsMissingError,
   cancelledError,
   configError,
+  formatDiagnostic,
   lifecycleError,
   notImplementedError,
   providerAuthError,
@@ -24,6 +26,7 @@ import {
   timeoutError,
   toolError,
   validationError,
+  withHint,
 } from "../src/factories"
 import type { ErrorSerialized } from "../src/types"
 import { VibeError } from "../src/vibe-error"
@@ -207,5 +210,33 @@ describe("error factories", () => {
     const cause = new Error("root cause")
     const error = configError("wrapped", cause)
     expect(error.cause).toBe(cause)
+  })
+})
+
+describe("hints & diagnostics", () => {
+  it("withHint attaches an actionable hint and round-trips through JSON", () => {
+    const error = withHint(configError("bad config"), "Try defineConfig({...}).")
+    expect(error.hint).toBe("Try defineConfig({...}).")
+    const restored = VibeError.fromJSON(error.toJSON())
+    expect(restored.hint).toBe("Try defineConfig({...}).")
+  })
+
+  it("agentsMissingError carries a hint pointing at the agents dir", () => {
+    const error = agentsMissingError("/app/agents")
+    expect(error).toBeInstanceOf(ConfigError)
+    expect(error.message).toContain("/app/agents")
+    expect(error.hint).toContain("createAgent")
+  })
+
+  it("formatDiagnostic renders message, hint, and code", () => {
+    const out = formatDiagnostic(agentsMissingError("/app/agents"))
+    expect(out).toContain("✗ No agents found under /app/agents.")
+    expect(out).toContain("Hint:")
+    expect(out).toContain("createAgent")
+    expect(out).toContain("Code:")
+  })
+
+  it("formatDiagnostic handles a plain Error", () => {
+    expect(formatDiagnostic(new Error("boom"))).toBe("✗ boom")
   })
 })
