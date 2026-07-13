@@ -57,3 +57,38 @@ describe("targets", () => {
     expect(result.statusCode).toBe(200)
   })
 })
+
+import type { DeployManifest } from "../src/manifest"
+import { deployPlan, generateHandler } from "../src/manifest"
+
+const manifest: DeployManifest = {
+  app: "shop",
+  target: "cloudflare",
+  agents: {
+    support: { name: "support", entry: "support.js", bytes: 3072, tools: ["../tools/get-order"] },
+    triage: { name: "triage", entry: "triage.js", bytes: 12_288, tools: [] },
+  },
+}
+
+describe("deployPlan", () => {
+  it("plans one handler per agent with cold-start sizes", () => {
+    const plan = deployPlan(manifest)
+    expect(plan.target).toBe("cloudflare")
+    expect(plan.agents.map((a) => a.name)).toEqual(["support", "triage"])
+    expect(plan.agents[0]?.coldStartKB).toBe(3)
+    expect(plan.agents[0]?.handler).toContain("toCloudflareWorker")
+  })
+
+  it("flags agents over the cold-start budget", () => {
+    const plan = deployPlan(manifest, { maxColdStartKB: 8 })
+    expect(plan.withinBudget).toBe(false)
+    expect(plan.agents.find((a) => a.name === "support")?.withinBudget).toBe(true)
+    expect(plan.agents.find((a) => a.name === "triage")?.withinBudget).toBe(false)
+  })
+
+  it("generateHandler emits the right wrapper per target", () => {
+    expect(generateHandler("a.js", "lambda")).toContain("toLambdaHandler")
+    expect(generateHandler("a.js", "vercel")).toContain("toVercelHandler")
+    expect(generateHandler("a.js", "node")).toContain("toNodeListener")
+  })
+})
