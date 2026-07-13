@@ -10,6 +10,8 @@ export {
   isPromise,
   isString,
 } from "./guards"
+export type { NativeAddon } from "./native"
+export { nativeAddon, resetNativeAddonCache } from "./native"
 export type {
   Awaitable,
   Fn,
