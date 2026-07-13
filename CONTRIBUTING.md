@@ -38,20 +38,21 @@ from everyone. By participating in this project, you agree to abide by our
 
 Vibe is split across **two workspaces** in one repo:
 
-- **`packages/*` — TypeScript runtime.** A bun + Turborepo monorepo of `@vibe/*`
-  packages. This is the target the compiler emits onto; the steps above set it up.
-- **`crates/*` — Rust language toolchain.** A Cargo workspace holding the compiler,
-  language server, CLI, and formatter (`vibe_lexer`, `vibe_parser`, `vibe_checker`,
-  `vibe_emit`, `vibe_cli`, `vibe_lsp`, …). It emits TypeScript that runs on the
-  runtime above.
+- **`packages/*` — TypeScript framework.** A bun + Turborepo monorepo of `@vibe/*`
+  packages. This is the whole framework — Vibe apps are plain TypeScript. The steps
+  above set it up.
+- **`crates/*` — Rust bundler addon.** A small Cargo workspace with two crates:
+  `vibe_bundler` (oxc-based static analysis of a Vibe app's agent/tool TypeScript
+  modules) and `vibe_napi` (its napi binding). They power `@vibe/build`'s agent→tool
+  graph and code-splitting. The addon is an optional accelerator — `@vibe/build` also
+  has a pure-TypeScript path — so most contributors never touch Rust.
 
-If you're only touching the runtime, the bun setup is all you need. To work on the
-language itself, set up the Rust toolchain below. See
-[The compiler is written in Rust](docs/language/05-rust-implementation.md) for the
-architecture and [docs/contributing/00-contributing.md](docs/contributing/00-contributing.md)
+If you're only touching the framework, the bun setup is all you need. To work on the
+bundler addon, set up the Rust toolchain below. See
+[docs/contributing/00-contributing.md](docs/contributing/00-contributing.md)
 for the full contributor workflow across both workspaces.
 
-### Rust Toolchain (the language toolchain)
+### Rust Toolchain (the bundler addon)
 
 Only needed when working in `crates/*`:
 
@@ -221,23 +222,18 @@ security issues privately to **security@vibe.dev**. See our
 
 ```
 vibe/
-├── packages/         # TypeScript runtime (bun + Turborepo)
+├── packages/         # TypeScript framework (bun + Turborepo)
 │   ├── core/         # Main system entry point
+│   ├── agent/        # Agent definition and loop
+│   ├── model/        # Model provider layer (Anthropic, OpenAI-compatible, fake)
+│   ├── tools/        # Tool / function-calling system
 │   ├── di/           # Dependency injection container
-│   ├── errors/       # Error types and handling
-│   ├── lifecycle/    # Lifecycle management
-│   ├── logger/       # Logging and telemetry
-│   ├── plugin/       # Plugin system
-│   ├── runtime/      # Runtime execution engine
-│   └── shared/       # Shared utilities
-├── crates/           # Rust language toolchain (Cargo workspace)
-│   ├── vibe_lexer/   # .vibe tokenizer
-│   ├── vibe_parser/  # parser → AST
-│   ├── vibe_checker/ # Vibe semantic analysis
-│   ├── vibe_emit/    # codegen: AST → TypeScript
-│   ├── vibe_compiler/# lex→parse→bind→check→emit library
-│   ├── vibe_cli/     # the `vibe` binary
-│   └── vibe_lsp/     # the language server
+│   ├── runtime/      # Runtime execution engine (retry, cancellation)
+│   ├── build/        # Bundler / build tooling (uses the Rust addon)
+│   └── …             # config, memory, workflows, skills, ontology, governance, …
+├── crates/           # Rust bundler addon (Cargo workspace)
+│   ├── vibe_bundler/ # oxc-based static analysis of agent/tool TS modules
+│   └── vibe_napi/    # napi binding exposing the analysis to @vibe/build
 ├── docs/             # Documentation
 ├── tools/            # Build and development tools
 ├── turbo.json        # Turborepo configuration

@@ -10,4 +10,3 @@ Task-oriented recipes. Each links to a runnable app under [`examples/`](../examp
 6. [Evaluating agents](./06-evaluating-agents.md)
 7. [Tracing & observability](./07-tracing.md)
 8. [Deploying to the edge](./08-deploying.md)
-9. [The Vibe language](./09-the-vibe-language.md)
