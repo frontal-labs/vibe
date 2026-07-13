@@ -1,8 +1,9 @@
 name: Release binaries
 
-# Cross-compile the `vibe` CLI, the napi addon, and the wasm module on tag, then
-# attach them to the GitHub release. Publishing the npm platform packages
-# (@vibe/cli-<platform>, @vibe/compiler-<platform>, @vibe/wasm) happens after.
+# Cross-compile the bundler's native analysis addon (napi) on tag and attach it to
+# the GitHub release. The `vibe` CLI and the whole runtime ship as npm packages;
+# the `.vibe` language + its Rust compiler/LSP/wasm were retired — Vibe apps are
+# plain TypeScript, and the addon is an optional accelerator for `@vibe/build`.
 on:
   push:
     tags: ["v*"]
@@ -12,8 +13,8 @@ permissions:
   contents: write
 
 jobs:
-  cli:
-    name: CLI ${{ matrix.target }}
+  napi:
+    name: napi ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -29,64 +30,21 @@ jobs:
       - name: Install Rust
         run: rustup target add ${{ matrix.target }}
       - uses: Swatinem/rust-cache@v2
-      - name: Build
-        # The `vibe` CLI moved to TypeScript (@vibe/cli); the shipped Rust binary is
-        # the language server used by the editor integrations.
-        run: cargo build --release -p vibe_lsp --target ${{ matrix.target }}
+      - name: Build addon
+        run: cargo build --release -p vibe_napi --features node --target ${{ matrix.target }}
       - name: Package
         shell: bash
         run: |
-          BIN="target/${{ matrix.target }}/release/vibe-lsp"
-          [ "${{ runner.os }}" = "Windows" ] && BIN="$BIN.exe"
-          tar -czf "vibe-lsp-${{ matrix.target }}.tar.gz" -C "$(dirname "$BIN")" "$(basename "$BIN")"
+          LIB="$(ls target/${{ matrix.target }}/release/*vibe_napi.* 2>/dev/null | grep -E '\.(dylib|so|dll)$' | head -1)"
+          tar -czf "vibe-napi-${{ matrix.target }}.tar.gz" -C "$(dirname "$LIB")" "$(basename "$LIB")"
       - uses: actions/upload-artifact@v4
         with:
-          name: vibe-${{ matrix.target }}
-          path: vibe-${{ matrix.target }}.tar.gz
-
-  napi:
-    name: napi ${{ matrix.target }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { os: macos-latest, target: aarch64-apple-darwin }
-          - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
-          - { os: windows-latest, target: x86_64-pc-windows-msvc }
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Rust
-        run: rustup target add ${{ matrix.target }}
-      - uses: Swatinem/rust-cache@v2
-      - name: Build addon
-        run: cargo build --release -p vibe_napi --features node --target ${{ matrix.target }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: vibe_napi-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/*vibe_napi*
-
-  wasm:
-    name: wasm
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Rust + wasm target
-        run: rustup target add wasm32-unknown-unknown
-      - name: Install wasm-bindgen
-        run: cargo install wasm-bindgen-cli
-      - name: Build
-        run: |
-          cargo build --release -p vibe_wasm --features wasm --target wasm32-unknown-unknown
-          wasm-bindgen target/wasm32-unknown-unknown/release/vibe_wasm.wasm --out-dir pkg --target web
-      - uses: actions/upload-artifact@v4
-        with:
-          name: vibe-wasm
-          path: pkg
+          name: vibe-napi-${{ matrix.target }}
+          path: vibe-napi-${{ matrix.target }}.tar.gz
 
   release:
     name: Attach to release
-    needs: [cli, napi, wasm]
+    needs: [napi]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     steps:
