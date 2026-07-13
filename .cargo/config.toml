@@ -1,6 +1,7 @@
-# Cargo configuration for the Vibe language toolchain.
+# Cargo configuration for the Vibe native addon.
 [alias]
-# The `vibe` CLI is now a TypeScript package (`@vibe/cli`) that drives the compiler
-# through the napi addon. `cargo addon` builds that addon for the current platform;
-# `@vibe/compiler` loads it (point `VIBE_NATIVE_ADDON` at the resulting library).
+# The Rust side is the bundler's static-analysis addon, not a language compiler.
+# `cargo addon` builds the napi `.node` addon (vibe_napi) for the current platform;
+# `@vibe/build` loads it to accelerate its agent→tool graph analysis (optional —
+# point `VIBE_NATIVE_ADDON` at the resulting library, or omit it for the pure-TS path).
 addon = "build --package vibe_napi --features node --release"

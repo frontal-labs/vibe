@@ -4,15 +4,20 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-description = "Criterion benchmarks for the Vibe compiler (the R11 perf gate)."
+description = "Criterion benchmarks for the Vibe bundler's static analysis (perf gate)."
 publish = false
 
 [dependencies]
-vibe_compiler = { path = "../crates/vibe_compiler" }
+vibe_bundler = { path = "../crates/vibe_bundler" }
+vibe_tokenizer = { path = "../crates/vibe_tokenizer" }
 
 [dev-dependencies]
 criterion = "0.5"
 
 [[bench]]
 name = "compile"
+harness = false
+
+[[bench]]
+name = "tokenize"
 harness = false

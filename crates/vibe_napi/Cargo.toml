@@ -11,7 +11,9 @@ description = "Node bindings (napi-rs) exposing the Vibe compiler to JavaScript.
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-vibe_compiler = { path = "../vibe_compiler" }
+vibe_bundler = { path = "../vibe_bundler" }
+vibe_tokenizer = { path = "../vibe_tokenizer" }
+vibe_sse = { path = "../vibe_sse" }
 napi = { version = "2", default-features = false, features = ["napi4"], optional = true }
 napi-derive = { version = "2", optional = true }
 

@@ -1,39 +1,26 @@
-//! Compiler throughput benchmarks. Run with `cargo bench -p vibe_benchmarks`.
+//! Bundler-analysis throughput benchmarks. Run with `cargo bench -p vibe_benchmarks`.
 //! In CI these feed a regression gate (compare against a committed baseline with
 //! `critcmp` / `criterion`'s `--save-baseline`).
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-const SAMPLE: &str = "\
-config { name \"bench\" ; provider anthropic }
+const AGENT: &str = "\
+import { createAgent } from \"vibe/agent\"
+import getOrder from \"../tools/get-order\"
+import lookup from \"../tools/lookup\"
+import { z } from \"zod\"
 
-/// Look up an order's status.
-tool GetOrder(orderId: string) -> string { return `shipped: ${orderId}` }
-
-model Fast { id claude-haiku-4-5 ; effort low }
-
-agent Triage {
-  model Fast
-  system \"Classify the request and route it.\"
-  use GetOrder
-}
-
-agent Support {
-  model claude-opus-4-8
-  system \"You are a concise support agent.\"
-  use GetOrder
-  use Triage
-}
+export default createAgent({
+  system: \"You are a concise support agent.\",
+  tools: [getOrder, lookup],
+})
 ";
 
-fn benches(c: &mut Criterion) {
-    c.bench_function("compile", |b| {
-        b.iter(|| vibe_compiler::compile(black_box(SAMPLE)))
-    });
-    c.bench_function("compile_json", |b| {
-        b.iter(|| vibe_compiler::compile_json(black_box(SAMPLE)))
+fn bench_tool_edges(c: &mut Criterion) {
+    c.bench_function("tool_edges", |b| {
+        b.iter(|| vibe_bundler::tool_edges(black_box(AGENT), black_box("/tools/")))
     });
 }
 
-criterion_group!(group, benches);
-criterion_main!(group);
+criterion_group!(benches, bench_tool_edges);
+criterion_main!(benches);

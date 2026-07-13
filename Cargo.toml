@@ -1,6 +1,7 @@
-# Vibe language toolchain — Rust Cargo workspace.
-# Coexists with the bun/Turborepo TypeScript workspace (packages/).
-# See docs/language/05-rust-implementation.md and docs/plan/05-language-implementation-plan.md.
+# Vibe native accelerators — Rust Cargo workspace.
+# Optional build-time and runtime performance addons for the TypeScript framework:
+# vibe_bundler (agent→tool graph), vibe_tokenizer (context budgeting), vibe_sse (streaming fold),
+# surfaced to JS via the vibe_napi addon. Coexists with the bun/Turborepo workspace (packages/).
 
 [workspace]
 resolver = "2"
