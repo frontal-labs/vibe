@@ -1,0 +1,19 @@
+{
+  "name": "@example/config-app",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Convention-based app: vibe.config.ts + auto-discovered agents/ and tools/",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vibe/build": "workspace:*",
+    "vibe": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@example/workflow",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Durable, resumable workflow DAG with checkpointing",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vibe": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
