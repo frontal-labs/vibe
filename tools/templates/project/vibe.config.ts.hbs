@@ -1,7 +1,8 @@
-import { defineConfig } from "vibe"
+import { defineConfig } from "vibe/config"
 
 export default defineConfig({
   name: "{{name}}",
   provider: "anthropic",
   model: "claude-opus-4-8",
+  // agents/ and tools/ are auto-discovered; list extras here if you prefer.
 })

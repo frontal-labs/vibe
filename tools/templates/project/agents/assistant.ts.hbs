@@ -1,0 +1,13 @@
+import { createAgent } from "vibe/agent"
+import { createAnthropicProvider, createFakeProvider } from "vibe/model"
+import greet from "../tools/greet"
+
+const provider = process.env.ANTHROPIC_API_KEY
+  ? createAnthropicProvider()
+  : createFakeProvider([{ content: [{ type: "text", text: "Hi! (offline)" }] }])
+
+export default createAgent({
+  provider,
+  system: "You are the {{name}} assistant. Use tools when helpful.",
+  tools: [greet],
+})

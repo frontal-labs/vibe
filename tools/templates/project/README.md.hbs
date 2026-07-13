@@ -1,12 +1,16 @@
 # {{name}}
 
-A Vibe agent app. Written in `.vibe`, compiled to TypeScript, run on the `@vibe/*` runtime.
+A Vibe app — **plain TypeScript**, typesafe by default. No custom file extensions.
 
-## Develop
+- `agents/*.ts` — each default-exports an agent (auto-discovered).
+- `tools/*.ts` — each default-exports a tool (auto-discovered).
+- `vibe.config.ts` — app config via `defineConfig`.
+
 ```sh
-vibe dev        # watch + recompile main.vibe
-vibe check --ts # Vibe + TypeScript diagnostics
-vibe build      # emit TypeScript to .vibe/
+bun install
+bun run build        # optimized, tree-shaken, code-split serverless bundles
+bun run check        # TypeScript type-check
 ```
 
-Set `ANTHROPIC_API_KEY` in your environment before running the compiled agent.
+Set `ANTHROPIC_API_KEY` to run against the live model; without it, agents use a
+deterministic fake provider so everything runs offline.
