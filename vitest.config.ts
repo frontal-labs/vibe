@@ -39,6 +39,12 @@ export default defineConfig({
       "@vibe/runtime": resolve(__dirname, "packages/runtime/src"),
       "@vibe/shared": resolve(__dirname, "packages/shared/src"),
       "@vibe/mcp-server": resolve(__dirname, "packages/mcp-server/src"),
+      "@vibe/skills": resolve(__dirname, "packages/skills/src"),
+      "@vibe/workflows": resolve(__dirname, "packages/workflows/src"),
+      "@vibe/ontology": resolve(__dirname, "packages/ontology/src"),
+      "@vibe/governance": resolve(__dirname, "packages/governance/src"),
+      "@vibe/security": resolve(__dirname, "packages/security/src"),
+      "@vibe/observability": resolve(__dirname, "packages/observability/src"),
     },
   },
 })

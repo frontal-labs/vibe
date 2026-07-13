@@ -28,6 +28,12 @@ export default defineConfig({
       "@vibe/shared": pkg("shared"),
       "@vibe/tools": pkg("tools"),
       "@vibe/tracing": pkg("tracing"),
+      "@vibe/skills": pkg("skills"),
+      "@vibe/workflows": pkg("workflows"),
+      "@vibe/ontology": pkg("ontology"),
+      "@vibe/governance": pkg("governance"),
+      "@vibe/security": pkg("security"),
+      "@vibe/observability": pkg("observability"),
     },
   },
 })

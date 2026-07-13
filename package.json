@@ -1,5 +1,5 @@
 {
-  "name": "vibe",
+  "name": "frontal-vibe-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",
