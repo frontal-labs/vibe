@@ -1,7 +1,13 @@
+import type { KnownModelId } from "./catalog"
+
 /** The default model — Anthropic's most capable Opus-tier model. */
 export const DEFAULT_MODEL = "claude-opus-4-8"
 
-export type ModelId = string
+/**
+ * A model id. Autocompletes the {@link KnownModelId} catalog while still accepting
+ * any custom string (`& {}` preserves the literal-union suggestions).
+ */
+export type ModelId = KnownModelId | (string & {})
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max"
 
 /** Normalized stop reason (provider-specific reasons map into this). */
