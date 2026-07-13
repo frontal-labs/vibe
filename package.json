@@ -50,11 +50,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx,mts,cts}": [
-      "biome check --write",
-      "biome format --write"
+      "biome check --write --no-errors-on-unmatched",
+      "biome format --write --no-errors-on-unmatched"
     ],
     "*.{json,yaml,yml}": [
-      "biome format --write"
+      "biome format --write --no-errors-on-unmatched"
     ]
   }
 }
