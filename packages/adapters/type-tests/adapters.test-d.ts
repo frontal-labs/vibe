@@ -9,6 +9,6 @@ expectAssignable<AgentLike>(agent)
 const fetchHandler = toFetchHandler(agent)
 expectType<Promise<Response>>(fetchHandler(new Request("http://x", { method: "POST" })))
 
-// Node listener returns a (req, res) => Promise<void>
+// Node listener is a (req, res) => Promise<void>
 const nodeListener = toNodeListener(agent)
-expectType<"function">(typeof nodeListener)
+expectAssignable<(...args: never[]) => Promise<void>>(nodeListener)

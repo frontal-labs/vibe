@@ -12,8 +12,10 @@ export function toNodeListener(agent: AgentLike, options: HttpAdapterOptions = {
   const handler = toFetchHandler(agent, options)
   return async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
     const chunks: Buffer[] = []
-    for await (const chunk of req) {
-      chunks.push(chunk as Buffer)
+    // `IncomingMessage` is an async iterable of chunks (Node ≥ 10); annotate it so
+    // the type-checker agrees regardless of the ambient lib settings.
+    for await (const chunk of req as unknown as AsyncIterable<Buffer>) {
+      chunks.push(chunk)
     }
     const request = new Request(`http://localhost${req.url ?? "/"}`, {
       method: req.method ?? "GET",
