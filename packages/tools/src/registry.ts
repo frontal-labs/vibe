@@ -1,22 +1,22 @@
 import { validationError } from "@vibe/errors"
 import type { ToolSchema } from "@vibe/model"
 
-import type { Tool } from "./types"
+import type { AnyTool } from "./types"
 
 /** A name-indexed collection of tools; rejects duplicate names. */
 export interface ToolRegistry {
-  register(tool: Tool): void
-  get(name: string): Tool | undefined
+  register(tool: AnyTool): void
+  get(name: string): AnyTool | undefined
   has(name: string): boolean
-  list(): Tool[]
+  list(): AnyTool[]
   /** The model-facing schemas, for the request builder. */
   toSchemas(): ToolSchema[]
 }
 
-export function createToolRegistry(initial: Tool[] = []): ToolRegistry {
-  const tools = new Map<string, Tool>()
+export function createToolRegistry(initial: readonly AnyTool[] = []): ToolRegistry {
+  const tools = new Map<string, AnyTool>()
 
-  function register(tool: Tool): void {
+  function register(tool: AnyTool): void {
     if (tools.has(tool.name)) {
       throw validationError(`Duplicate tool name: "${tool.name}"`)
     }

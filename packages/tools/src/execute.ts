@@ -1,7 +1,7 @@
 import { cancelledError } from "@vibe/errors"
 import { isError as isErrorValue } from "@vibe/shared"
 
-import type { Tool, ToolContext, ToolResult } from "./types"
+import type { AnyTool, ToolContext, ToolResult } from "./types"
 
 export interface RunToolOptions {
   /** Wall-clock budget for the handler; a timeout yields an `isError` result. */
@@ -16,21 +16,24 @@ export interface RunToolOptions {
  * cancellation is the one exception: it rejects, unwinding the whole run.
  */
 export async function runToolCall(
-  tool: Tool,
+  tool: AnyTool,
   input: unknown,
   ctx: ToolContext = {},
   options: RunToolOptions = {},
 ): Promise<ToolResult> {
   ctx.cancellationToken?.throwIfCancelled()
 
-  const parsed = tool.schema.safeParse(input)
-  if (!parsed.success) {
-    return { isError: true, content: `Invalid input for "${tool.name}": ${parsed.error.message}` }
+  // Validate via the Standard Schema interface, so any validator (Zod/Valibot/
+  // ArkType/…) works. `validate` may be sync or async.
+  const result = await tool.schema["~standard"].validate(input)
+  if (result.issues) {
+    const message = result.issues.map((issue) => issue.message).join("; ")
+    return { isError: true, content: `Invalid input for "${tool.name}": ${message}` }
   }
 
   try {
     const value = await withTimeout(
-      Promise.resolve(tool.execute(parsed.data, ctx)),
+      Promise.resolve(tool.execute(result.value, ctx)),
       options.timeoutMs,
       ctx,
       tool.name,

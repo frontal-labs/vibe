@@ -29,7 +29,8 @@
     "@vibe/model": "workspace:*",
     "@vibe/runtime": "workspace:*",
     "@vibe/shared": "workspace:*",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@standard-schema/spec": "^1.1.0"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
