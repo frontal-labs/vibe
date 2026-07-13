@@ -83,6 +83,41 @@
       "import": "./dist/devtools.js",
       "require": "./dist/devtools.cjs",
       "types": "./dist/devtools.d.ts"
+    },
+    "./config": {
+      "import": "./dist/config.js",
+      "require": "./dist/config.cjs",
+      "types": "./dist/config.d.ts"
+    },
+    "./skills": {
+      "import": "./dist/skills.js",
+      "require": "./dist/skills.cjs",
+      "types": "./dist/skills.d.ts"
+    },
+    "./workflows": {
+      "import": "./dist/workflows.js",
+      "require": "./dist/workflows.cjs",
+      "types": "./dist/workflows.d.ts"
+    },
+    "./ontology": {
+      "import": "./dist/ontology.js",
+      "require": "./dist/ontology.cjs",
+      "types": "./dist/ontology.d.ts"
+    },
+    "./governance": {
+      "import": "./dist/governance.js",
+      "require": "./dist/governance.cjs",
+      "types": "./dist/governance.d.ts"
+    },
+    "./security": {
+      "import": "./dist/security.js",
+      "require": "./dist/security.cjs",
+      "types": "./dist/security.d.ts"
+    },
+    "./observability": {
+      "import": "./dist/observability.js",
+      "require": "./dist/observability.cjs",
+      "types": "./dist/observability.d.ts"
     }
   },
   "main": "./dist/index.cjs",
@@ -114,7 +149,14 @@
     "@vibe/tracing": "workspace:*",
     "@vibe/evals": "workspace:*",
     "@vibe/deploy": "workspace:*",
-    "@vibe/devtools": "workspace:*"
+    "@vibe/devtools": "workspace:*",
+    "@vibe/config": "workspace:*",
+    "@vibe/skills": "workspace:*",
+    "@vibe/workflows": "workspace:*",
+    "@vibe/ontology": "workspace:*",
+    "@vibe/governance": "workspace:*",
+    "@vibe/security": "workspace:*",
+    "@vibe/observability": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
