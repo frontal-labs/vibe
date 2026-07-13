@@ -10,6 +10,13 @@ import { createRuntime, type Runtime } from "@vibe/runtime"
 import { VERSION } from "@vibe/shared"
 import { createToolRegistry, type ToolRegistry } from "@vibe/tools"
 
+import {
+  createEnterpriseServices,
+  type EnterpriseServices,
+  type ObservabilityServices,
+  type OntologyServices,
+  type SecurityServices,
+} from "./enterprise"
 import type { SystemConfig, SystemInfo } from "./types"
 
 export interface System {
@@ -18,6 +25,18 @@ export interface System {
   readonly logger: Logger
   readonly plugins: PluginHost
   readonly runtime: Runtime
+  /** Governance policy engine built from the app's `governance` config. */
+  readonly governance: EnterpriseServices["governance"]
+  /** Security services (PII redaction, guardrails, rate limits, secrets). */
+  readonly security: SecurityServices
+  /** Observability services (metrics, audit, tracing flag). */
+  readonly observability: ObservabilityServices
+  /** Ontology services (entity registry + semantic store). */
+  readonly ontology: OntologyServices
+  /** The skill registry (also merged into the tool registry). */
+  readonly skills: EnterpriseServices["skills"]
+  /** Named workflows from config. */
+  readonly workflows: EnterpriseServices["workflows"]
   init(): Promise<void>
   start(): Promise<void>
   stop(timeoutMs?: number): Promise<void>
@@ -33,6 +52,7 @@ export const lifecycleToken = createToken("system.lifecycle")
 export const pluginHostToken = createToken<PluginHost>("system.plugins")
 export const toolRegistryToken = createToken<ToolRegistry>("system.tools")
 export const memoryToken = createToken<Memory>("system.memory")
+export const enterpriseToken = createToken<EnterpriseServices>("system.enterprise")
 
 export function createSystem(config: SystemConfig): System {
   const container = createContainer()
@@ -45,6 +65,8 @@ export function createSystem(config: SystemConfig): System {
   const runtime = createRuntime()
   const toolRegistry = createToolRegistry(config.tools ?? [])
   const memory = createInMemoryMemory()
+  // Instantiate enterprise services and merge configured skills into the tool registry.
+  const enterprise = createEnterpriseServices(config, toolRegistry, logger)
 
   container.registerInstance(containerToken, container)
   container.registerInstance(loggerToken, logger)
@@ -52,6 +74,7 @@ export function createSystem(config: SystemConfig): System {
   container.registerInstance(pluginHostToken, plugins)
   container.registerInstance(toolRegistryToken, toolRegistry)
   container.registerInstance(memoryToken, memory)
+  container.registerInstance(enterpriseToken, enterprise)
   if (config.provider) {
     container.registerInstance(modelProviderToken, config.provider)
   }
@@ -130,6 +153,30 @@ export function createSystem(config: SystemConfig): System {
 
     get runtime() {
       return runtime
+    },
+
+    get governance() {
+      return enterprise.governance
+    },
+
+    get security() {
+      return enterprise.security
+    },
+
+    get observability() {
+      return enterprise.observability
+    },
+
+    get ontology() {
+      return enterprise.ontology
+    },
+
+    get skills() {
+      return enterprise.skills
+    },
+
+    get workflows() {
+      return enterprise.workflows
     },
 
     async init() {
