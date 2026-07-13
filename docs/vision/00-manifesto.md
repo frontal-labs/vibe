@@ -17,20 +17,18 @@ We are not building "another LangChain." We are building the runtime that a seri
 agentic application deserves — the thing you would build in-house on your third
 agent project, extracted, hardened, and typed.
 
-**And it should be a language, not a library.** The deepest way to make a
-framework disappear is the one TypeScript itself took: don't ship functions people
-import — **add syntax and structure to the language and ship a compiler.** Write
-`.ts`, run `tsc`, get `.js`. Vibe does this one level up: you write `.vibe` files
-with first-class constructs — `agent`, `tool`, `model`, `memory`, `plugin`,
-`config` — and the `vibe` compiler emits TypeScript that runs on the `@vibe/*`
-runtime. `.vibe → vibe compiler → .ts → tsc → .js`. You never import the framework;
-the compiler writes the wiring. The runtime packages become the **compile target**,
-not the surface — and because the target is the documented runtime, every
+**And it is a framework, not a DSL.** Vibe is TypeScript-native to the core: you
+import `@vibe/*` and write ordinary `.ts`. First-class constructs — agents, tools,
+models, memory, plugins, config — are plain functions you call (`defineAgent`,
+`defineTool`, `defineConfig`, `createSystem`) with full type inference, not a
+separate syntax you have to learn or a compiler you have to run. Your app *is*
+TypeScript: it type-checks with `tsc`, runs on `node`/`bun`, and every
 architectural guarantee (the [agent loop](../architecture/09-agent-loop.md), typed
-errors, the durable runtime) still holds. And the compiler and its toolchain are
-written in **Rust**, for the same reason modern JS tooling is (raw speed and
-single-binary distribution) — see [Rust implementation](../language/05-rust-implementation.md).
-See [The Vibe language](../language/00-overview.md).
+errors, the durable runtime) holds because you're using the documented runtime
+directly. The only native code in the repo is an **optional build accelerator**
+(the oxc-based `vibe_bundler` and its `vibe_napi` binding) that lets
+[`@vibe/build`](../architecture/02-package-topology.md) code-split tools for
+smaller cold starts — the framework works without it.
 
 ## What "agentic TypeScript framework" means here
 
@@ -68,9 +66,10 @@ them, not reinvent them.
    independently installable. You can use `@vibe/runtime` without `@vibe/agent`.
    See [Package topology](../architecture/02-package-topology.md).
 
-3. **The happy path is one line; the escape hatch is always there.** `vibe.system({name}).ask("...")`
-   works with zero ceremony. When you need to control the model, register a custom
-   tool, or intercept the loop, every layer is a public, documented seam.
+3. **The happy path is one line; the escape hatch is always there.**
+   `createSystem({ name }).ask("...")` works with zero ceremony. When you need to
+   control the model, register a custom tool, or intercept the loop, every layer
+   is a public, documented seam.
 
 4. **Provider-agnostic core, Claude-first defaults.** The [model layer](../architecture/10-model-provider-layer.md)
    is an interface. The reference implementation is Anthropic's SDK with sensible
@@ -96,9 +95,9 @@ parallel. Vibe is the shared answer.
 
 Vibe succeeds when a developer can:
 
-- Run `vibe new`, write a `.vibe` file with a `tool` and an `agent`, and run
-  `vibe dev` — a tool-using agent from nothing in under five minutes, no framework
-  imports and no manual wiring.
+- Add `@vibe/*` to a project, write a TypeScript file with a `defineTool` and a
+  `defineAgent`, and run it with `bun`/`node` — a tool-using agent from nothing in
+  under five minutes.
 - Add a custom tool with full type inference and zero boilerplate.
 - Swap `claude-opus-4-8` for `claude-haiku-4-5` on a sub-agent with one line.
 - Read a production incident straight from structured logs with trace ids.

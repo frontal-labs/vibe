@@ -1,43 +1,42 @@
 # Vibe Documentation
 
-> A compiled language for building production AI agents. Vibe is to agents what
-> TypeScript is to JavaScript: you write `.vibe`, the compiler emits TypeScript,
-> and it runs on a durable, typed runtime.
+> A pure-TypeScript framework for building production AI agents. You write plain
+> TypeScript against the `@vibe/*` packages and it runs on a durable, typed runtime.
 
-Vibe is **a language, not a library you import.** You write `.vibe` files with
-first-class constructs — `agent`, `tool`, `model`, `memory`, `plugin`, `config` —
-and the `vibe` compiler turns them into TypeScript that runs on the `@vibe/*`
-runtime (dependency injection, a lifecycle state machine, a plugin system, a
-durable execution runtime, structured errors, and structured logging). You never
-wire the framework by hand; the compiler emits the wiring, the way `tsc` emits the
-JavaScript you never write. The compiler itself is written in **Rust** (in the
-`crates/` workspace) and emits TypeScript — the SWC/Biome/oxc playbook.
+Vibe is **a TypeScript framework** — a bun + Turborepo monorepo of `@vibe/*`
+packages under `packages/`. You compose agents, tools, models, memory, and plugins
+from first-class TypeScript APIs that run on the runtime (dependency injection, a
+lifecycle state machine, a plugin system, a durable execution runtime, structured
+errors, and structured logging). Apps built with Vibe are ordinary TypeScript
+projects — there is no separate source language to learn.
 
-```vibe
-// support.vibe
-import { db } from "./db"                 // interop: your own TypeScript
+```ts
+// support.ts
+import { defineTool, defineAgent, createSystem } from "vibe"
+import { db } from "./db"                          // your own TypeScript
 
-config { name "support-bot" ; provider anthropic }
+const getOrder = defineTool({
+  name: "GetOrder",
+  input: z.object({ orderId: z.string() }),
+  async run({ orderId }) {
+    const order = await db.orders.find(orderId)
+    return order ?? { status: "not_found" }
+  },
+})
 
-tool GetOrder(orderId: string) -> OrderStatus {
-  const order = await db.orders.find(orderId)   // body is ordinary TypeScript
-  return order ?? { status: "not_found" }
-}
+const support = defineAgent({
+  name: "Support",
+  model: "claude-opus-4-8",
+  system: "You are a concise support agent. Use tools before guessing.",
+  tools: [getOrder],
+})
 
-agent Support {
-  model  claude-opus-4-8
-  system "You are a concise support agent. Use tools before guessing."
-  use    GetOrder
-}
+const system = createSystem({ agents: [support] })
 ```
 
-```bash
-vibe dev     # compile .vibe → .ts, wire it onto the runtime, and run
-```
-
-That is the whole application. `use GetOrder` is the wiring; there are no framework
-imports. The pipeline is `.vibe → vibe compiler → .ts → tsc/esbuild → .js → @vibe/*
-runtime`. See [The Vibe language](./language/00-overview.md).
+That is the whole application. You wire agents to tools by composition; `@vibe/build`
+statically analyzes the imports to code-split tools into lazily-loaded chunks for
+small cold starts.
 
 This documentation set describes what Vibe is, the problems it solves, its
 architecture, its developer experience, and the concrete plan to build the
@@ -49,16 +48,6 @@ best agentic TypeScript framework."
 Start with **Vision** for the "why", then **Analysis** for the honest current
 state, then **Architecture** for the "how". **Plan** is the actionable build
 sequence.
-
-### Language — what you write
-- [Overview](./language/00-overview.md) — the `.vibe` language and the "Vibe is to agents what TypeScript is to JavaScript" model.
-- [Syntax](./language/01-syntax.md) — every construct (`agent`, `tool`, `model`, `memory`, `plugin`, `config`).
-- [The compiler](./language/02-compiler.md) — pipeline, codegen onto the runtime, source maps.
-- [Toolchain](./language/03-toolchain.md) — the `vibe` CLI, language server, editor extension.
-- [TypeScript interop](./language/04-typescript-interop.md) — how `.vibe` and `.ts` mix.
-- [Rust implementation](./language/05-rust-implementation.md) — the `crates/` Cargo workspace, distribution, two-pass type checking.
-- [Language implementation plan](./plan/05-language-implementation-plan.md) — the phased (R0–R11) build of the compiler, LSP, and CLI.
-- [Grammar](./specs/grammar.md) — the formal grammar.
 
 ### Vision — why Vibe exists
 - [Manifesto](./vision/00-manifesto.md) — the thesis, the bet, the non-negotiables.
@@ -118,7 +107,7 @@ sequence.
 | Composition root | `core` | ✅ Wired; `ask()` stubbed |
 | Agentic layer | `model`, `tools`, `agent`, `memory` | 🚧 Planned — see [Agentic implementation plan](./plan/02-agentic-implementation-plan.md) |
 | Framework front door | `config`, `vibe` (meta) | 🚧 Planned — see [Configuration & bootstrap](./architecture/14-configuration-and-bootstrap.md) |
-| Language toolchain (Rust) | `crates/*` (compiler, LSP, CLI) | 🚧 Planned — see [Language implementation plan](./plan/05-language-implementation-plan.md) |
+| Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | ✅ oxc-based tool-edge extraction for `@vibe/build` (optional native accelerator) |
 
 The infrastructure is real and tested. The agentic layer is designed here and not
 yet built. `system.ask()` throws `notImplementedError` on purpose — this

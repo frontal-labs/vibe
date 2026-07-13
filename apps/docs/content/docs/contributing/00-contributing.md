@@ -88,16 +88,25 @@ bun format     # biome format --write .
 `lint-staged` runs Biome on staged files at commit time via the Husky `pre-commit`
 hook, so most style issues fix themselves before they ever reach a PR.
 
-## Working on the language (Rust)
+## Working on the bundler crates (Rust)
 
-The `@vibe/*` packages above are the **runtime**. The **language toolchain** —
-compiler, LSP, CLI, and formatter — is written in Rust and lives in a separate
-Cargo workspace under `crates/*`. The repo has two workspaces side by side: the
-bun/Turborepo TypeScript workspace (`packages/*`) and the Cargo workspace
-(`crates/*`). See [The compiler is written in Rust](../language/05-rust-implementation.md)
-for the crate graph and rationale, and the
-[Language implementation plan](../plan/05-language-implementation-plan.md) for the
-phased (R0–R11) build.
+The `@vibe/*` packages above are the whole framework. The only Rust in the repo is
+a small **native build accelerator** for `@vibe/build`, living in a separate Cargo
+workspace under `crates/*`. It is **not** a language compiler — it's an optional
+speedup. The repo has two workspaces side by side: the bun/Turborepo TypeScript
+workspace (`packages/*`) and the Cargo workspace (`crates/*`), whose members are
+exactly two crates:
+
+- **`vibe_bundler`** — oxc-based static analysis of a Vibe app's agent/tool
+  TypeScript modules. It extracts `import` declarations and agent→tool edges so
+  `@vibe/build` can build a dependency graph and code-split tools into lazily
+  loaded chunks. Pure Rust library, `#![forbid(unsafe_code)]`.
+- **`vibe_napi`** — a napi-rs binding (behind the `node` feature) that exposes
+  `tool_edges(source, marker)` and `version()` to JS, powering `@vibe/build`. It's
+  an optional accelerator; the framework works without it.
+
+See [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md)
+for how `@vibe/build` uses these.
 
 ### Prerequisites
 
@@ -105,13 +114,10 @@ phased (R0–R11) build.
 |---|---|
 | rustup | Installs and manages the Rust toolchain. |
 | Rust toolchain | **Pinned by `rust-toolchain.toml`** (channel + `rustfmt`, `clippy`) — rustup selects it automatically in the repo. |
-| rust-analyzer | Editor language server; add it to your editor for `crates/` work. |
 
 ### The Rust dev loop
 
-The crates live under `crates/` (`vibe_lexer`, `vibe_parser`, `vibe_binder`,
-`vibe_checker`, `vibe_emit`, `vibe_compiler`, `vibe_cli`, `vibe_lsp`, `vibe_fmt`,
-`vibe_napi`, `vibe_wasm`, …), one responsibility per crate.
+The two crates live under `crates/` (`vibe_bundler`, `vibe_napi`).
 
 ```bash
 cargo build                          # build the whole workspace
@@ -127,9 +133,9 @@ moves intentionally.
 
 CI runs the two workspaces independently, and both must be green:
 
-- **TypeScript runtime** — `bun ci:check` (lint → typecheck → build → test), plus
+- **TypeScript framework** — `bun ci:check` (lint → typecheck → build → test), plus
   `bun test:types` and `bun knip`, over `packages/*`.
-- **Rust toolchain** — `cargo fmt --check`, `cargo clippy --all-targets -D warnings`,
+- **Rust accelerator** — `cargo fmt --check`, `cargo clippy --all-targets -D warnings`,
   and `cargo test`, over `crates/*`.
 
 A PR that touches `crates/` must have `cargo fmt`, `cargo clippy` (no warnings), and

@@ -6,35 +6,25 @@ description: "The ordered engineering work to take Vibe from \"tested infrastruc
 # Build Plan
 
 The ordered engineering work to take Vibe from "tested infrastructure with a
-stubbed `ask()`" to a **compiled language for agents** — `.vibe` files that compile
-onto a first-class agentic runtime. Phases are sequential where they must be and
-parallelizable where noted. Each phase has an exit gate — nothing proceeds until the
-gate is green.
+stubbed `ask()`" to a **TypeScript-native agent framework** — a set of `@vibe/*`
+packages you compose into plain-TypeScript agent apps. Phases are sequential where
+they must be and parallelizable where noted. Each phase has an exit gate — nothing
+proceeds until the gate is green.
 
-There are **two workstreams**:
+The work is a single workstream — **the `@vibe/*` runtime** (Phases 0–7): the
+model, tools, memory, agent, and front-door packages that an app imports and calls
+directly. Everything is written and consumed in TypeScript; an app is authored in
+`.ts` and composed from these APIs (`createSystem`, `defineTool`, `createAgent`).
 
-- **The runtime** (Phases 0–7) — the `@vibe/*` packages that are the **compile
-  target**: model, tools, memory, agent, and the front door. Written in TypeScript,
-  used by emitted code, never hand-imported in a `.vibe` project.
-- **The language toolchain** (Phases R0–R11) — a **Rust** `crates/` Cargo workspace
-  (SWC/Biome/oxc style): the `vibe_compiler`, the `vibe_cli` binary, the `vibe_lsp`
-  language server, and the editor extension that turn `.vibe` source into TypeScript
-  calls onto that runtime. The **authoritative, code-level sequence lives in the
-  [Language implementation plan (Rust)](./05-language-implementation-plan.md)** — this
-  section only summarizes it and maps the old intent onto its phases. See also
-  [The compiler is written in Rust](../language/05-rust-implementation.md) and
-  [The Vibe language](../language/00-overview.md).
-
-The relationship is exactly TypeScript→JavaScript: `.vibe` → `.ts` (Vibe compiler, in
-Rust) → `.js` (`tsc`/esbuild) → `@vibe/*` runtime. **The language workstream targets the
-runtime**, so its emitter (R4) depends on Phases 1–5 being real — though it can develop
-against the runtime's *types* and the deterministic fake provider (Phase 1) well before a
-live model is wired.
+An optional native accelerator lives in `crates/` — `vibe_bundler` (an oxc-based
+static analyzer that extracts a Vibe app's agent→tool import edges) and `vibe_napi`
+(its napi-rs binding) — which powers tool code-splitting in `@vibe/build`. It is a
+build-time performance optimization, not part of the runtime, and the framework
+works without it. See [Cross-cutting rules](#cross-cutting-rules-for-every-phase).
 
 Companion docs: [Roadmap](./00-roadmap.md) (milestones), [Agentic implementation
 plan](./02-agentic-implementation-plan.md) (the model→agent detail), [Testing
-strategy](./03-testing-strategy.md), [The compiler](../language/02-compiler.md),
-[Language syntax](../language/01-syntax.md).
+strategy](./03-testing-strategy.md), [Quickstart](../dx/03-quickstart.md).
 
 ## Phase 0 — Stabilize the base (blocker)
 
@@ -134,88 +124,30 @@ releases and returns; iteration ceiling raises the typed error.
 - [ ] Add `System.agent(config)` for constructing custom agents.
 
 **Depends on:** Phases 1–4.
-**Exit gate:** `vibe.system({name}).start()` then `.ask("...")` returns a real
+**Exit gate:** `createSystem({name}).start()` then `.ask("...")` returns a real
 answer; a tool-using example works; the [quickstart](../dx/03-quickstart.md) runs
 verbatim.
 
 ## Phase 5b — Config resolver (`@vibe/config`)
 
-Deliver the resolved-configuration layer. This is the narrowed remnant of the old
-"framework front door" phase: the **barrel `vibe` package + `vibe.boot()`** framing
-is retired — that role is now filled by the compiler and the `vibe` CLI (Rust phases
-[R4](./05-language-implementation-plan.md#phase-r4--emitter--source-maps)/[R5](./05-language-implementation-plan.md#phase-r5--compiler-library--vibe-buildvibe-check-cli)),
-and the front door is the language itself. What survives here is the config schema and
-loader, because **both a `config { }` block and a `vibe.config.ts` file compile/resolve
-to the same `VibeConfig`**. See
+Deliver the resolved-configuration layer: the schema and loader that turn a
+`vibe.config.ts` file into a validated, normalized `VibeConfig` the `System`
+consumes at boot. See
 [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md).
 
 - [ ] `@vibe/config`: `VibeConfig` schema (Zod-validated), `defineConfig` identity
       helper, `loadConfig` (discover `vibe.config.{ts,mts,cts,js,mjs,cjs}`,
       transpile TS in-memory, import default, validate, normalize), `mergeConfig`
       (defaults → file → env → explicit overrides).
-- [ ] A single resolution target: the `config { }` construct (Phase L1 emitter) and a
-      `vibe.config.ts` file both produce the same normalized `VibeConfig`; the CLI and
-      emitted bootstrap consume it.
 - [ ] Loud, typed config failures (unknown model id, missing provider key, unmet
-      plugin dependency) surfaced as diagnostics by the CLI/compiler, not raw throws.
+      plugin dependency) surfaced as diagnostics, not raw throws.
 
-**Depends on:** Phase 5 (a working `System` to bootstrap). Consumed by Rust phases
-[R4](./05-language-implementation-plan.md#phase-r4--emitter--source-maps)–[R5](./05-language-implementation-plan.md#phase-r5--compiler-library--vibe-buildvibe-check-cli).
-**Exit gate:** a `vibe.config.ts` and an equivalent `config { }` block resolve to an
-identical `VibeConfig`; a bad model id is rejected with a typed diagnostic.
+**Depends on:** Phase 5 (a working `System` to bootstrap).
+**Exit gate:** a `vibe.config.ts` resolves to a normalized `VibeConfig`; a bad
+model id is rejected with a typed diagnostic.
 
 > **Sequencing note:** 5b can be developed in parallel with Phase 5 against the fake
-> provider — the config schema and loader don't need a live model — but it is now
-> primarily a dependency of the language toolchain rather than a standalone front door.
-
----
-
-# Language toolchain (Rust, Phases R0–R11)
-
-> 🚧 The `.vibe` toolchain is a **Rust** `crates/` Cargo workspace (SWC/Biome/oxc
-> style) that emits TypeScript onto the `@vibe/*` runtime. The **authoritative,
-> code-level sequence is the
-> [Language implementation plan (Rust)](./05-language-implementation-plan.md)** —
-> phases R0–R11, with exit gates. This section is a **map, not a duplicate**: it exists
-> so the two workstreams read together. Do not track the language work here; track it
-> in doc 05.
-
-The language is a **parallel workstream** to the runtime. Its emitter (R4) targets the
-runtime built in Phases 1–5, so it cannot fully close until those packages exist — but
-the lexer/parser/binder/checker (R1–R3) need no runtime at all, and the emitter can
-develop against the runtime's *types* and the Phase 1 **fake provider** before a live
-model is wired. The two tracks meet at the emitter: the runtime is *what the compiler
-emits calls to*, so **every architecture guarantee carries through** — the
-[agent loop](../architecture/09-agent-loop.md), the
-[durable runtime](../architecture/05-runtime-execution.md),
-[typed errors](../architecture/07-errors.md).
-
-**Crates:** `vibe_lexer`, `vibe_parser`, `vibe_binder`, `vibe_checker`, `vibe_emit`,
-`vibe_compiler`, `vibe_cli`, `vibe_lsp`, `vibe_fmt`, `vibe_napi`, `vibe_wasm` (plus the
-`vibe_span`/`vibe_ast`/`vibe_diagnostics` support crates). See the
-[crate dependency graph](../language/05-rust-implementation.md#crate-dependency-graph).
-
-## How the old `L1–L4` intent maps onto `R0–R11`
-
-The retired TypeScript phases `L1–L4` are superseded by the Rust phases. The mapping:
-
-| Old intent (`L1–L4`) | Rust phase(s) | Delivers |
-|---|---|---|
-| Workspace bootstrap (new) | [R0](./05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done) | Cargo workspace, crate skeletons, Rust CI job, `bechmarks/`→`benchmarks/` rename |
-| `L1` compiler MVP — lex/parse/bind/check/emit | [R1](./05-language-implementation-plan.md#phase-r1--foundations-spans-diagnostics-lexer)–[R5](./05-language-implementation-plan.md#phase-r5--compiler-library--vibe-buildvibe-check-cli) | `vibe_lexer`→`vibe_parser`→`vibe_binder`→`vibe_checker`→`vibe_emit`, then `vibe_compiler` + `vibe build`/`vibe check` |
-| `L1` embedded-TS type-checking | [R6](./05-language-implementation-plan.md#phase-r6--embedded-typescript-type-check-integration) | Two-pass: Rust checks Vibe semantics (`VBxxxx`), `tsc`/`tsserver` checks embedded TS (`TSxxxx`), re-anchored to `.vibe` |
-| `L2` CLI + watch/incremental | [R5](./05-language-implementation-plan.md#phase-r5--compiler-library--vibe-buildvibe-check-cli) + [R7](./05-language-implementation-plan.md#phase-r7--vibe-dev-watch-incremental-run) | `vibe new`/`build`/`check`/`info`, then `vibe dev` (watch + incremental + run) |
-| (new) distribution | [R8](./05-language-implementation-plan.md#phase-r8--node--wasm-bindings--npm-distribution) | `vibe_napi` (`.node`), `vibe_wasm`, the `vibe` npm launcher (platform binaries) |
-| `L3` LSP + VS Code extension | [R9](./05-language-implementation-plan.md#phase-r9--language-server--editor-extension) | `vibe_lsp` (reuses R3 binder/checker), TextMate grammar, LSP client |
-| `L4` `model`/`memory`/`plugin` + interop | [R2](./05-language-implementation-plan.md#phase-r2--parser--ast)–[R6](./05-language-implementation-plan.md#phase-r6--embedded-typescript-type-check-integration) (full construct coverage across the front end) | Remaining constructs, prompt interpolation, `.d.ts`/TS interop |
-| `L4` formatter (`vibe fmt`) | [R10](./05-language-implementation-plan.md#phase-r10--formatter--scaffolder-polish) | `vibe_fmt` (idempotent), format-on-save via the LSP, `vibe new` templates |
-| (new) release engineering | [R11](./05-language-implementation-plan.md#phase-r11--release-engineering) | Cross-compile matrix, signed binaries, `npm`/`cargo`/Homebrew install, `criterion` perf gate |
-
-**Critical path:** R1–R5 is "a `.vibe` file compiles"; R6/R9 add the TypeScript and
-editor experience; R8/R11 make it installable. The emitter (R4) is the coupling point to
-the runtime — keep the runtime's public API stable before R4 hardens. For every crate's
-responsibility, dependency edges, and exit gate, defer to
-[doc 05](./05-language-implementation-plan.md).
+> provider — the config schema and loader don't need a live model.
 
 ---
 
@@ -237,15 +169,19 @@ logs show nested traces.
 - [ ] `create-vibe` scaffolder (Phase-gated by DX readiness).
 - [ ] Docs kept in lockstep; API reference generated from types.
 - [ ] Perf pass using `tools/profiling`.
+- [ ] Optional native accelerator: harden `vibe_bundler`/`vibe_napi` so `@vibe/build`
+      can code-split tools into lazily-loaded chunks; keep the pure-TS fallback path
+      green when the addon is absent.
 
 ## Cross-cutting rules for every phase
 
-These apply to the runtime phases (0–7). The language phases (R0–R11) carry their own
-Rust ground rules in [doc 05](./05-language-implementation-plan.md#ground-rules)
-(acyclic crate graph, `#![forbid(unsafe_code)]`, snapshot-everything, first-class
-diagnostics), but rules 7–9 below — the emit contract — bind the emitter identically.
+These apply to every runtime phase (0–7). The optional native accelerator crates
+(`vibe_bundler`, `vibe_napi`) carry their own Rust ground rules —
+`#![forbid(unsafe_code)]`, an acyclic crate graph, and `cargo test`/`clippy` in CI —
+but they are a build-time optimization for `@vibe/build`, not part of the runtime
+contract below.
 
-1. **Preserve the acyclic graph** — agentic packages depend down, never up. See
+1. **Preserve the acyclic graph** — packages depend down, never up. See
    [Package topology](../architecture/02-package-topology.md).
 2. **No bare `throw new Error`** — use `@vibe/errors` factories.
 3. **No `console.log`** in library code — use `@vibe/logger`.
@@ -253,11 +189,10 @@ diagnostics), but rules 7–9 below — the emit contract — bind the emitter i
    retry/cancellation.
 5. **Ship `tests/` + `type-tests/` with every package**; the CI gate stays green.
 6. **Changesets** for every user-facing change (versioning is already configured).
-7. **The compiler emits onto the documented runtime** — no shadow API. Emitted code
-   calls `defineTool`/`createAgent`/`createSystem`/`createMemory`/`createPluginHost`
-   exactly as a hand-written user would; if the emit target doesn't exist yet, the
-   language phase waits on the runtime phase that provides it.
-8. **One config, two front doors** — a `config { }` block and a `vibe.config.ts` file
-   resolve to the **same** `VibeConfig`; neither is privileged.
-9. **Default model `claude-opus-4-8`** — the compiler completes/validates model ids
-   against the catalog and defaults an agent's `model` to `claude-opus-4-8`.
+7. **A clean, hand-writable public API** — `defineTool`/`createAgent`/`createSystem`/
+   `createMemory`/`createPluginHost` are called directly by app authors, so keep the
+   surface small, typed, and composable.
+8. **One config source** — a `vibe.config.ts` file resolves to a normalized
+   `VibeConfig` consumed by the `System`.
+9. **Default model `claude-opus-4-8`** — an agent's `model` defaults to
+   `claude-opus-4-8`, validated against the catalog.

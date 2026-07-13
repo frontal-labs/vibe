@@ -9,9 +9,8 @@ export default defineConfig({
   mdxOptions: {
     rehypeCodeOptions: {
       ...rehypeCodeDefaultOptions,
-      // `.vibe` is a TypeScript superset with no Shiki grammar yet (nor does
-      // `ebnf`, used in spec docs). Fall back to the TypeScript grammar for any
-      // unbundled language so ```vibe fences render instead of failing the build.
+      // Fall back to the TypeScript grammar for any code fence whose language
+      // Shiki doesn't bundle, so those blocks render instead of failing the build.
       fallbackLanguage: "typescript",
     },
   },

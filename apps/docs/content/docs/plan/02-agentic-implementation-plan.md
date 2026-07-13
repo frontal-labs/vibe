@@ -16,29 +16,22 @@ Read alongside: [The agent loop](../architecture/09-agent-loop.md),
 [Model spec](../specs/model-spec.md), [Tool spec](../specs/tool-spec.md),
 [Agent spec](../specs/agent-spec.md).
 
-## This plan builds the compile target
+## This plan builds the framework core
 
-Vibe is a **compiled language for agents**: you write `.vibe`, and `@vibe/compiler`
-emits TypeScript that runs on the `@vibe/*` runtime — exactly as `.ts` compiles to
-`.js`. **This document is the runtime side of that split.** The packages built here
-(`@vibe/model`, `@vibe/tools`, `@vibe/memory`, `@vibe/agent`) are the **compile
-target** — the API the compiler emits calls onto (`defineTool`, `createAgent`,
-`createSystem`), not the surface a `.vibe` author sees.
+Vibe is a **TypeScript-native agent framework**: an app is plain TypeScript (`.ts`)
+that imports and calls the `@vibe/*` packages — `defineTool`, `createAgent`,
+`createSystem`. The packages built here (`@vibe/model`, `@vibe/tools`, `@vibe/memory`,
+`@vibe/agent`) are that public API — the surface an app author writes against directly.
 
-That ordering matters: the language toolchain **depends on this runtime being real and
-stable**. The compiler's emitter can only generate a `defineTool` call once
-`@vibe/tools` exists; a `createAgent` call once `@vibe/agent` exists. So the runtime
-phases here (Build plan [Phases 1–5](./01-build-plan.md#phase-1--model-layer-vibemodel))
-lead, and the language phases
-([L1–L4](./01-build-plan.md#how-the-old-l1l4-intent-maps-onto-r0r11)) emit onto them — though the
-compiler can develop against the deterministic **fake provider** (Package 1) before a
-live model is wired. Nothing in this plan changes because a compiler sits above it: keep
-the API clean and hand-writable, because emitted code is exactly what a careful human
-would write by hand.
+Keep the API clean and hand-writable: it is the surface users compose their apps from,
+so every construct should read the way a careful engineer would write it by hand. The
+runtime phases here (Build plan [Phases 1–5](./01-build-plan.md#phase-1--model-layer-vibemodel))
+build up in order — `model` → `tools`/`memory` → `agent` → `core.ask()` — and each can
+be developed and tested against the deterministic **fake provider** (Package 1) before a
+live model is wired.
 
-For the language side of the split, see [The Vibe language](../language/00-overview.md),
-[The compiler](../language/02-compiler.md), and the
-[build-plan language phases](./01-build-plan.md#how-the-old-l1l4-intent-maps-onto-r0r11).
+For the app-author's view of these APIs, see the [Quickstart](../dx/03-quickstart.md),
+[Agent spec](../specs/agent-spec.md), and [Tool spec](../specs/tool-spec.md).
 
 ## Guiding constraints
 
@@ -263,7 +256,7 @@ needs all three.
 
 ## Definition of done for the agentic layer
 
-- `vibe.system({ name }).start()` then `.ask("...")` returns a real answer.
+- `createSystem({ name }).start()` then `.ask("...")` returns a real answer.
 - A custom tool defined with `defineTool` is called by the model and its typed
   result flows back.
 - Cancellation, retry, timeouts, and structured logs demonstrably work in a run.

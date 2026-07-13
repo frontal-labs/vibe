@@ -14,14 +14,14 @@ layering rules that keep it honest.
 ## The graph
 
 ```
-   ┌───────── LANGUAGE TOOLCHAIN (🚧 · Rust crates/ workspace) ─────┐
-   │  vibe (CLI)   vibe_compiler   vibe_lsp   (Rust binaries/addons) │
-   │      emits .ts that imports the runtime below ────────────┐    │
-   └───────────────────────────────────────────────────────────┼────┘
-                                                                │ generated code
-                         ┌──────────────┐                       │
-                         │  @vibe/core  │◀──────────────────────┘
-                         └──────┬───────┘   composition root — the compile target
+   ┌───────── BUILD TOOLING (🚧 · @vibe/build + Rust crates/ accelerator) ┐
+   │  @vibe/cli (TS)   @vibe/build   vibe_bundler / vibe_napi (Rust)      │
+   │      bundles your TypeScript app that imports the runtime below ─┐   │
+   └──────────────────────────────────────────────────────────────────┼──┘
+                                                                       │ imports
+                         ┌──────────────┐                              │
+                         │  @vibe/core  │◀─────────────────────────────┘
+                         └──────┬───────┘   composition root — createSystem(...)
                                 │           + orchestration (not agentic yet)
                                 │
           ┌─────────────────────┼─────────────────────┐
@@ -60,44 +60,37 @@ The exact declared edges (from each `package.json`):
 | `@vibe/runtime` | `errors`, `lifecycle`, `shared` |
 | `@vibe/core` | `di`, `errors`, `lifecycle`, `logger`, `plugin`, `runtime`, `shared` |
 | 🚧 `@vibe/config` | `errors`, `shared` (+ types from `model`/`tools`/`plugin` for `VibeConfig`) |
-| 🚧 `@vibe/compiler` (npm) | thin JS launcher over the `vibe_napi` `.node` addon (Rust `vibe_compiler`); no `@vibe/*` runtime deps |
-| 🚧 `@vibe/language-server` (npm) | thin launcher over the `vibe_lsp` Rust binary |
-| 🚧 `vibe` (CLI, npm) | thin launcher; prebuilt `vibe_cli` binary via `@vibe/cli-<platform>` `optionalDependencies` |
+| 🚧 `@vibe/build` | `errors`, `shared`; loads the `vibe_napi` `.node` accelerator when present |
+| 🚧 `@vibe/cli` (TS) | `build`, `config`, `core`, `errors`, `shared` |
 
-The toolchain is **dev-time**: it runs at compile time and is not shipped in the
-running agent. Note the toolchain rows above are *not* Rust-to-`@vibe/*` edges —
-those npm packages are launchers around Rust crates (see [The two workspaces](#the-two-workspaces-rust--bun)
-below); the Rust `crates/` graph is documented in
-[Rust implementation](../language/05-rust-implementation.md). The **emitted**
-TypeScript is what imports the runtime (`core`, `agent`, `model`, `tools`,
-`memory`, `plugin`) — those are the compile target's dependencies, resolved in the
-generated `.vibe.ts`, not in your `.vibe` source.
+The build tooling is **dev-time**: it runs when you bundle the app and is not
+shipped in the running agent. A Vibe app is plain TypeScript that imports the
+runtime (`core`, `agent`, `model`, `tools`, `memory`, `plugin`) — those are your
+app's ordinary dependencies, resolved by your own `import` statements. `@vibe/build`
+just bundles that app; it does not generate any wiring.
 
 ### The two workspaces (Rust + bun)
 
-The repo carries **two** coexisting workspaces that meet at the emitted `.ts`:
+The repo carries **two** coexisting workspaces that meet at build time:
 
-- **`crates/` — a Cargo workspace (Rust).** The whole language toolchain —
-  `vibe_span`, `vibe_diagnostics`, `vibe_lexer`, `vibe_ast`, `vibe_parser`,
-  `vibe_binder`, `vibe_checker`, `vibe_emit`, `vibe_fmt`, `vibe_compiler`,
-  `vibe_cli`, `vibe_lsp`, `vibe_napi`, `vibe_wasm` — following the SWC/Biome/oxc
-  playbook. `cargo` builds it into per-platform binaries and `.node`/`.wasm`
-  addons. The `vibe` CLI and the language server are **Rust binaries**, not Node
-  scripts.
+- **`crates/` — a Cargo workspace (Rust).** A **build accelerator**, not a language
+  compiler. It contains exactly two crates (`Cargo.toml` members = `["crates/*",
+  "benchmarks"]`): `vibe_bundler` — an oxc-based static analysis of a Vibe app's
+  agent/tool TypeScript modules that extracts `import` declarations and agent→tool
+  edges (pure Rust, `#![forbid(unsafe_code)]`) — and `vibe_napi`, a napi-rs binding
+  (behind the `node` feature) exposing `tool_edges(source, marker)` and `version()`
+  to JS. It compiles nothing and understands no bespoke syntax; it reads TypeScript.
 - **`packages/` — a bun/Turborepo workspace (TypeScript).** The `@vibe/*` runtime
-  documented on this page, plus thin npm **launchers** that resolve and exec the
-  prebuilt Rust binaries: the `vibe`/`@vibe/compiler`/`@vibe/language-server`
-  packages ship as JS launchers whose `optionalDependencies` are platform packages
-  (`@vibe/cli-darwin-arm64`, `@vibe/cli-linux-x64-gnu`, …) carrying the binary — the
-  `@biomejs/biome` distribution model — while in-process compilation uses the
-  `vibe_napi` `.node` addon published as `@vibe/compiler-<platform>`.
+  documented on this page, plus `@vibe/build` (the bundler) and `@vibe/cli` (a plain
+  TypeScript CLI). `@vibe/build` uses the `vibe_napi` `.node` addon when it is
+  available to build a dependency graph and code-split tools into lazily-loaded
+  chunks (smaller cold starts); the framework works without it.
 
-`cargo` builds the toolchain; `bun`/`turbo` build the runtime and wrap the
-binaries. The emitted `.ts` imports the runtime packages, so the acyclic-layering
-point is unchanged: **the Rust toolchain generates code that imports the runtime;
-nothing in the runtime ever depends up into the toolchain.** Full detail —
-crate graph, two-pass type checking, distribution — lives in
-[Rust implementation](../language/05-rust-implementation.md).
+`cargo` builds the accelerator; `bun`/`turbo` build the runtime and the CLI. Your
+app imports the runtime packages directly, so the acyclic-layering point is
+unchanged: **nothing in the runtime ever depends up into the build tooling, and the
+build tooling only reads and bundles the app — it never becomes a runtime
+dependency.**
 
 Two facts worth noting against the tidy diagram: `@vibe/plugin` **and**
 `@vibe/runtime` both depend on `@vibe/lifecycle` (plugin hooks and runtime work
@@ -170,37 +163,27 @@ and delegate to it. The direction never reverses — `runtime` will never import
 `agent`. See [The agent loop](./09-agent-loop.md) and
 [Model & provider layer](./10-model-provider-layer.md).
 
-### 🚧 The language toolchain (planned · Rust)
+### 🚧 The build tooling (planned)
 
-Above the runtime sits the toolchain that turns `.vibe` into TypeScript — the part
-that makes Vibe a language rather than a library. It is a **Rust Cargo workspace
-under `crates/`** (see [The two workspaces](#the-two-workspaces-rust--bun)); the
-only `@vibe/*` npm packages here are thin launchers around the Rust binaries. It is
-**dev-time**: it runs the compile, it is not in the deployed agent:
+Alongside the runtime sits the tooling that bundles a Vibe app for deployment. It
+is **dev-time**: it runs when you build, it is not in the deployed agent:
 
-- **`@vibe/config`** — the `VibeConfig` schema + loader shared by the compiler and
-  a `vibe.config.ts` escape hatch. This one is genuine TypeScript, depending only on
-  `errors`/`shared` plus the *types* of the layers a config can reference.
-- **`vibe_compiler` (Rust crate)** — lexer, parser, binder, checker, emitter. It
-  reads `.vibe`, and **emits TypeScript** that imports the runtime; embedded TS spans
-  are checked by delegating to `tsc` over the emitted `.ts` (not an in-process TS
-  API). Consumed from JS via the `vibe_napi` `.node` addon (`@vibe/compiler`). See
-  [The compiler](../language/02-compiler.md) and
-  [Rust implementation](../language/05-rust-implementation.md).
-- **`vibe_lsp` (Rust crate)** — a `tower-lsp` language server that reuses the
-  compiler's `vibe_binder`/`vibe_checker` crates (diagnostics, completion, hover,
-  go-to-def). Shipped as a prebuilt binary; `@vibe/language-server` is its launcher.
-- **`vibe_cli` (Rust crate)** — the `vibe` binary (`new`, `dev`, `build`, `check`,
-  `fmt`, `info`), distributed as prebuilt per-platform npm packages. See
-  [Toolchain](../language/03-toolchain.md).
+- **`@vibe/config`** — the `VibeConfig` schema + loader for `defineConfig` in
+  `vibe.config.ts`. Genuine TypeScript, depending only on `errors`/`shared` plus the
+  *types* of the layers a config can reference.
+- **`@vibe/build`** — the bundler. It reads your app's agent/tool TypeScript
+  modules, builds a dependency graph, and code-splits tools into lazily-loaded
+  chunks for smaller cold starts. It optionally offloads the static analysis to the
+  `vibe_bundler`/`vibe_napi` Rust accelerator (via `tool_edges(source, marker)`) but
+  works in pure TypeScript when the addon is absent.
+- **`@vibe/cli`** — the `vibe` command (a plain TypeScript CLI): scaffolding, `dev`,
+  `build`, and friends. It drives `@vibe/build` and `@vibe/config`.
 
-This does **not** violate the layering rules. The toolchain doesn't sit *inside* the
-runtime dependency graph — it **generates code that imports it**. The relationship
-is `tsc`↔JavaScript: the compiler depends on knowing the runtime's shape (for
-codegen), the *emitted* code depends on the runtime, and nothing in the runtime ever
-depends up into the toolchain. See [The Vibe language](../language/00-overview.md),
-[Rust implementation](../language/05-rust-implementation.md), and
-[Configuration & the compiler entry points](./14-configuration-and-bootstrap.md).
+This does **not** violate the layering rules. The build tooling doesn't sit
+*inside* the runtime dependency graph — it **reads and bundles the app that imports
+it**. Your app depends on the runtime; the bundler depends on knowing how to trace
+imports; and nothing in the runtime ever depends up into the build tooling. See
+[Configuration & bootstrap](./14-configuration-and-bootstrap.md).
 
 ## Layering rules
 

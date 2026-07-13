@@ -19,29 +19,19 @@ Read alongside: [The agent loop](../architecture/09-agent-loop.md),
 [Model spec](../specs/model-spec.md), [Tool spec](../specs/tool-spec.md),
 [Agent spec](../specs/agent-spec.md).
 
-## This plan builds the compile target
+## This plan builds the core of the framework
 
-Vibe is a **compiled language for agents**: you write `.vibe`, and `@vibe/compiler`
-emits TypeScript that runs on the `@vibe/*` runtime — exactly as `.ts` compiles to
-`.js`. **This document is the runtime side of that split.** The packages built here
-(`@vibe/model`, `@vibe/tools`, `@vibe/memory`, `@vibe/agent`) are the **compile
-target** — the API the compiler emits calls onto (`defineTool`, `createAgent`,
-`createSystem`), not the surface a `.vibe` author sees.
+Vibe is a **pure-TypeScript agent framework**: you build an app by importing `@vibe/core`
+and defining tools and agents against typed APIs. The packages built here
+(`@vibe/model`, `@vibe/tools`, `@vibe/memory`, `@vibe/agent`) are that core — the surface
+a user calls directly (`defineTool`, `createAgent`, `createSystem`).
 
-That ordering matters: the language toolchain **depends on this runtime being real and
-stable**. The compiler's emitter can only generate a `defineTool` call once
-`@vibe/tools` exists; a `createAgent` call once `@vibe/agent` exists. So the runtime
-phases here (Build plan [Phases 1–5](./01-build-plan.md#phase-1--model-layer-vibemodel))
-lead, and the language phases
-([L1–L4](./01-build-plan.md#how-the-old-l1l4-intent-maps-onto-r0r11)) emit onto them — though the
-compiler can develop against the deterministic **fake provider** (Package 1) before a
-live model is wired. Nothing in this plan changes because a compiler sits above it: keep
-the API clean and hand-writable, because emitted code is exactly what a careful human
-would write by hand.
-
-For the language side of the split, see [The Vibe language](../language/00-overview.md),
-[The compiler](../language/02-compiler.md), and the
-[build-plan language phases](./01-build-plan.md#how-the-old-l1l4-intent-maps-onto-r0r11).
+Keep the API clean and hand-writable: these are the functions users type by hand, so the
+ergonomics of the public surface *are* the product. Build order follows the dependency
+graph (Build plan [Phases 1–5](./01-build-plan.md#phase-1--model-layer-vibemodel)): the
+model layer's types come first, then tools and memory in parallel, then the agent loop
+that assembles them, all developed against the deterministic **fake provider** (Package 1)
+before a live model is wired.
 
 ## Guiding constraints
 
@@ -311,8 +301,8 @@ needs all three.
   result flows back (agent loop tests: `tool_use → tool_result → end_turn`).
 - ✅ Cancellation, retry, timeouts, and structured logs demonstrably work in a run
   (covered across `@vibe/tools` and `@vibe/agent` tests).
-- ⏳ The [quickstart](../dx/03-quickstart.md) runs verbatim — needs a live key /
-  `.vibe` compile path; the runtime API it targets is now in place.
+- ⏳ The [quickstart](../dx/03-quickstart.md) runs verbatim — needs a live key; the
+  public API it targets is now in place.
 - ✅ Workspace green (`bun build` / `test` / `test:types` / `typecheck`); every new
   package (`model`, `tools`, `memory`, `agent`) has `tests/` + `type-tests/`.
 

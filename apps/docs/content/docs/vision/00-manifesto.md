@@ -22,20 +22,20 @@ We are not building "another LangChain." We are building the runtime that a seri
 agentic application deserves — the thing you would build in-house on your third
 agent project, extracted, hardened, and typed.
 
-**And it should be a language, not a library.** The deepest way to make a
-framework disappear is the one TypeScript itself took: don't ship functions people
-import — **add syntax and structure to the language and ship a compiler.** Write
-`.ts`, run `tsc`, get `.js`. Vibe does this one level up: you write `.vibe` files
-with first-class constructs — `agent`, `tool`, `model`, `memory`, `plugin`,
-`config` — and the `vibe` compiler emits TypeScript that runs on the `@vibe/*`
-runtime. `.vibe → vibe compiler → .ts → tsc → .js`. You never import the framework;
-the compiler writes the wiring. The runtime packages become the **compile target**,
-not the surface — and because the target is the documented runtime, every
-architectural guarantee (the [agent loop](../architecture/09-agent-loop.md), typed
-errors, the durable runtime) still holds. And the compiler and its toolchain are
-written in **Rust**, for the same reason modern JS tooling is (raw speed and
-single-binary distribution) — see [Rust implementation](../language/05-rust-implementation.md).
-See [The Vibe language](../language/00-overview.md).
+**And it should make the framework disappear.** The way to make infrastructure
+vanish is not more ceremony but less: first-class building blocks you compose in
+plain TypeScript, so the wiring is just typed values, not boilerplate. You write
+`.ts`, run `tsc`, get `.js` — and Vibe rides on that unchanged toolchain. You
+compose your app from `agent`, `tool`, `model`, `memory`, `plugin`, and `config`
+building blocks exposed by the `@vibe/*` packages, and the runtime owns the hard
+parts underneath. Because you build against the documented runtime directly,
+every architectural guarantee (the [agent loop](../architecture/09-agent-loop.md),
+typed errors, the durable runtime) holds by construction. The one place we reach
+for **Rust** is a small, optional build accelerator — `crates/vibe_bundler` (oxc
+static analysis of your agent/tool modules) and its `crates/vibe_napi` binding —
+that lets [`@vibe/build`](../architecture/02-package-topology.md) code-split tools
+into lazily-loaded chunks for fast cold starts. It is an accelerator, not a
+requirement: the framework works without it.
 
 ## What "agentic TypeScript framework" means here
 
@@ -101,9 +101,9 @@ parallel. Vibe is the shared answer.
 
 Vibe succeeds when a developer can:
 
-- Run `vibe new`, write a `.vibe` file with a `tool` and an `agent`, and run
-  `vibe dev` — a tool-using agent from nothing in under five minutes, no framework
-  imports and no manual wiring.
+- Run `vibe new`, write a TypeScript file with a `tool` and an `agent`, and run
+  `vibe dev` — a tool-using agent from nothing in under five minutes, with typed
+  composition and no manual plumbing.
 - Add a custom tool with full type inference and zero boilerplate.
 - Swap `claude-opus-4-8` for `claude-haiku-4-5` on a sub-agent with one line.
 - Read a production incident straight from structured logs with trace ids.

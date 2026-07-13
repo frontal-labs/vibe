@@ -89,18 +89,16 @@ optional cross-run persistence. Both feed the request builder and respect contex
 limits (with compaction/context-editing hooks). Built on `shared`'s context-store.
 See [Memory & context](./12-memory-and-context.md).
 
-### The Vibe language & compiler (🚧 `@vibe/compiler`, `vibe` CLI)
-The **surface** developers actually write. A `.vibe` file declares agents, tools,
-models, memory, plugins, and config with first-class syntax; the **`vibe`
-compiler** lexes/parses/checks it and **emits TypeScript** that calls the runtime
-constructs above (`createSystem`, `createAgent`, `defineTool`, …). You never import
-the framework — the compiler writes the wiring, the way `tsc` writes JavaScript.
-The `vibe` CLL (`new`/`dev`/`build`/`check`/`fmt`), a language server, and an editor
-extension complete the toolchain. **VibeConfig** — the resolved wiring (name, model,
-provider, tools, plugins, memory, logging, runtime limits) — comes from a `config { }`
-block in `.vibe` (or a `vibe.config.ts` escape hatch). See
-[The Vibe language](../language/00-overview.md) and
-[Configuration & the compiler entry points](./14-configuration-and-bootstrap.md).
+### Config & bootstrap (🚧 `@vibe/config`, `@vibe/cli`)
+The **surface** developers actually write is plain TypeScript. You declare agents,
+tools, models, memory, plugins, and config with the `@vibe/*` APIs —
+`defineAgent`, `defineTool`, `defineConfig`, `createSystem` — and import the
+framework directly. **VibeConfig** — the resolved wiring (name, model, provider,
+tools, plugins, memory, logging, runtime limits) — comes from `defineConfig` in a
+`vibe.config.ts` file (or is passed straight to `createSystem`). The `@vibe/cli`
+TypeScript CLI (`new`/`dev`/`build`) drives it, and `@vibe/build` code-splits an
+app's tools into lazily-loaded chunks. See
+[Configuration & bootstrap](./14-configuration-and-bootstrap.md).
 
 ## How the nouns compose
 

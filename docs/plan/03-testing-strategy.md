@@ -5,11 +5,10 @@ non-negotiable: **every package ships `tests/` and `type-tests/`, and
 `bun ci:check` stays green.** This document describes the layers of testing, the
 tools behind each, and the specific behaviors the agent loop must prove.
 
-This is the **runtime** (TypeScript) test story. The **language toolchain is Rust**
-(the `crates/` workspace — see the
-[Language implementation plan](./05-language-implementation-plan.md)), and it has its own
-tooling; the [Rust testing](#rust-testing-the-crates-workspace) section below covers it,
-and [What CI runs](#what-ci-runs) explains the two CI tracks.
+This is the framework (TypeScript) test story. The one native component — the
+`vibe_bundler`/`vibe_napi` build accelerator (a small `crates/` workspace) — has its own
+Rust tooling; the [Rust testing](#rust-testing-the-crates-workspace) section below covers
+it, and [What CI runs](#what-ci-runs) explains the two CI tracks.
 
 Companion docs: [Build plan](./01-build-plan.md) (per-phase exit gates),
 [Release & versioning](./04-release-and-versioning.md),
@@ -170,67 +169,46 @@ dedicated tests, all driven by the fake provider (see
 
 ## Rust testing (the `crates/` workspace)
 
-The language front end is Rust, so it is tested with the Rust toolchain, not Vitest.
-The philosophy mirrors the runtime side — deterministic, exhaustive on the parts that
-can hurt you — but the tools differ. See the
-[Language implementation plan](./05-language-implementation-plan.md) for which phase
-(`R0`–`R11`) each layer lands in, and
-[The compiler is written in Rust](../language/05-rust-implementation.md) for the crate
-graph.
+The build accelerator is Rust, so it is tested with the Rust toolchain, not Vitest. It
+is a small workspace — two crates, no source language: `vibe_bundler` (oxc-based static
+analysis of an app's agent/tool TypeScript modules — extracts `import` declarations and
+agent→tool edges so `@vibe/build` can build the dependency graph and code-split tools)
+and `vibe_napi` (its optional napi-rs binding to JS, exposing `tool_edges(source, marker)`
+and `version()`). The philosophy mirrors the TypeScript side — deterministic, exhaustive
+on the parts that can hurt you.
 
 | Surface | Tool | What it proves |
 |---|---|---|
-| Unit + integration | `cargo test` | Each crate's public API does the right thing |
-| Snapshots | [`insta`](https://insta.rs) | Tokens, AST, diagnostics, and emitted TS are stable and reviewable |
-| Emit correctness | golden-file + `tsc --noEmit` | Emitted `.ts` actually type-checks against the runtime |
-| CLI | [`assert_cmd`](https://docs.rs/assert_cmd) | `vibe build`/`check`/`new` behave end-to-end |
-| Benchmarks | [`criterion`](https://bheisler.github.io/criterion.rs/) (in `benchmarks/`) | Perf doesn't silently regress |
-| Robustness | fuzzing (`cargo-fuzz`) | The lexer/parser never panic on adversarial input |
+| Unit + integration | `cargo test` | The bundler's extraction API does the right thing |
+| Snapshots | [`insta`](https://insta.rs) | The extracted import list and agent→tool edges are stable and reviewable |
+| Benchmarks | [`criterion`](https://bheisler.github.io/criterion.rs/) (in `benchmarks/`) | Analysis throughput doesn't silently regress |
+| Robustness | fuzzing (`cargo-fuzz`) | The analyzer never panics on adversarial or half-written source |
 
-**`insta` snapshot tests — the workhorse.** Every stage of the front end snapshots its
-output so a change to token layout, AST shape, a diagnostic message, or emitted TypeScript
-shows up as a reviewable diff (`cargo insta review`). This is the Rust equivalent of an
-asserted transcript: `vibe_lexer` snapshots the token stream per construct, `vibe_parser`
-snapshots the AST, `vibe_checker` snapshots `VBxxxx` diagnostics (code + span + message),
-and `vibe_emit` snapshots the emitted `.ts`. A ui-test-style corpus of valid **and**
-intentionally-broken `.vibe` files pins error recovery and precise spans.
+**`insta` snapshot tests — the workhorse.** The bundler snapshots its output — the set of
+`import` declarations and the agent→tool edges it extracts from a given TypeScript
+module — so a change to the analysis shows up as a reviewable diff (`cargo insta
+review`). A corpus of representative and intentionally-broken input modules pins the
+extraction against real-world code.
 
-**Golden-file emit tests that compile their output.** `vibe_emit` golden tests pair each
-`.vibe` input with its expected `.ts`, and then a **compile-the-output** test runs
-`tsc --noEmit` over the emitted TypeScript against stub runtime types — proving the
-emitter targets code that actually type-checks against `@vibe/*`, not just code that
-*looks* right. Source-map round-trips are asserted the same way (emitted position →
-`.vibe` position).
+**Cross-language contract tests.** `@vibe/build`'s TypeScript tests call the `vibe_napi`
+binding (`tool_edges`, `version`) and assert the graph it returns matches what the app
+expects — proving the native accelerator and the JS consumer agree. Because `@vibe/build`
+degrades gracefully when the native addon is absent, there is also a test that the
+pure-JS path produces an equivalent graph.
 
-**`assert_cmd` CLI integration tests.** The `vibe` binary is exercised as a black box:
-`vibe check` exits non-zero on a bad model id and prints the `VBxxxx` diagnostic;
-`vibe build` turns a fixture project into `.ts`/`.js`; `vibe new` scaffolds a project that
-`vibe check` then passes. These are the Rust analogue of the `core` integration tests.
+**`criterion` benchmarks.** Analysis throughput (parsing and edge-extraction over a large
+module) has `criterion` benches under `benchmarks/`.
 
-**`criterion` benchmarks.** Perf-sensitive stages (lexer throughput, parse of a large
-file, full-project compile) have `criterion` benches under `benchmarks/` (note: the ghost
-`bechmarks/` dir is renamed to `benchmarks/` in [Phase
-R0](./05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done)). A
-benchmark gate in [Phase R11](./05-language-implementation-plan.md#phase-r11--release-engineering)
-fails CI on a regression.
-
-**Fuzzing the lexer/parser.** Because the lexer captures embedded TypeScript as opaque
-byte spans and the parser must recover from arbitrary broken input (for the LSP), both are
-fuzzed (`cargo-fuzz`) to guarantee they never panic — a hard requirement, since
-`#![forbid(unsafe_code)]` means a panic is the worst failure mode, and the LSP must survive
-half-typed files.
-
-**The cross-compile release matrix** (Phase R11) is itself a test surface: CI builds the
-binaries and `.node`/`.wasm` artifacts on macOS arm64/x64, Linux x64/arm64 (gnu + musl),
-and Windows x64, and a smoke test (`npx vibe --version`, `cargo install`) proves each
-artifact runs before release.
+**Fuzzing the analyzer.** Because the bundler must tolerate arbitrary and half-written
+TypeScript, it is fuzzed (`cargo-fuzz`) to guarantee it never panics — a hard requirement,
+since `#![forbid(unsafe_code)]` means a panic is the worst failure mode.
 
 ## What CI runs
 
-CI now has **two tracks** that both gate `master` — the runtime (TypeScript) track and
-the language (Rust) track — because the two workstreams have independent toolchains.
+CI has **two tracks** that both gate `master` — the framework (TypeScript) track and
+the build-accelerator (Rust) track — because they have independent toolchains.
 
-**Track 1 — runtime (TypeScript).** `.github/workflows/ci.yml` and the local
+**Track 1 — framework (TypeScript).** `.github/workflows/ci.yml` and the local
 `bun ci:check` are the same gate, run through Turborepo so unchanged packages are
 cached:
 
@@ -241,21 +219,19 @@ cached:
 - **`bun format:check`** — Biome formatting is verified, not fixed, in CI.
 - **`bun knip`** — dead-code / unused-dependency detection.
 
-**Track 2 — language (Rust).** A parallel CI job runs the `crates/` workspace toolchain,
-established in [Phase R0](./05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done):
+**Track 2 — build accelerator (Rust).** A parallel CI job runs the `crates/` workspace
+toolchain for `vibe_bundler`/`vibe_napi`:
 
 - **`cargo fmt --check`** — formatting is verified, not fixed (the `rustfmt` analogue of
   `bun format:check`).
 - **`cargo clippy --all-targets -D warnings`** — lints are errors; a warning fails the
   build.
-- **`cargo test`** — unit, `insta` snapshot, golden-file, and `assert_cmd` CLI tests
-  across every crate.
-- **Release-only:** the cross-compile matrix and `criterion` benchmark gate (Phase R11).
+- **`cargo test`** — unit and `insta` snapshot tests for the bundler.
 
-Both tracks must be green for a merge. They are independent — a runtime-only change need
-not rebuild the Rust workspace and vice versa — but the emit contract couples them: a
-change to the runtime's public API can break `vibe_emit`'s golden-file `tsc --noEmit`
-tests, which is exactly the signal you want.
+Both tracks must be green for a merge. They are largely independent — a framework-only
+change need not rebuild the Rust workspace and vice versa — but the `vibe_napi` contract
+couples them: a change to the shape `vibe_bundler` returns can break `@vibe/build`'s
+cross-language contract tests, which is exactly the signal you want.
 
 > **Note:** CI currently triggers on `main` while the default branch is `master`,
 > so the gate does not actually run on pushes. Fixing this is an M0 blocker — see

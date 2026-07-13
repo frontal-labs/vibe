@@ -1,23 +1,21 @@
 ---
 title: "Quickstart"
-description: "From nothing to a tool-using, custom-model agent — written in the **Vibe"
+description: "From nothing to a tool-using, custom-model agent — in plain TypeScript with @vibe/core."
 ---
 
 # Quickstart
 
-From nothing to a tool-using, custom-model agent — written in the **Vibe
-language**. You write `.vibe`; the `vibe` compiler turns it into TypeScript that
-runs on the `@vibe/*` runtime, the same way `tsc` turns `.ts` into `.js`. You do
-**not** import the framework — the compiler emits the wiring. This page is meant
-to be read top to bottom and copy-pasted.
+From nothing to a tool-using, custom-model agent — in plain **TypeScript**. You
+write ordinary `.ts` files that import from `@vibe/core` (`createSystem`,
+`defineTool`, `createAgent`); `vibe dev` runs them on the runtime and `vibe build`
+bundles them for production. This page is meant to be read top to bottom and
+copy-pasted.
 
 > **Honesty first.** The runtime foundation (`System`, DI, lifecycle, plugins,
-> runtime, errors, logging) is **built and tested today** — it is the compile
-> target. The **language and its compiler** (`.vibe` syntax, `vibe new/dev/build/
-> check/fmt`) and the **agentic layer** behind the agent loop and `system.ask()`
-> are **planned** and marked 🚧. `system.ask()` currently throws
-> `notImplementedError` on purpose. The `.vibe` snippets below are the target
-> language; the runtime they compile onto is real.
+> runtime, errors, logging) is **built and tested today**. The **agentic layer**
+> behind the agent loop and `system.ask()` is **planned** and marked 🚧.
+> `system.ask()` currently throws `notImplementedError` on purpose. The `@vibe/*`
+> APIs you compose against are real; the loop that drives them is still landing.
 
 ## Prerequisites
 
@@ -25,79 +23,83 @@ to be read top to bottom and copy-pasted.
 - **bun** (the repo's package manager)
 - An **`ANTHROPIC_API_KEY`** for anything that actually calls a model (🚧 steps)
 
-## 1. Scaffold a project (🚧)
+## 1. Scaffold a project
 
-There is nothing to `bun add` into your app — you don't import `@vibe/*`, you
-compile onto it. `vibe new` scaffolds a project the way `cargo new` or
-`create-next-app` does:
+`vibe new` scaffolds a plain-TypeScript project the way `create-next-app` does. The
+`vibe` CLI is a TypeScript CLI (`vibe new`/`dev`/`build`), not a language compiler:
 
 ```bash
 vibe new support-bot
 cd support-bot
 ```
 
-You get a language-first layout:
+You get an ordinary TypeScript layout:
 
 ```
 support-bot/
-  support.vibe          # your agent, tools, and config — the whole app
-  db.ts                 # your ordinary TypeScript (imported by tool bodies)
-  vibe.config.ts        # optional — a config block in .vibe works too (see step 2)
+  src/
+    support.ts          # your agent, tools, and system wiring
+    db.ts               # your own TypeScript (imported by tool bodies)
+  vibe.config.ts        # project config (defineConfig)
   package.json
-  .vibe/                # generated .ts/.d.ts/source-maps (gitignored) — never edit
   dist/                 # vibe build output
 ```
 
-The `@vibe/*` runtime is a dependency of the **compile target**, not something
-your source imports. See [The Vibe language](../language/00-overview.md).
+`@vibe/core` is a normal dependency in your `package.json` — you import it directly.
 
-## 2. Write `support.vibe`
+## 2. Write `support.ts`
 
-One declarative file holds the config, the tools, and the agent. No imports of
-the framework, no wiring — `use` *is* the wiring.
+One TypeScript module holds the tools, the agent, and the system wiring. You call
+the `@vibe/core` factories directly — `defineTool`, `createAgent`, `createSystem`:
 
-```vibe
-// support.vibe
-import { db } from "./db"          // interop: import your own TypeScript
+```ts
+// src/support.ts
+import { createAgent, createSystem, defineTool } from "@vibe/core"
 
-config {
-  name      "support-bot"
-  logLevel  info
-  provider  anthropic              // reads ANTHROPIC_API_KEY from env
-}
+import { db } from "./db"
 
-/// Look up the current status of a customer order by id.
-tool GetOrder(orderId: string @desc("The order id, e.g. '1024'.")) -> OrderStatus {
-  // the body is ordinary TypeScript, type-checked against ./db
-  const order = await db.orders.find(orderId)
-  if (!order) return { status: "not_found" }
-  return { status: order.status, eta: order.eta }
-}
+/** Look up the current status of a customer order by id. */
+const getOrder = defineTool({
+  name: "GetOrder",
+  description: "Look up the current status of a customer order by id.",
+  schema: {
+    orderId: { type: "string", description: "The order id, e.g. '1024'." },
+  },
+  async execute({ orderId }) {
+    const order = await db.orders.find(orderId)
+    if (!order) return { status: "not_found" }
+    return { status: order.status, eta: order.eta }
+  },
+})
 
-agent Support {
-  model  claude-opus-4-8           // default model; catalog id completed by the LSP
-  effort high
-  system "You are a concise support agent. Use tools before guessing."
-  use    GetOrder                  // wire the tool into the agent
-}
+const support = createAgent({
+  name: "Support",
+  model: "claude-opus-4-8", // default model
+  system: "You are a concise support agent. Use tools before guessing.",
+  tools: [getOrder],
+})
+
+export const system = createSystem({
+  name: "support-bot",
+  logLevel: "info",
+  agents: [support],
+})
 ```
 
 That is the entire application. Three things are worth calling out:
 
-- **`config { }` is the config surface.** You can put it in any `.vibe` file, or
-  keep a `vibe.config.ts` instead — both are supported. See
-  [Configuration & the compiler entry points](../architecture/14-configuration-and-bootstrap.md).
+- **`createSystem({...})` is the composition root** and a config surface. You can
+  configure the system here, keep a `vibe.config.ts` alongside it, or both. See
+  [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md).
 - **`import { db } from "./db"`** brings your own TypeScript into the tool body.
-  Your types flow through; the body is type-checked by the real TS compiler.
-- **`use GetOrder`** is the wiring. There is no `defineTool({...})`, no
-  `createAgent(...)`, no container setup — the compiler emits all of it. (The old
-  `import { defineTool } from "vibe"` library style is gone; the surface is now
-  `.vibe` syntax.)
+  Your types flow through and are checked by the real TS compiler.
+- **`tools: [getOrder]`** is the wiring — you pass the tool into the agent
+  explicitly. There's one surface here: plain TypeScript calling `@vibe/*` APIs.
 
 Your `db.ts` is just TypeScript:
 
 ```ts
-// db.ts
+// src/db.ts
 export const db = {
   orders: {
     async find(id: string) {
@@ -110,109 +112,97 @@ export const db = {
 
 ## 3. Run it with `vibe dev` (🚧)
 
-`vibe dev` compiles `.vibe` → `.ts`, type-checks the embedded TypeScript, wires
-it onto the runtime, watches for changes, and runs the entry agent — one command,
-like `next dev`:
+`vibe dev` runs your project on the runtime, watches for changes, and drives the
+entry agent — one command, like `next dev`:
 
 ```bash
 vibe dev
 ```
 
-Under the hood it lexes, parses, binds, checks, and **emits TypeScript** that
-calls the runtime (`defineTool`, `createAgent`, `createSystem`), then runs it.
 Run it today and you'll see the runtime's structured startup/shutdown logs and a
-`notImplementedError` from the agent loop — proof the lifecycle and logger are
-real while the loop (`system.ask()` / `agent.run`) is still 🚧. See
-[The compiler](../language/02-compiler.md) for exactly what it emits.
+`notImplementedError` from the agent loop — proof the lifecycle and logger are real
+while the loop (`system.ask()` / `agent.run`) is still 🚧. See the
+[Agent loop](../architecture/09-agent-loop.md) for what it will do.
 
 ## 4. Swap a sub-agent's model
 
-Add a cheaper triage agent and let `Support` delegate to it. Swapping a model is
-a one-line change — no rewrite, no re-registration:
+Add a cheaper triage agent and let `Support` delegate to it. Swapping a model is a
+one-line change — no rewrite, no re-registration:
 
-```vibe
-// support.vibe (continued)
+```ts
+// src/support.ts (continued)
 
-model Fast {
-  id     claude-haiku-4-5          // cheap fan-out
-  effort low
-}
+const triage = createAgent({
+  name: "Triage",
+  model: "claude-haiku-4-5", // cheap fan-out
+  system: "Classify the request and route it.",
+  tools: [getOrder],
+})
 
-agent Triage {
-  model Fast                        // reference the named model config
-  system "Classify the request and route it."
-  use    GetOrder
-}
-
-agent Support {
-  model  claude-opus-4-8
-  effort high
-  system "You are a concise support agent. Use tools before guessing."
-  use    GetOrder
-  use    Triage                     // wiring a sub-agent works exactly like a tool
-}
+const support = createAgent({
+  name: "Support",
+  model: "claude-opus-4-8",
+  system: "You are a concise support agent. Use tools before guessing.",
+  tools: [getOrder],
+  agents: [triage], // wiring a sub-agent works much like a tool
+})
 ```
 
 Pick the model per job from the
 [catalog](../specs/model-spec.md#model-catalog-defaults): `claude-opus-4-8`
 (default, most capable), `claude-sonnet-4-6` (balanced), `claude-haiku-4-5`
-(cheap fan-out), `claude-fable-5` (hardest runs). Change `model Fast { id … }`
-and every agent that references `Fast` follows — one edit.
+(cheap fan-out), `claude-fable-5` (hardest runs). Change one `model` field and that
+agent follows — one edit.
 
-## 5. Check and build (🚧)
+## 5. Build (🚧)
 
-`vibe check` is the "does my agent even compile?" pre-flight — it runs the full
-lexer/parser/checker (including agent-aware diagnostics like "tool declared but
-never `use`d" and "unknown model id, did you mean…") plus the embedded-TypeScript
-type check. It exits non-zero on error, so it's ideal for CI:
-
-```bash
-vibe check
-```
-
-`vibe build` compiles the whole project to `dist/` (`.vibe` → `.ts` → `.js`) for
-production:
+`vibe build` bundles the whole project to `dist/` for production via `@vibe/build`.
+When the optional `vibe_bundler` native addon is present, `@vibe/build` uses it to
+statically analyze your agent/tool modules and code-split tools into lazily loaded
+chunks; without it, the build still works, just without that acceleration:
 
 ```bash
 vibe build
 ```
 
-And `vibe fmt` formats your `.vibe` sources, the way `gofmt`/`prettier` do:
+Because everything is ordinary TypeScript, `tsc`/your editor already give you full
+type-checking and diagnostics as you write — there's no separate language check to
+run.
 
-```bash
-vibe fmt
+## Configuration
+
+Configure the project with a `vibe.config.ts` using `defineConfig`, and/or inline
+in `createSystem({...})` — both are supported:
+
+```ts
+// vibe.config.ts
+import { defineConfig } from "@vibe/core"
+
+export default defineConfig({
+  name: "support-bot",
+  logLevel: "info",
+})
 ```
 
-## Embedding the runtime directly (escape hatch)
-
-The compiler's whole job is to emit code onto the `@vibe/*` runtime. If you'd
-rather write that TypeScript by hand — embedding the runtime in an existing app
-instead of shipping a `.vibe` project — you can call `createSystem` yourself. That
-is the compile target, so everything still works, you just write the wiring the
-compiler would have written. See
-[Configuration & the compiler entry points](../architecture/14-configuration-and-bootstrap.md#embedding-the-runtime-directly).
+See [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md).
 
 ## What's built vs planned
 
 | Piece | Status |
 |---|---|
-| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `@vibe/core` and friends) — the compile target |
+| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `@vibe/core` and friends) |
 | Plugins (manifest + `setup(hooks)`, dependency-ordered) | ✅ Built |
-| The Vibe **language** — `.vibe` syntax (`agent`/`tool`/`model`/`memory`/`plugin`/`config`/`use`/`import`) | 🚧 Planned |
-| The **compiler** — lex/parse/bind/check/emit, source maps (`@vibe/compiler`) | 🚧 Planned |
-| The **toolchain** — `vibe new/dev/build/check/fmt`, LSP, editor extension | 🚧 Planned |
+| `@vibe/build` + optional `vibe_bundler` native addon (tool code-splitting) | 🚧 In progress |
 | The **agentic layer** — agent loop, `system.ask()`, tool execution, model providers | 🚧 Planned |
 
-The runtime that all of the above compiles onto is built and tested today; the
-language, compiler, and agentic layer are the planned work on top.
+The runtime is built and tested today; `@vibe/build` and the agentic layer are the
+planned work on top.
 
 ## Where to go next
 
-- [The Vibe language](../language/00-overview.md) — the mental model.
-- [Syntax](../language/01-syntax.md) — every construct, with examples.
-- [The compiler](../language/02-compiler.md) — pipeline, codegen, source maps.
-- [Toolchain](../language/03-toolchain.md) — the `vibe` CLI, LSP, editor extension.
-- [Grammar](../specs/grammar.md) — the formal `.vibe` grammar.
-- [Configuration & the compiler entry points](../architecture/14-configuration-and-bootstrap.md) — `config { }` vs `vibe.config.ts`.
+- [Developer experience](./00-developer-experience.md) — the mental model.
+- [API design](./01-api-design.md) — the factory-function surface, with examples.
+- [Type safety](./02-type-safety.md) — how types flow through tools and agents.
+- [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md) — `vibe.config.ts` vs `createSystem({...})`.
 - [Agent spec](../specs/agent-spec.md) · [Tool spec](../specs/tool-spec.md) ·
-  [Model spec](../specs/model-spec.md) — the runtime contracts the compiler targets.
+  [Model spec](../specs/model-spec.md) — the runtime contracts you compose against.

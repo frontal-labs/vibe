@@ -178,38 +178,30 @@ impossible. If a change seems to need an upward import, the abstraction is in th
 wrong package. See [Package topology](../architecture/02-package-topology.md) for the
 full graph and rationale.
 
-## Rust conventions (the language toolchain)
+## Rust conventions (the native accelerator)
 
-The compiler, LSP, CLI, and formatter live in the `crates/*` Cargo workspace (see
-[The compiler is written in Rust](../language/05-rust-implementation.md)). These
-conventions are the Rust analog of the TypeScript ones above — match them the same
-way.
+The optional build accelerator lives in the `crates/*` Cargo workspace — just two
+crates, `vibe_bundler` and `vibe_napi`. These conventions are the Rust analog of
+the TypeScript ones above — match them the same way.
 
 ### Crate structure
 
-- **One responsibility per crate.** Each crate does one job (`vibe_lexer` tokenizes,
-  `vibe_parser` parses, `vibe_checker` checks Vibe semantics, `vibe_emit` lowers to
-  TypeScript, …), mirroring "one cohesive concept per file" on the TS side.
+- **One responsibility per crate.** Each crate does one job: `vibe_bundler` is the
+  oxc-based static analyzer (extracting `import` declarations and agent→tool edges
+  for `@vibe/build`), and `vibe_napi` is the napi-rs binding that exposes that
+  analysis to JS. This mirrors "one cohesive concept per file" on the TS side.
 - **Module docs with `//!`.** Every crate and module opens with a `//!` doc comment
   stating what it owns — the Rust equivalent of the package barrel telling you the
   public surface.
-- **`#![forbid(unsafe_code)]`** at the crate root of every crate **except the FFI
-  crates** (`vibe_napi`, `vibe_wasm`), which need `unsafe` at the language boundary.
+- **`#![forbid(unsafe_code)]`** at the crate root. `vibe_bundler` is a pure-safe
+  Rust library. The only exception is the FFI crate, `vibe_napi`, which needs
+  `unsafe` at the napi-rs language boundary.
 
 ### Snapshot tests with insta
 
-Test token streams, ASTs, diagnostics, and emitted TypeScript with `insta`
-snapshots (the way TS behavior is pinned with Vitest and types with tsd). Review
-intentional changes with `cargo insta review`; commit the accepted `.snap` files
-with your code.
-
-### Diagnostics
-
-Diagnostics are first-class. Every error carries a stable **`VBxxxx` code**, a
-**span** into the source, and a message with a **suggestion** where possible — the
-Rust counterpart to the `@vibe/errors` factories that give TypeScript errors a
-stable `code`. Add new codes to the diagnostic registry (`vibe_diagnostics`); don't
-invent ad-hoc error strings.
+Test the extracted import/edge output with `insta` snapshots (the way TS behavior
+is pinned with Vitest and types with tsd). Review intentional changes with
+`cargo insta review`; commit the accepted `.snap` files with your code.
 
 ### Formatting & linting
 
@@ -220,7 +212,6 @@ non-negotiable formatter and linter, enforced in CI. Run `cargo fmt` and
 ### The crate graph rule
 
 The crate dependency graph is **acyclic and directional**, exactly like the
-`packages/*` graph: `vibe_span` is the floor, `vibe_compiler` is the composition
-root, and the four front ends (`vibe_cli`, `vibe_lsp`, `vibe_napi`, `vibe_wasm`) sit
-on top. A crate depends *down*, never up. See the
-[crate dependency graph](../language/05-rust-implementation.md#crate-dependency-graph).
+`packages/*` graph: `vibe_bundler` is the pure-Rust analysis library, and
+`vibe_napi` sits on top of it as the FFI front end that surfaces it to JS. A crate
+depends *down*, never up.

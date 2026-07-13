@@ -88,19 +88,24 @@ that stamps time on read. Harmless; noted so no one caches it expecting stabilit
 Every `packages/*/package.json` has `"description": ""`. Fill these before any
 publish; they surface on npm and in `@vibe/*` discovery.
 
-### ✅ The Rust toolchain — was 100% ghost, now bootstrapped (Phase R0 done)
-Vibe's compiler/language tooling is [written in Rust](../language/05-rust-implementation.md).
-The `crates/`/`.cargo/` directories were **empty ghosts**; they are now a real Cargo
-workspace ([Phase R0](../plan/05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done)):
-- Root `Cargo.toml` workspace + `rust-toolchain.toml` (1.95.0) + `.cargo/config.toml`.
-- **14 crate skeletons** (`vibe_span` → … → `vibe_cli`/`vibe_lsp`/`vibe_napi`/`vibe_wasm`),
-  wired into the documented dependency graph, `#![forbid(unsafe_code)]` outside FFI.
+### ✅ The Rust crates — a small native build accelerator, not a language compiler
+The only Rust in the repo is a build accelerator for `@vibe/build`. The `crates/`
+Cargo workspace holds **exactly two crates**:
+- **`vibe_bundler`** — oxc-based static analysis of a Vibe app's agent/tool
+  TypeScript modules; extracts `import` declarations and agent→tool edges so
+  `@vibe/build` can build a dependency graph and code-split tools into lazily loaded
+  chunks. Pure Rust library, `#![forbid(unsafe_code)]`.
+- **`vibe_napi`** — a napi-rs binding (behind the `node` feature) exposing
+  `tool_edges(source, marker)` and `version()` to JS. Optional accelerator; the
+  framework works without it.
+- Root `Cargo.toml` workspace (members `["crates/*", "benchmarks"]`) +
+  `rust-toolchain.toml` + `.cargo/config.toml`.
 - Verified green: `cargo build`, `cargo fmt --check`, `cargo clippy -D warnings`,
-  `cargo test` (13 unit tests). `target/` gitignored; `Cargo.lock` committed.
-- A `rust` job added to `ci.yml`; `rust-analyzer` added to the editor recommendations.
+  `cargo test`. `target/` gitignored; `Cargo.lock` committed. A `rust` job runs in
+  CI.
 
-The crates are **skeletons** — real lexing/parsing/checking/emit land in Phases
-R1–R11. The language now has a foundation to build on.
+This is a performance addon, not a language toolchain — there is no custom source
+language and no compiler. Vibe apps are plain TypeScript composing `@vibe/*` APIs.
 
 ### 🟡 Stray / mis-named ghost directories
 Several empty top-level directories were added and need triage:
@@ -138,8 +143,8 @@ choice is intentional (Apache-2.0) and fix the `release.yml` branch trigger (abo
    `.changeset/config.json`, `biome-config/biome.json`).
 3. 🟠 Land this `docs/` tree (this PR).
 4. 🟡 Fill package `description` fields. (`bechmarks/`→`benchmarks/` rename and stray
-   `errors/` removal — ✅ done in R0.)
-5. ✅ ~~Execute [Phase R0](../plan/05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done):
-   Cargo workspace + CI + `rust-analyzer`~~ — **done**. Next: Phase R1 (lexer).
-6. 🔴 Build the runtime per the [agentic implementation plan](../plan/02-agentic-implementation-plan.md)
-   (model → tools → agent → `ask()`) — the compiler's emit target.
+   `errors/` removal — ✅ done.)
+5. ✅ ~~Stand up the `crates/` build accelerator (`vibe_bundler` + `vibe_napi`) with
+   Cargo workspace + CI~~ — **done**. It powers `@vibe/build`'s tool code-splitting.
+6. 🔴 Build the agentic layer per the [agentic implementation plan](../plan/02-agentic-implementation-plan.md)
+   (model → tools → agent → `ask()`).

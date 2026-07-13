@@ -37,8 +37,7 @@ its container, `ask()` delegates to `system.agent().run({ text })`, and returns
 the assistant text. Without a configured `provider` it throws a clear
 `configError` (not a stub). The [agentic implementation plan](../plan/02-agentic-implementation-plan.md)
 has landed (Packages 1–6). What remains is exercising it against the **live**
-Anthropic API (smoke tests behind `ANTHROPIC_API_KEY`) and wiring the `.vibe`
-compile path to emit onto it.
+Anthropic API (smoke tests behind `ANTHROPIC_API_KEY`).
 
 ### 🔴 Uncommitted config refactor is mid-flight
 The working tree shows a large, inconsistent change set:
@@ -97,19 +96,21 @@ that stamps time on read. Harmless; noted so no one caches it expecting stabilit
 Every `packages/*/package.json` has `"description": ""`. Fill these before any
 publish; they surface on npm and in `@vibe/*` discovery.
 
-### ✅ The Rust toolchain — was 100% ghost, now bootstrapped (Phase R0 done)
-Vibe's compiler/language tooling is [written in Rust](../language/05-rust-implementation.md).
-The `crates/`/`.cargo/` directories were **empty ghosts**; they are now a real Cargo
-workspace ([Phase R0](../plan/05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done)):
-- Root `Cargo.toml` workspace + `rust-toolchain.toml` (1.95.0) + `.cargo/config.toml`.
-- **14 crate skeletons** (`vibe_span` → … → `vibe_cli`/`vibe_lsp`/`vibe_napi`/`vibe_wasm`),
-  wired into the documented dependency graph, `#![forbid(unsafe_code)]` outside FFI.
+### ✅ The Rust bundler accelerator — a real Cargo workspace
+Vibe ships a small Rust side that accelerates `@vibe/build`. The `crates/`/`.cargo/`
+directories are a real Cargo workspace:
+- Root `Cargo.toml` workspace (`members = ["crates/*", "benchmarks"]`) +
+  `rust-toolchain.toml` + `.cargo/config.toml`.
+- **Two crates.** `vibe_bundler` — oxc-based static analysis of a Vibe app's
+  agent/tool TypeScript modules; it extracts `import` declarations and the
+  agent→tool edges so `@vibe/build` can build the dependency graph and code-split
+  tools into lazily-loaded chunks (small cold starts). `vibe_napi` — a napi-rs
+  binding (behind the `node` feature) exposing `tool_edges(source, marker)` and
+  `version()` to JavaScript. `#![forbid(unsafe_code)]`.
+- The native binding is an **optional accelerator**; `@vibe/build` works without it.
 - Verified green: `cargo build`, `cargo fmt --check`, `cargo clippy -D warnings`,
-  `cargo test` (13 unit tests). `target/` gitignored; `Cargo.lock` committed.
+  `cargo test`. `target/` gitignored; `Cargo.lock` committed.
 - A `rust` job added to `ci.yml`; `rust-analyzer` added to the editor recommendations.
-
-The crates are **skeletons** — real lexing/parsing/checking/emit land in Phases
-R1–R11. The language now has a foundation to build on.
 
 ### 🟡 Stray / mis-named ghost directories
 Several empty top-level directories were added and need triage:
@@ -148,7 +149,7 @@ choice is intentional (Apache-2.0) and fix the `release.yml` branch trigger (abo
 3. 🟠 Land this `docs/` tree (this PR).
 4. 🟡 Fill package `description` fields. (`bechmarks/`→`benchmarks/` rename and stray
    `errors/` removal — ✅ done in R0.)
-5. ✅ ~~Execute [Phase R0](../plan/05-language-implementation-plan.md#phase-r0--workspace-bootstrap--done):
-   Cargo workspace + CI + `rust-analyzer`~~ — **done**. Next: Phase R1 (lexer).
+5. ✅ ~~Bootstrap the Cargo workspace (`vibe_bundler` + `vibe_napi`) + CI +
+   `rust-analyzer`~~ — **done**.
 6. 🔴 Build the runtime per the [agentic implementation plan](../plan/02-agentic-implementation-plan.md)
-   (model → tools → agent → `ask()`) — the compiler's emit target.
+   (model → tools → agent → `ask()`).
