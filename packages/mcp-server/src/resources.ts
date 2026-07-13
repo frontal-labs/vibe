@@ -1,5 +1,3 @@
-import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { listPackages } from "./lib/workspace"
 import type { ToolContext } from "./types"
 
@@ -24,12 +22,6 @@ export const resources: readonly McpResource[] = [
     description: "Default model id and effort modes.",
   },
   {
-    uri: "vibe://grammar",
-    name: "Vibe grammar",
-    mimeType: "text/plain",
-    description: "The formal .vibe grammar (docs/specs/grammar.md).",
-  },
-  {
     uri: "vibe://runtime/status",
     name: "Runtime status",
     mimeType: "application/json",
@@ -52,10 +44,6 @@ export async function readResource(uri: string, ctx: ToolContext): Promise<strin
     }
     case "vibe://model-catalog":
       return JSON.stringify(MODEL_CATALOG, null, 2)
-    case "vibe://grammar": {
-      const gramarPath = join(ctx.repoRoot, "docs", "specs", "grammar.md")
-      return readFileSync(gramarPath, "utf8")
-    }
     case "vibe://runtime/status":
       return JSON.stringify(await ctx.session.status(), null, 2)
     default:

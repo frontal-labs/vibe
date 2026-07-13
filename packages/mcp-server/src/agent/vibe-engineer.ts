@@ -2,7 +2,7 @@ import type { Agent } from "@vibe/agent"
 import { createAgent } from "@vibe/agent"
 import type { Logger } from "@vibe/logger"
 import { DEFAULT_MODEL, type ModelProvider } from "@vibe/model"
-import type { Tool } from "@vibe/tools"
+import type { AnyTool } from "@vibe/tools"
 import { defineTool } from "@vibe/tools"
 
 import { createBuiltinTools } from "../tools/builtin"
@@ -11,8 +11,8 @@ import { runtimeTools } from "../tools/runtime"
 import type { McpTool, ToolContext, ToolSession } from "../types"
 
 const ENGINEER_SYSTEM = `You are the Vibe engineer: an autonomous agent that designs, generates, and
-operates the Vibe framework (a compiled .vibe language + a layered @vibe/* TypeScript
-runtime). You work inside the monorepo at the workspace root.
+operates the Vibe framework (a layered @vibe/* TypeScript runtime, with a Rust bundler
+addon that accelerates @vibe/build). You work inside the monorepo at the workspace root.
 
 Your tools are the same ones any MCP client uses:
 - vibe_runtime_* to run agents and inspect tools,
@@ -28,7 +28,7 @@ Operating loop for an engineering task:
 6. Report what you changed and the final ci:check outcome.`
 
 /** Convert one `McpTool` into a `@vibe/tools` `Tool`, sharing the same schema. */
-function mcpToVibeTool(tool: McpTool, ctx: ToolContext): Tool {
+function mcpToVibeTool(tool: McpTool, ctx: ToolContext): AnyTool {
   return defineTool({
     name: tool.name,
     description: tool.description,

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join } from "node:path"
-import type { Tool } from "@vibe/tools"
+import type { AnyTool } from "@vibe/tools"
 import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 
@@ -12,7 +12,7 @@ import { resolveWithin } from "../../lib/path"
  * directories, and run scoped commands (build/test/lint). All paths are
  * resolved against the workspace root, so the loop can't stray outside it.
  */
-export function createBuiltinTools(repoRoot: string): Tool[] {
+export function createBuiltinTools(repoRoot: string): AnyTool[] {
   return [
     defineTool({
       name: "read_file",

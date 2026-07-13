@@ -106,15 +106,24 @@ import type { ModelProvider } from "@vibe/model"
 import { z } from "zod"
 
 // A self-contained agent scaffold. Wire a real provider (e.g. createAnthropicProvider)
-// and register this module's tools on a System to run it.
+// and register this module's tools on a System to run it. Replace the tool body below
+// with your own data source (DB query, HTTP call, ontology retrieve, …).
+const knowledge: Record<string, string> = {
+  hello: "Hi! Ask me anything and I'll look it up.",
+}
+
 export const ${camel(name)}Tool = defineTool({
   name: "${snake(name)}_lookup",
   description: "Look up information for the ${name} agent.",
   schema: z.object({
     query: z.string().describe("What to look up."),
   }),
-  async execute({ query }) {
-    return "(stub) looked up: " + query
+  execute({ query }) {
+    const key = query.trim().toLowerCase()
+    const answer = knowledge[key]
+    return Promise.resolve(
+      answer ?? \`No entry for "\${query}". Known keys: \${Object.keys(knowledge).join(", ")}.\`,
+    )
   },
 })
 
@@ -128,9 +137,9 @@ export function create${pascal(name)}Agent(provider: ModelProvider) {
 `
 
 /**
- * Generate a runnable agent example module under `examples/`. The `.vibe` variant
- * is deferred until the Rust compiler lands; this TS form runs on the current
- * `@vibe/*` runtime today. Returns the created file path.
+ * Generate a runnable agent example module under `examples/`. Vibe apps are plain
+ * TypeScript that run on the `@vibe/*` runtime; this emits a ready-to-run starter.
+ * Returns the created file path.
  */
 export function scaffoldAgent(repoRoot: string, name: string): string[] {
   if (name.includes("/") || name.includes("\\") || name.trim() === "") {
