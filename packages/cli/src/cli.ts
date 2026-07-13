@@ -3,47 +3,78 @@ import { existsSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { createCompiler, loadNativeBinding } from "@vibe/compiler"
+import { createDevBuilder, type DevBuilder } from "@vibe/build"
+import { formatDiagnostic } from "@vibe/errors"
 import chokidar from "chokidar"
 
-import { buildFile } from "./actions"
+import { buildApp, summarizeManifest } from "./actions"
 import { createProgram } from "./program"
 
 /** Best-effort locate `tools/templates`: env override, else walk up for the monorepo. */
 function resolveTemplatesDir(): string {
-  if (process.env.VIBE_TEMPLATES_DIR) return process.env.VIBE_TEMPLATES_DIR
+  if (process.env.VIBE_TEMPLATES_DIR) {
+    return process.env.VIBE_TEMPLATES_DIR
+  }
   let dir = dirname(fileURLToPath(import.meta.url))
   for (let i = 0; i < 8; i++) {
     const candidate = join(dir, "tools", "templates")
-    if (existsSync(candidate)) return candidate
+    if (existsSync(candidate)) {
+      return candidate
+    }
     dir = resolve(dir, "..")
   }
   return join(process.cwd(), "tools", "templates")
 }
 
 function main(): void {
-  const compiler = createCompiler(loadNativeBinding())
-  const program = createProgram({ compiler, templatesDir: resolveTemplatesDir() })
+  const program = createProgram({ build: buildApp, templatesDir: resolveTemplatesDir() })
 
-  // `dev` watches and rebuilds; kept out of the testable program (needs chokidar/IO).
+  // `dev` watches `agents/`, `tools/`, `skills/`, `workflows/`, and the config, rebuilding
+  // incrementally via a warm esbuild context. Kept out of the testable program (needs chokidar/IO).
   program
     .command("dev")
-    .argument("[path]", "file or directory", ".")
-    .option("-o, --out-dir <dir>", "output directory", ".vibe")
-    .action((path: string, opts: { outDir: string }) => {
-      const rebuild = (file: string) => {
+    .description("Watch the app and rebuild on change")
+    .argument("[dir]", "app directory", ".")
+    .action((dir: string) => {
+      const configFile = join(dir, "vibe.config.ts")
+      // A change is "structural" when the set of entries could change (a file added/removed, or the
+      // config edited) — that needs a re-plan; a plain edit to an existing entry just rebuilds.
+      const isConfig = (path: string): boolean =>
+        path === configFile || path.endsWith("vibe.config.ts")
+
+      let builder: DevBuilder | null = null
+      const build = async (structural: boolean): Promise<void> => {
         try {
-          const result = buildFile(compiler, file, opts.outDir)
-          console.log(`✓ ${file} → ${result.outputs.length} file(s)`)
+          if (!builder) {
+            builder = await createDevBuilder(dir, {})
+            console.log(summarizeManifest(await builder.rebuild()))
+            return
+          }
+          const manifest = structural ? await builder.reload() : await builder.rebuild()
+          console.log(summarizeManifest(manifest))
         } catch (error) {
-          console.error(`✗ ${file}: ${error instanceof Error ? error.message : String(error)}`)
+          console.error(formatDiagnostic(error))
         }
       }
-      console.log(`watching ${path} …`)
+
+      console.log(`watching ${dir} …`)
+      build(false).catch(() => {
+        // build() already logs its own diagnostics; nothing to surface here.
+      })
       chokidar
-        .watch(path, { ignored: /(^|[/\\])\.vibe([/\\]|$)/, ignoreInitial: false })
-        .on("add", (f) => f.endsWith(".vibe") && rebuild(f))
-        .on("change", (f) => f.endsWith(".vibe") && rebuild(f))
+        .watch(
+          [
+            join(dir, "agents"),
+            join(dir, "tools"),
+            join(dir, "skills"),
+            join(dir, "workflows"),
+            configFile,
+          ],
+          { ignoreInitial: true },
+        )
+        .on("add", () => build(true))
+        .on("unlink", () => build(true))
+        .on("change", (path: string) => build(isConfig(path)))
     })
 
   program.parse()

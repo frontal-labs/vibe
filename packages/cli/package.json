@@ -27,11 +27,11 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/compiler": "workspace:*",
-    "@vibe/errors": "workspace:*",
     "@vibe/generators": "workspace:*",
     "chokidar": "^4.0.0",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "@vibe/build": "workspace:*",
+    "@vibe/errors": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
