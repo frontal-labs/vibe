@@ -1,4 +1,4 @@
-import type { Tool } from "@vibe/tools"
+import type { AnyTool } from "@vibe/tools"
 import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 import type { AgentConfig } from "./agent"
@@ -19,7 +19,7 @@ export interface DelegateToolConfig extends AgentConfig {
  * into the sub-agent's run, so cancelling the coordinator cancels its workers.
  * Deeper nesting is intentionally not wired yet.
  */
-export function createDelegateTool(config: DelegateToolConfig): Tool {
+export function createDelegateTool(config: DelegateToolConfig): AnyTool {
   const { name, description, ...agentConfig } = config
   const agent = createAgent(agentConfig)
 

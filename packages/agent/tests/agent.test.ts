@@ -100,6 +100,49 @@ describe("createAgent.run", () => {
   })
 })
 
+describe("createAgent timings & cost", () => {
+  it("reports per-iteration timings split by model and tools", async () => {
+    const provider = createFakeProvider([
+      { content: [{ type: "toolUse", id: "c1", name: "echo", input: { value: "hi" } }] },
+      { content: [{ type: "text", text: "done" }] },
+    ])
+    const agent = createAgent({ provider, tools: [echo] })
+
+    const events: AgentEvent[] = []
+    const result = await agent.run("go", { onEvent: (e) => events.push(e) })
+
+    // Two model round-trips, one tool batch of one call.
+    expect(result.timings.model.calls).toBe(2)
+    expect(result.timings.tools.calls).toBe(1)
+    expect(result.timings.iterations).toHaveLength(2)
+    expect(result.timings.totalMs).toBeGreaterThanOrEqual(0)
+    expect(result.timings.model.ms).toBeGreaterThanOrEqual(0)
+    // A timing event is emitted per iteration.
+    expect(events.filter((e) => e.type === "timing")).toHaveLength(2)
+  })
+
+  it("aborts the run once maxCostCents is exceeded", async () => {
+    const provider = createFakeProvider([
+      // 1M output tokens on claude-opus-4-8 (output $25/1M) = 2500¢, over the 100¢ ceiling.
+      {
+        content: [{ type: "toolUse", id: "c1", name: "echo", input: { value: "x" } }],
+        usage: { outputTokens: 1_000_000 },
+      },
+      { content: [{ type: "text", text: "should not be reached" }] },
+    ])
+    const agent = createAgent({ provider, model: "claude-opus-4-8", tools: [echo] })
+
+    await expect(agent.run("go", { maxCostCents: 100 })).rejects.toThrow(/maxCostCents/)
+  })
+
+  it("does not abort a cheap run under the cost ceiling", async () => {
+    const provider = createFakeProvider([{ content: [{ type: "text", text: "cheap" }] }])
+    const agent = createAgent({ provider, model: "claude-opus-4-8" })
+    const result = await agent.run("go", { maxCostCents: 100 })
+    expect(result.text).toBe("cheap")
+  })
+})
+
 describe("createAgent.stream", () => {
   it("yields events and returns the result", async () => {
     const provider = createFakeProvider([{ content: [{ type: "text", text: "streamed" }] }])

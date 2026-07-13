@@ -1,12 +1,13 @@
 import { runtimeError } from "@vibe/errors"
-import type { Conversation } from "@vibe/memory"
+import type { CompactionStrategy, Conversation } from "@vibe/memory"
 import { buildRequest } from "@vibe/memory"
 import type { ContentBlock, Effort, ModelProvider, ModelResponse, TokenUsage } from "@vibe/model"
+import { contextWindowFor, priceUsd, tokenFamilyFor } from "@vibe/model"
 import { createCancellationTokenSource, defaultRetryPolicy, executeWithRetry } from "@vibe/runtime"
 import type { ToolRegistry } from "@vibe/tools"
 import { runToolCall } from "@vibe/tools"
 
-import type { AgentEvent, AgentInput, AgentResult, RunOptions } from "./types"
+import type { AgentEvent, AgentInput, AgentResult, RunOptions, RunTimings } from "./types"
 
 export interface LoopConfig {
   provider: ModelProvider
@@ -16,9 +17,27 @@ export interface LoopConfig {
   maxTokens?: number
   registry: ToolRegistry
   conversation: Conversation
+  /**
+   * Max input tokens per request. Defaults to the model's context window minus an output reserve,
+   * so long conversations are compacted to fit instead of overflowing the provider (a 400).
+   */
+  budget?: number
+  /** How to compact the transcript when over budget. Defaults to `drop-oldest`. */
+  compaction?: CompactionStrategy
 }
 
 const EMPTY_USAGE: TokenUsage = { inputTokens: 0, outputTokens: 0 }
+/** Tokens held back from the context window for the model's output when no explicit budget is set. */
+const DEFAULT_OUTPUT_RESERVE = 4096
+/** Extra safety margin below the context window (schemas, framing the counter can't see exactly). */
+const BUDGET_SAFETY_MARGIN = 1024
+
+/** The input-token budget for a request: explicit, else context window minus output reserve. */
+function resolveBudget(config: LoopConfig): number {
+  if (config.budget !== undefined) return config.budget
+  const reserve = (config.maxTokens ?? DEFAULT_OUTPUT_RESERVE) + BUDGET_SAFETY_MARGIN
+  return Math.max(BUDGET_SAFETY_MARGIN, contextWindowFor(config.model) - reserve)
+}
 
 /**
  * The agent run loop, as an async generator. `run()` drains it; `stream()`
@@ -37,16 +56,29 @@ export async function* runLoop(
   const token = options.cancellationToken ?? createCancellationTokenSource().token
   const maxIterations = options.maxIterations ?? 10
   const policy = defaultRetryPolicy()
+  const budget = resolveBudget(config)
+  const tokenFamily = tokenFamilyFor(config.model)
 
   conversation.append({ role: "user", content: text })
 
   let iterations = 0
   let usage = EMPTY_USAGE
+  const timings = newTimings()
+  const startedAt = performance.now()
 
   while (true) {
     token.throwIfCancelled()
     if (++iterations > maxIterations) {
       throw runtimeError(`Agent exceeded maxIterations (${maxIterations})`)
+    }
+    // Cost backstop: enforce before the next (billable) model call, never discarding a done result.
+    if (options.maxCostCents !== undefined) {
+      const cents = priceUsd(usage, config.model) * 100
+      if (cents > options.maxCostCents) {
+        throw runtimeError(
+          `Agent exceeded maxCostCents (${options.maxCostCents}); spent ~${cents.toFixed(3)}¢`,
+        )
+      }
     }
     yield { type: "iteration", iteration: iterations }
 
@@ -57,8 +89,12 @@ export async function* runLoop(
       tools: registry.toSchemas(),
       effort: config.effort,
       maxTokens: config.maxTokens,
+      budget,
+      tokenFamily,
+      compaction: config.compaction,
     })
 
+    const modelStart = performance.now()
     const response: ModelResponse = await executeWithRetry(() => provider.generate(request), {
       policy,
       cancellationToken: token,
@@ -66,6 +102,7 @@ export async function* runLoop(
       onAttempt: (attempt, error) =>
         options.logger?.warn("model:retry", { attempt, error: String(error) }),
     })
+    const modelMs = performance.now() - modelStart
 
     usage = addUsage(usage, response.usage)
     conversation.append({ role: "assistant", content: response.content })
@@ -77,7 +114,10 @@ export async function* runLoop(
 
     if (response.stopReason !== "tool_use") {
       // end_turn | max_tokens | refusal | pause → the run is over.
-      const result = finish(response, usage, iterations, conversation)
+      recordIteration(timings, iterations, modelMs, 0, 0)
+      timings.totalMs = performance.now() - startedAt
+      yield { type: "timing", iteration: iterations, modelMs, toolsMs: 0 }
+      const result = finish(response, usage, iterations, conversation, timings)
       yield { type: "done", result }
       return result
     }
@@ -88,6 +128,7 @@ export async function* runLoop(
       yield { type: "toolCall", id: call.id, name: call.name, input: call.input }
     }
 
+    const toolsStart = performance.now()
     const executed = await Promise.all(
       calls.map(async (call) => {
         const tool = registry.get(call.name)
@@ -102,6 +143,9 @@ export async function* runLoop(
         return { call, block }
       }),
     )
+    const toolsMs = performance.now() - toolsStart
+    recordIteration(timings, iterations, modelMs, toolsMs, calls.length)
+    yield { type: "timing", iteration: iterations, modelMs, toolsMs }
 
     for (const { call, block } of executed) {
       yield {
@@ -115,6 +159,26 @@ export async function* runLoop(
 
     conversation.append({ role: "user", content: executed.map((e) => e.block) })
   }
+}
+
+function newTimings(): RunTimings & {
+  iterations: { index: number; modelMs: number; toolsMs: number }[]
+} {
+  return { totalMs: 0, model: { ms: 0, calls: 0 }, tools: { ms: 0, calls: 0 }, iterations: [] }
+}
+
+function recordIteration(
+  timings: RunTimings & { iterations: { index: number; modelMs: number; toolsMs: number }[] },
+  index: number,
+  modelMs: number,
+  toolsMs: number,
+  toolCalls: number,
+): void {
+  timings.model.ms += modelMs
+  timings.model.calls += 1
+  timings.tools.ms += toolsMs
+  timings.tools.calls += toolCalls
+  timings.iterations.push({ index, modelMs, toolsMs })
 }
 
 function isToolUse(
@@ -136,6 +200,7 @@ function finish(
   usage: TokenUsage,
   iterations: number,
   conversation: Conversation,
+  timings: RunTimings,
 ): AgentResult {
   const text = response.content
     .filter((b): b is { type: "text"; text: string } => b.type === "text")
@@ -148,6 +213,7 @@ function finish(
     iterations,
     stopReason: response.stopReason,
     transcript: conversation.snapshot(),
+    timings,
   }
 }
 

@@ -13,4 +13,7 @@ export type {
   AgentInput,
   AgentResult,
   RunOptions,
+  RunTimings,
+  ToolCallEvent,
+  ToolName,
 } from "./types"
