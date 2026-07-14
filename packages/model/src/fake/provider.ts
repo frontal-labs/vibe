@@ -34,9 +34,11 @@ export function createFakeProvider(script: FakeTurn[]): ModelProvider {
 
   return {
     id: "fake",
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async generate() {
       return nextResponse()
     },
+    // biome-ignore lint/suspicious/useAwait: interface requires AsyncIterable return
     async *stream() {
       const response = nextResponse()
       for (const block of response.content) {
@@ -53,6 +55,7 @@ export function createFakeProvider(script: FakeTurn[]): ModelProvider {
       }
       yield { type: "done", response }
     },
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async countTokens() {
       return 0
     },

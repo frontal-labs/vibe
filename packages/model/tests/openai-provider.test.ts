@@ -16,7 +16,7 @@ describe("createOpenAIProvider", () => {
   it("generate posts to <baseURL>/chat/completions and normalizes the response", async () => {
     let calledUrl = ""
     let sentBody: Record<string, unknown> = {}
-    const fetchLike: FetchLike = async (url, init) => {
+    const fetchLike: FetchLike = (url, init) => {
       calledUrl = url
       sentBody = JSON.parse(init.body)
       return jsonResponse({
@@ -42,7 +42,7 @@ describe("createOpenAIProvider", () => {
   })
 
   it("maps HTTP errors to typed errors", async () => {
-    const fetchLike: FetchLike = async () => jsonResponse({ error: "nope" }, 401)
+    const fetchLike: FetchLike = () => jsonResponse({ error: "nope" }, 401)
     const provider = createOpenAIProvider({ fetch: fetchLike })
     await expect(provider.generate({ model: "gpt-4o", messages: [] })).rejects.toThrow()
   })

@@ -30,7 +30,7 @@ describe("openai() env fallback", () => {
     process.env.OPENAI_API_KEY = "sk-env"
     let auth: string | undefined
     const provider = openai({
-      fetch: async (_url, init) => {
+      fetch(_url, init) {
         auth = init.headers.authorization
         return new Response(
           JSON.stringify({

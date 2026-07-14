@@ -111,7 +111,7 @@ describe("PluginHost", () => {
     expect(shutdownFn).toHaveBeenCalledOnce()
   })
 
-  it("should provide hook access via getHooks", async () => {
+  it("should provide hook access via getHooks", () => {
     const host = createPluginHost()
     const hooks = host.getHooks()
 

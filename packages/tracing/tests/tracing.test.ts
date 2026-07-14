@@ -26,6 +26,7 @@ describe("createTracer", () => {
     const exporter = createMemoryExporter()
     const tracer = createTracer({ exporter })
     await expect(
+      // biome-ignore lint/suspicious/useAwait: callback just throws
       tracer.withSpan("boom", async () => {
         throw new Error("nope")
       }),
@@ -59,6 +60,7 @@ describe("traceAgentRun", () => {
       transcript: [],
     }
     const agent: StreamableAgent = {
+      // biome-ignore lint/suspicious/useAwait: async generator for test agent
       async *stream() {
         yield { type: "iteration", iteration: 1 }
         yield { type: "toolCall", id: "c1", name: "noop", input: {} }

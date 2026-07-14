@@ -39,11 +39,12 @@ export function createPluginHost(): PluginHost {
     await plugin.setup(hooks)
   }
 
-  async function unregister(name: string): Promise<void> {
+  function unregister(name: string): Promise<void> {
     if (!plugins.has(name)) {
       throw pluginNotFoundError(`Plugin "${name}" is not registered`)
     }
     plugins.delete(name)
+    return Promise.resolve()
   }
 
   function getPlugin(name: string): Plugin | undefined {
