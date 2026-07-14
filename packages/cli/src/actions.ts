@@ -2,7 +2,7 @@ import type { BuildManifest, BuildOptions } from "@vibe/build"
 import { bundleApp, discoverApp, formatAnalysis } from "@vibe/build"
 
 /** Build an app directory into optimized, tree-shaken, code-split bundles. */
-export async function buildApp(root: string, options: BuildOptions = {}): Promise<BuildManifest> {
+export function buildApp(root: string, options: BuildOptions = {}): Promise<BuildManifest> {
   return bundleApp(root, options)
 }
 
