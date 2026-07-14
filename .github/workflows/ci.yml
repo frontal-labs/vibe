@@ -33,28 +33,6 @@ jobs:
       - run: bun format:check
       - run: bun typecheck
 
-  test:
-    name: Test
-    runs-on: ubuntu-24.04
-    needs: [quality]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-      - run: bun install --frozen-lockfile
-      - run: bun test
-      - run: bun test:types
-
   build:
     name: Build
     runs-on: ubuntu-24.04
@@ -75,6 +53,28 @@ jobs:
             ${{ runner.os }}-turbo-
       - run: bun install --frozen-lockfile
       - run: bun build
+
+  test:
+    name: Test
+    runs-on: ubuntu-24.04
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - run: bun test:types
 
   rust:
     name: Rust (language toolchain)
