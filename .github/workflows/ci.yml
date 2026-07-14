@@ -52,7 +52,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
       - run: bun install --frozen-lockfile
-      - run: bun build
+      - run: bun run build
       - run: bun test
       - run: bun test:types
 
