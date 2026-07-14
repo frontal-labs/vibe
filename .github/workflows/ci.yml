@@ -33,8 +33,8 @@ jobs:
       - run: bun format:check
       - run: bun typecheck
 
-  build:
-    name: Build
+  build-and-test:
+    name: Build & Test
     runs-on: ubuntu-24.04
     needs: [quality]
     steps:
@@ -52,27 +52,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
       - run: bun install --frozen-lockfile
-      - run: bun run build
-
-  test:
-    name: Test
-    runs-on: ubuntu-24.04
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
-      - run: bun install --frozen-lockfile
+      - run: bun build
       - run: bun test
       - run: bun test:types
 
