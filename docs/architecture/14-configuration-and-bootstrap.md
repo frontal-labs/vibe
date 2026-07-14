@@ -18,7 +18,7 @@ configures, defined with the `@vibe/*` APIs:
 
 ```ts
 // vibe.config.ts
-import { defineConfig, defineAgent, defineTool, defineModel } from "vibe"
+import { defineConfig, defineAgent, defineTool, defineModel } from "frontal-vibe"
 import { z } from "zod"
 
 const Fast = defineModel({ id: "claude-haiku-4-5", effort: "low" })

@@ -3,7 +3,7 @@
 One Zod schema types the handler **and** the model-facing JSON Schema.
 
 ```ts
-import { defineTool } from "vibe/tools"
+import { defineTool } from "frontal-vibe/tools"
 import { z } from "zod"
 
 export const getWeather = defineTool({

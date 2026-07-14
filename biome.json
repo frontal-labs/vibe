@@ -33,7 +33,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noBannedTypes": "error",
         "noExtraBooleanCast": "error",
@@ -111,6 +111,7 @@
         "packages/logger/src/transports/**",
         "packages/cli/**",
         "packages/devtools/**",
+        "packages/tracing/**",
         "examples/**",
         "tools/**",
         "scripts/**"

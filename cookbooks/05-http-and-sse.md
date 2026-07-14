@@ -1,7 +1,7 @@
 # Serving an agent over HTTP
 
 ```ts
-import { toFetchHandler } from "vibe/adapters"
+import { toFetchHandler } from "frontal-vibe/adapters"
 
 const handler = toFetchHandler(agent)   // (Request) => Promise<Response>
 Bun.serve({ port: 3000, fetch: handler })

@@ -1,7 +1,7 @@
 # Evaluating agents
 
 ```ts
-import { includes, runEval } from "vibe/evals"
+import { includes, runEval } from "frontal-vibe/evals"
 
 const report = await runEval({
   cases: [{ name: "capital", input: "Capital of France?", expected: "Paris" }],

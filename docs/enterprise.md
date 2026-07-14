@@ -16,7 +16,7 @@ Both directions are supported.
 **Consume any OpenAI-compatible backend** as a `ModelProvider`:
 
 ```ts
-import { createOpenAIProvider } from "vibe/model"
+import { createOpenAIProvider } from "frontal-vibe/model"
 
 const provider = createOpenAIProvider({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,7 +31,7 @@ reusing the same retry path as the Anthropic provider.
 **Expose a Vibe agent behind the OpenAI API** so existing OpenAI clients can call it:
 
 ```ts
-import { toOpenAICompatHandler } from "vibe/adapters"
+import { toOpenAICompatHandler } from "frontal-vibe/adapters"
 
 const handler = toOpenAICompatHandler(agent) // POST /v1/chat/completions + GET /v1/models
 ```
@@ -49,7 +49,7 @@ shared cancellation token stops the whole tree, and an optional tracer nests
 `workflow → step → agent` spans.
 
 ```ts
-import { defineWorkflow, runWorkflow, step, parallel } from "vibe/workflows"
+import { defineWorkflow, runWorkflow, step, parallel } from "frontal-vibe/workflows"
 
 const wf = defineWorkflow({
   name: "support",

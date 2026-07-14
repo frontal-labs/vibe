@@ -1,7 +1,7 @@
 # Deploying to the edge
 
 ```ts
-import { toCloudflareWorker, toLambdaHandler, generateDockerfile } from "vibe/deploy"
+import { toCloudflareWorker, toLambdaHandler, generateDockerfile } from "frontal-vibe/deploy"
 
 export default toCloudflareWorker(agent)          // Cloudflare Workers
 export const handler = toLambdaHandler(agent)     // AWS Lambda (Function URL / APIGW v2)

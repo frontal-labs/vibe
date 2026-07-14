@@ -42,7 +42,7 @@ bun run dev
 
 | Package | Description |
 |---------|-------------|
-| `vibe` | Barrel package — import everything from `vibe` or `vibe/*` |
+| `frontal-vibe` | Barrel package — import everything from `frontal-vibe` or `frontal-vibe/*` |
 | `@vibe/core` | Central orchestrator that wires all modules together |
 | `@vibe/agent` | Agent definition, lifecycle, and execution |
 | `@vibe/model` | LLM provider abstraction layer |
