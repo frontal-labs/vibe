@@ -13,6 +13,7 @@ export const devTools: McpTool[] = [
     description:
       "Summarize the Vibe monorepo: the repo root and every package with its @vibe/* dependencies (the acyclic package graph).",
     schema: z.object({}),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(_args, ctx) {
       return { repoRoot: ctx.repoRoot, packages: listPackages(ctx.repoRoot) }
     },
@@ -25,6 +26,7 @@ export const devTools: McpTool[] = [
     schema: z.object({
       name: z.string().describe("Bare package name, e.g. 'cache' (becomes @vibe/cache)."),
     }),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {
       return { created: scaffoldPackage(ctx.repoRoot, args.name) }
     },
@@ -37,6 +39,7 @@ export const devTools: McpTool[] = [
     schema: z.object({
       name: z.string().describe("Bare agent name, e.g. 'triage'."),
     }),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {
       return { created: scaffoldAgent(ctx.repoRoot, args.name) }
     },

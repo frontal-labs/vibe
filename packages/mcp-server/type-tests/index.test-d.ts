@@ -6,6 +6,7 @@ const tool: McpTool = {
   name: "ping",
   description: "noop",
   schema: z.object({}),
+  // biome-ignore lint/suspicious/useAwait: type test requires async for Promise return type
   async execute() {
     return "pong"
   },

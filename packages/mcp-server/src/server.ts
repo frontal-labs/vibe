@@ -39,7 +39,7 @@ function err(message: string) {
 }
 
 /** Build (but don't connect) the MCP server and register all handlers. */
-export async function buildServer(options: StartOptions): Promise<Server> {
+export function buildServer(options: StartOptions): Server {
   const server = new Server(
     { name: "vibe-mcp", version: "0.0.0" },
     { capabilities: { tools: {}, resources: {}, prompts: {} } },
@@ -115,7 +115,7 @@ export async function buildServer(options: StartOptions): Promise<Server> {
     })),
   }))
 
-  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+  server.setRequestHandler(GetPromptRequestSchema, (request) => {
     try {
       return getPrompt(request.params.name, request.params.arguments, ctx)
     } catch (error) {

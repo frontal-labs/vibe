@@ -22,6 +22,7 @@ export const runtimeTools: McpTool[] = [
         .optional()
         .describe("Hard ceiling on model round-trips (default 10)."),
     }),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {
       return ctx.session.runAgent(args.prompt, {
         system: args.system,
@@ -50,6 +51,7 @@ export const runtimeTools: McpTool[] = [
         .optional()
         .describe("Hard ceiling on model round-trips."),
     }),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {
       return ctx.session.runAgent(args.prompt, {
         system: args.system,
@@ -65,6 +67,7 @@ export const runtimeTools: McpTool[] = [
     description:
       "Register the built-in operator tools (read_file, list_dir, run_command) into the agent's tool registry so the agent loop can operate the workspace. Idempotent.",
     schema: z.object({}),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(_args, ctx) {
       ctx.session.registerBuiltinTools()
       return { tools: ctx.session.listTools() }
@@ -75,6 +78,7 @@ export const runtimeTools: McpTool[] = [
     name: "vibe_runtime_list_tools",
     description: "List the tools currently available to the agent (built-in + any registered).",
     schema: z.object({}),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(_args, ctx) {
       return { tools: ctx.session.listTools() }
     },
@@ -86,6 +90,7 @@ export const runtimeTools: McpTool[] = [
     schema: z.object({
       name: z.string().describe("The tool name, e.g. 'read_file'."),
     }),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {
       const tool = ctx.session.getTool(args.name)
       if (!tool) {
@@ -100,6 +105,7 @@ export const runtimeTools: McpTool[] = [
     description:
       "Report the live Vibe system status: repo root, provider id, tool count, and lifecycle/version info.",
     schema: z.object({}),
+    // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(_args, ctx) {
       return ctx.session.status()
     },

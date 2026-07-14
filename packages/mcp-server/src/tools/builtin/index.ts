@@ -20,7 +20,7 @@ export function createBuiltinTools(repoRoot: string): AnyTool[] {
       schema: z.object({
         path: z.string().describe("Workspace-relative path, e.g. 'packages/core/src/system.ts'."),
       }),
-      async execute({ path }) {
+      execute({ path }) {
         const full = resolveWithin(repoRoot, path)
         return readFileSync(full, "utf8")
       },
@@ -35,7 +35,7 @@ export function createBuiltinTools(repoRoot: string): AnyTool[] {
           .describe("Workspace-relative directory, e.g. 'packages'. Defaults to repo root.")
           .default("."),
       }),
-      async execute({ path }) {
+      execute({ path }) {
         const full = resolveWithin(repoRoot, path)
         const entries = readdirSync(full).map((name) => {
           let type = "file"
