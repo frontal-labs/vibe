@@ -52,6 +52,7 @@ describe("ExecutionEngine", () => {
     const engine = createExecutionEngine()
     engine.registerTask({
       id: tid("failing"),
+      // biome-ignore lint/suspicious/useAwait: test handler matches TaskHandler interface
       handler: async () => {
         throw new Error("oops")
       },
@@ -70,11 +71,13 @@ describe("ExecutionEngine", () => {
 
     engine.registerTask({
       id: tid("slow"),
-      handler: async (_input, ctx) => {
-        capturedExecutionId = ctx.executionId
-        await new Promise((resolve) => setTimeout(resolve, 500))
-        ctx.cancellationToken.throwIfCancelled()
-        return "done"
+      handler(_input, ctx) {
+        return (async () => {
+          capturedExecutionId = ctx.executionId
+          await new Promise((resolve) => setTimeout(resolve, 500))
+          ctx.cancellationToken.throwIfCancelled()
+          return "done"
+        })()
       },
     })
 
@@ -114,6 +117,7 @@ describe("ExecutionEngine", () => {
     const engine = createExecutionEngine()
     engine.registerTask({
       id: tid("streaming"),
+      // biome-ignore lint/suspicious/useAwait: test handler matches TaskHandler interface
       handler: async (_input, ctx) => {
         ctx.progress("step1")
         ctx.progress("step2")

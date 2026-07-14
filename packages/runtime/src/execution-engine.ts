@@ -110,7 +110,7 @@ export function createExecutionEngine(): ExecutionEngine {
 
     const progressListeners = new Set<(value: unknown) => void>()
 
-    async function handleProgress(value: unknown): Promise<void> {
+    function handleProgress(value: unknown): void {
       for (const listener of progressListeners) {
         listener(value)
       }
@@ -125,7 +125,7 @@ export function createExecutionEngine(): ExecutionEngine {
       cancellationToken: source.token,
       progress: handleProgress,
       checkpoint: async (state: unknown) => {
-        const ckpt = saveCheckpoint(executionId, state)
+        const ckpt = await saveCheckpoint(executionId, state)
         return ckpt.id
       },
     }
@@ -134,7 +134,7 @@ export function createExecutionEngine(): ExecutionEngine {
       executions.set(executionId as string, "running")
 
       const output = await executeWithRetry(
-        async () => {
+        () => {
           currentAttempt++
           return task.handler(input, ctx)
         },
@@ -215,7 +215,7 @@ export function createExecutionEngine(): ExecutionEngine {
         progressEvents.push(value)
       },
       checkpoint: async (state: unknown) => {
-        const ckpt = saveCheckpoint(executionId, state)
+        const ckpt = await saveCheckpoint(executionId, state)
         return ckpt.id
       },
     }
@@ -226,7 +226,7 @@ export function createExecutionEngine(): ExecutionEngine {
       executions.set(executionId as string, "running")
 
       const output = await executeWithRetry(
-        async () => {
+        () => {
           currentAttempt++
           return task.handler(input, ctx)
         },
@@ -304,7 +304,7 @@ export function createExecutionEngine(): ExecutionEngine {
     return undefined
   }
 
-  async function resumeFromCheckpoint<TOutput>(
+  function resumeFromCheckpoint<TOutput>(
     checkpoint: Checkpoint,
     taskId: TaskId,
   ): Promise<ExecutionResult<TOutput>> {

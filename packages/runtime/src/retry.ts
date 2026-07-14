@@ -99,7 +99,7 @@ function createAbortController(): AbortController {
   return new AbortController()
 }
 
-async function raceWithTimeout<T>(
+function raceWithTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
   signal: AbortSignal,

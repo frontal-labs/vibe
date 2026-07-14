@@ -14,6 +14,7 @@ expectError(source.token.cancel())
 // TaskDefinition
 const task: TaskDefinition<string, number> = {
   id: "test" as TaskId,
+  // biome-ignore lint/suspicious/useAwait: type test for TaskHandler interface
   handler: async (input: string, _ctx: ExecutionContext): Promise<number> => {
     return input.length
   },

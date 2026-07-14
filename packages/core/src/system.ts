@@ -90,11 +90,11 @@ export function createSystem(config: SystemConfig): System {
 
   const startTime = Date.now()
 
-  lifecycle.onBefore("init", async () => {
+  lifecycle.onBefore("init", () => {
     logger.debug("System initializing", { system: config.name })
   })
 
-  lifecycle.onAfter("init", async () => {
+  lifecycle.onAfter("init", () => {
     logger.info("System initialized", { system: config.name })
   })
 
@@ -109,7 +109,7 @@ export function createSystem(config: SystemConfig): System {
     }
   })
 
-  lifecycle.onAfter("start", async () => {
+  lifecycle.onAfter("start", () => {
     logger.info("System started", {
       system: config.name,
       uptimeMs: Date.now() - startTime,
@@ -121,7 +121,7 @@ export function createSystem(config: SystemConfig): System {
     await plugins.shutdown()
   })
 
-  lifecycle.onAfter("stop", async () => {
+  lifecycle.onAfter("stop", () => {
     logger.info("System stopped", {
       system: config.name,
       uptimeMs: Date.now() - startTime,

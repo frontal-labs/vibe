@@ -50,6 +50,7 @@ export function createResourceManager(): ResourceManager {
     }
   }
 
+  // biome-ignore lint/suspicious/useAwait: complex return type (Promise | direct object)
   async function acquire(
     name: string,
     limit: number,
