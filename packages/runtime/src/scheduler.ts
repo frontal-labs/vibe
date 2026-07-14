@@ -4,7 +4,7 @@ import type { ExecutionEngine } from "./execution-engine"
 import type { ExecutionId, ExecutionResult, ScheduleOptions, Scheduler, TaskId } from "./types"
 
 export function createScheduler(engine: ExecutionEngine): Scheduler {
-  function schedule<TInput, TOutput>(
+  async function schedule<TInput, TOutput>(
     taskId: TaskId,
     input: TInput,
     options?: ScheduleOptions,
@@ -17,20 +17,19 @@ export function createScheduler(engine: ExecutionEngine): Scheduler {
     return engine.execute<TInput, TOutput>(taskId, input, options?.retry, options?.timeoutMs)
   }
 
-  function cancel(executionId: ExecutionId): Promise<void> {
+  async function cancel(executionId: ExecutionId): Promise<void> {
     const state = engine.getExecutionState(executionId)
     if (!state) {
       throw runtimeError(`Execution "${executionId}" not found`)
     }
     if (state !== "pending" && state !== "running") {
-      return Promise.resolve()
+      return
     }
     engine.cancel(executionId)
-    return Promise.resolve()
   }
 
-  function getStatus(executionId: ExecutionId): Promise<ExecutionResult | undefined> {
-    return Promise.resolve(engine.getResult(executionId))
+  async function getStatus(executionId: ExecutionId): Promise<ExecutionResult | undefined> {
+    return engine.getResult(executionId)
   }
 
   return {

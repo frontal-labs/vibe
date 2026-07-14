@@ -52,6 +52,6 @@ describe("PluginHooks", () => {
 
   it("should silently skip unregistered hooks", async () => {
     const hooks = createPluginHooks()
-    await expect(hooks.execute("nonexistent")).resolves.not.toThrow()
+    await expect(hooks.execute("nonexistent")).resolves.toBeUndefined()
   })
 })

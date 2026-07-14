@@ -80,7 +80,7 @@ describe("PluginHost", () => {
     const dependent = createTestPlugin("dependent", undefined, ["base"])
 
     await host.register(base)
-    await expect(host.register(dependent)).resolves.not.toThrow()
+    await expect(host.register(dependent)).resolves.toBeUndefined()
   })
 
   it("should call plugin setup on registration", async () => {
