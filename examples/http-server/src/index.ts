@@ -1,6 +1,6 @@
-import { toFetchHandler } from "vibe/adapters"
-import { createAgent } from "vibe/agent"
-import { createAnthropicProvider } from "vibe/model"
+import { toFetchHandler } from "frontal-vibe/adapters"
+import { createAgent } from "frontal-vibe/agent"
+import { createAnthropicProvider } from "frontal-vibe/model"
 
 const provider = createAnthropicProvider()
 
@@ -15,7 +15,7 @@ if (bun) {
   console.log(`Listening on http://localhost:${port} (POST { prompt })`)
 } else {
   const { createServer } = await import("node:http")
-  const { toNodeListener } = await import("vibe/adapters")
+  const { toNodeListener } = await import("frontal-vibe/adapters")
   createServer(toNodeListener(createAgent({ provider }))).listen(port, () =>
     console.log(`Listening on http://localhost:${port}`),
   )

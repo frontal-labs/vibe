@@ -1,4 +1,4 @@
-import { defineConfig } from "vibe/config"
+import { defineConfig } from "frontal-vibe/config"
 
 // The typed shape of a Vibe app. `agents/` and `tools/` are auto-discovered by
 // convention (each file default-exports one), so there's nothing else to wire.

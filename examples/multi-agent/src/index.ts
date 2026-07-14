@@ -1,5 +1,5 @@
-import { createAgent, createDelegateTool } from "vibe/agent"
-import { createAnthropicProvider } from "vibe/model"
+import { createAgent, createDelegateTool } from "frontal-vibe/agent"
+import { createAnthropicProvider } from "frontal-vibe/model"
 
 // A worker sub-agent, exposed to the coordinator as a `delegate` tool. Pair workers
 // with a cheaper model (e.g. `claude-haiku-4-5`) for fan-out.

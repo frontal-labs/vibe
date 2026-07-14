@@ -1,7 +1,7 @@
-import { createAgent } from "vibe/agent"
-import { createPolicyEngine, guardTool, requireApprovalFor } from "vibe/governance"
-import { createAnthropicProvider } from "vibe/model"
-import { defineTool } from "vibe/tools"
+import { createAgent } from "frontal-vibe/agent"
+import { createPolicyEngine, guardTool, requireApprovalFor } from "frontal-vibe/governance"
+import { createAnthropicProvider } from "frontal-vibe/model"
+import { defineTool } from "frontal-vibe/tools"
 import { z } from "zod"
 
 const issueRefund = defineTool({

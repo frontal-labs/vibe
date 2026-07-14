@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@vibe/build": "workspace:*",
-    "vibe": "workspace:*",
+    "frontal-vibe": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

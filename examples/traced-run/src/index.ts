@@ -1,6 +1,6 @@
-import { createAgent } from "vibe/agent"
-import { createAnthropicProvider } from "vibe/model"
-import { createConsoleExporter, createTracer, traceAgentRun } from "vibe/tracing"
+import { createAgent } from "frontal-vibe/agent"
+import { createAnthropicProvider } from "frontal-vibe/model"
+import { createConsoleExporter, createTracer, traceAgentRun } from "frontal-vibe/tracing"
 
 const agent = createAgent({ provider: createAnthropicProvider() })
 const tracer = createTracer({ exporter: createConsoleExporter() })

@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "vibe": "workspace:*"
+    "frontal-vibe": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
