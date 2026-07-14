@@ -53,8 +53,8 @@ jobs:
             ${{ runner.os }}-turbo-
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: bun test
-      - run: bun test:types
+      - run: bun run test
+      - run: bun run test:types
 
   rust:
     name: Rust (language toolchain)
