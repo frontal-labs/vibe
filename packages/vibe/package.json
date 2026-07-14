@@ -1,8 +1,41 @@
 {
-  "name": "vibe",
+  "name": "frontal-vibe",
   "version": "0.0.0",
   "type": "module",
-  "description": "The Vibe framework barrel — import from `vibe` and `vibe/*` instead of `@vibe/*`.",
+  "description": "The Vibe framework barrel — import from `frontal-vibe` and `frontal-vibe/*` instead of `@vibe/*`.",
+  "keywords": [
+    "ai",
+    "agents",
+    "agent-framework",
+    "llm",
+    "anthropic",
+    "openai",
+    "tools",
+    "tool-calling",
+    "mcp",
+    "typescript",
+    "frontal",
+    "vibe"
+  ],
+  "homepage": "https://github.com/vibe-lang/vibe#readme",
+  "bugs": {
+    "url": "https://github.com/vibe-lang/vibe/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vibe-lang/vibe.git",
+    "directory": "packages/vibe"
+  },
+  "license": "Apache-2.0",
+  "author": "Frontal (https://frontal.dev)",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

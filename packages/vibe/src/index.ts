@@ -1,4 +1,4 @@
-// The `vibe` barrel. Prefer subpath imports (`import { createAgent } from "vibe/agent"`)
+// The `frontal-vibe` barrel. Prefer subpath imports (`import { createAgent } from "frontal-vibe/agent"`)
 // for tree-shaking; this root re-exports the handful of everyday entry points.
 
 export type { Agent, AgentEvent, AgentResult } from "@vibe/agent"
