@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, statSync } from "node:fs"
 import { basename, join } from "node:path"
 
-import { findConfig, loadConfig } from "@vibe/config"
+import { findConfig, loadConfig } from "vibe/config"
 
 import type { AppEntry, AppGraph } from "./types"
 

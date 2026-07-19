@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js"
 
-import { createLogger, LogLevel } from "@vibe/logger"
+import { createLogger, LogLevel } from "vibe/logger"
 import { expect, test } from "vitest"
 
 import { buildServer } from "../src/server"

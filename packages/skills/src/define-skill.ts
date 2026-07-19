@@ -1,5 +1,5 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
-import { defineTool, type ToolDefinition } from "@vibe/tools"
+import { defineTool, type ToolDefinition } from "vibe/tools"
 
 import type { Skill } from "./types"
 

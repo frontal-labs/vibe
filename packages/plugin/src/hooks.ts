@@ -1,4 +1,4 @@
-import type { LifecycleEvent } from "@vibe/lifecycle"
+import type { LifecycleEvent } from "vibe/lifecycle"
 
 import type { HookHandler, HookName, PluginHooks } from "./types"
 

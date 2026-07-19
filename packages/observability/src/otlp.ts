@@ -1,4 +1,4 @@
-/** The span shape this exporter reads — structurally satisfied by `@vibe/tracing`. */
+/** The span shape this exporter reads — structurally satisfied by `vibe/tracing`. */
 export interface SpanLike {
   readonly id: string
   readonly parentId: string | undefined

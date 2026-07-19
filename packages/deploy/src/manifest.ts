@@ -1,6 +1,6 @@
 /**
- * Consume a `@vibe/build` manifest to plan per-target serverless deployment. Kept
- * structurally decoupled from `@vibe/build` (no esbuild dep here): any object with
+ * Consume a `vibe/build` manifest to plan per-target serverless deployment. Kept
+ * structurally decoupled from `vibe/build` (no esbuild dep here): any object with
  * this shape works.
  */
 export interface DeployManifestAgent {
@@ -48,14 +48,14 @@ export function generateHandler(agentEntry: string, target: DeployTarget): strin
   const importLine = `import agent from "./${agentEntry}"`
   switch (target) {
     case "cloudflare":
-      return `${importLine}\nimport { toCloudflareWorker } from "@vibe/deploy"\nexport default toCloudflareWorker(agent)\n`
+      return `${importLine}\nimport { toCloudflareWorker } from "vibe/deploy"\nexport default toCloudflareWorker(agent)\n`
     case "lambda":
-      return `${importLine}\nimport { toLambdaHandler } from "@vibe/deploy"\nexport const handler = toLambdaHandler(agent)\n`
+      return `${importLine}\nimport { toLambdaHandler } from "vibe/deploy"\nexport const handler = toLambdaHandler(agent)\n`
     case "vercel":
     case "edge":
-      return `${importLine}\nimport { toVercelHandler } from "@vibe/deploy"\nexport default toVercelHandler(agent)\n`
+      return `${importLine}\nimport { toVercelHandler } from "vibe/deploy"\nexport default toVercelHandler(agent)\n`
     default:
-      return `${importLine}\nimport { toNodeListener } from "@vibe/adapters"\nimport { createServer } from "node:http"\ncreateServer(toNodeListener(agent)).listen(Number(process.env.PORT ?? 3000))\n`
+      return `${importLine}\nimport { toNodeListener } from "vibe/adapters"\nimport { createServer } from "node:http"\ncreateServer(toNodeListener(agent)).listen(Number(process.env.PORT ?? 3000))\n`
   }
 }
 

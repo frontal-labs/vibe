@@ -1,1 +1,1 @@
-export * from "@vibe/adapters"
+export * from "vibe/adapters"

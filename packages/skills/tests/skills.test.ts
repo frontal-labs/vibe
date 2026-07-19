@@ -1,4 +1,4 @@
-import { runToolCall } from "@vibe/tools"
+import { runToolCall } from "vibe/tools"
 import { describe, expect, it } from "vitest"
 import { z } from "zod"
 

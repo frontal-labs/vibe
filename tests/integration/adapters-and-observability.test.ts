@@ -1,9 +1,9 @@
-import { toFetchHandler } from "@vibe/adapters"
-import { createAgent } from "@vibe/agent"
-import { estimateCost, summarizeResult } from "@vibe/devtools"
-import { includes, runEval } from "@vibe/evals"
-import { createFakeProvider } from "@vibe/model"
-import { createMemoryExporter, createTracer, traceAgentRun } from "@vibe/tracing"
+import { toFetchHandler } from "vibe/adapters"
+import { createAgent } from "vibe/agent"
+import { estimateCost, summarizeResult } from "vibe/devtools"
+import { includes, runEval } from "vibe/evals"
+import { createFakeProvider } from "vibe/model"
+import { createMemoryExporter, createTracer, traceAgentRun } from "vibe/tracing"
 import { describe, expect, it } from "vitest"
 
 const agentSaying = (text: string) =>

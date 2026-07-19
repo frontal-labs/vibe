@@ -1,5 +1,5 @@
-import type { BuildManifest, BuildOptions } from "@vibe/build"
-import { bundleApp, discoverApp, formatAnalysis } from "@vibe/build"
+import type { BuildManifest, BuildOptions } from "vibe/build"
+import { bundleApp, discoverApp, formatAnalysis } from "vibe/build"
 
 /** Build an app directory into optimized, tree-shaken, code-split bundles. */
 export function buildApp(root: string, options: BuildOptions = {}): Promise<BuildManifest> {

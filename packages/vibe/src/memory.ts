@@ -1,1 +1,1 @@
-export * from "@vibe/memory"
+export * from "vibe/memory"

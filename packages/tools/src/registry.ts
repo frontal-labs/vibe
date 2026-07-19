@@ -1,5 +1,5 @@
-import { validationError } from "@vibe/errors"
-import type { ToolSchema } from "@vibe/model"
+import { validationError } from "vibe/errors"
+import type { ToolSchema } from "vibe/model"
 
 import type { AnyTool } from "./types"
 

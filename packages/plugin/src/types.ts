@@ -1,4 +1,4 @@
-import type { LifecycleEvent } from "@vibe/lifecycle"
+import type { LifecycleEvent } from "vibe/lifecycle"
 
 export type HookName = string
 

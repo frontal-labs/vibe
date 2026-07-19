@@ -1,4 +1,4 @@
-import type { VibeConfig } from "@vibe/config"
+import type { VibeConfig } from "vibe/config"
 
 /** A discovered agent or tool module: its export name and source file. */
 export interface AppEntry {

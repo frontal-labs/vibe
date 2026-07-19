@@ -1,5 +1,5 @@
-import type { Message, ModelRequest } from "@vibe/model"
 import { expectAssignable, expectType } from "tsd"
+import type { Message, ModelRequest } from "vibe/model"
 
 import {
   buildRequest,

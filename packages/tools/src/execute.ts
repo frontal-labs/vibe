@@ -1,5 +1,5 @@
-import { cancelledError } from "@vibe/errors"
-import { isError as isErrorValue } from "@vibe/shared"
+import { cancelledError } from "vibe/errors"
+import { isError as isErrorValue } from "vibe/shared"
 
 import type { AnyTool, ToolContext, ToolResult } from "./types"
 

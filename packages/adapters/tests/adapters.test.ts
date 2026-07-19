@@ -1,5 +1,5 @@
-import { createAgent } from "@vibe/agent"
-import { createFakeProvider } from "@vibe/model"
+import { createAgent } from "vibe/agent"
+import { createFakeProvider } from "vibe/model"
 import { describe, expect, it } from "vitest"
 
 import { toFetchHandler } from "../src/fetch"

@@ -1,5 +1,5 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
-import { toJsonSchema } from "@vibe/tools"
+import { toJsonSchema } from "vibe/tools"
 
 /** The outcome of validating a record against an entity's schema. */
 export type ValidationResult<T> =

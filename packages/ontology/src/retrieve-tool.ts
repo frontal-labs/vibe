@@ -1,4 +1,4 @@
-import { defineTool, type Tool } from "@vibe/tools"
+import { defineTool, type Tool } from "vibe/tools"
 import { z } from "zod"
 
 import type { OntologyStore, RetrieveOptions } from "./store"

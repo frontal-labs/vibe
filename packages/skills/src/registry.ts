@@ -1,4 +1,4 @@
-import type { AnyTool, ToolSchema } from "@vibe/tools"
+import type { AnyTool, ToolSchema } from "vibe/tools"
 
 import type { AnySkill, SkillKind } from "./types"
 

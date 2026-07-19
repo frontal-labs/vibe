@@ -1,5 +1,5 @@
-import type { AgentLike } from "@vibe/adapters"
 import { expectAssignable, expectType } from "tsd"
+import type { AgentLike } from "vibe/adapters"
 import type { DeployPlan } from "../src/index"
 import { deployPlan, generateDockerfile, toLambdaHandler, toVercelHandler } from "../src/index"
 

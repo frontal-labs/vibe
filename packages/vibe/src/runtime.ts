@@ -1,1 +1,1 @@
-export * from "@vibe/runtime"
+export * from "vibe/runtime"

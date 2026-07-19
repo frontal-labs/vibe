@@ -1,5 +1,5 @@
-import { createFakeProvider } from "@vibe/model"
 import { expectAssignable, expectType } from "tsd"
+import { createFakeProvider } from "vibe/model"
 
 import { type Agent, type AgentEvent, type AgentResult, createAgent } from "../src/index"
 

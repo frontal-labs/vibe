@@ -1,4 +1,4 @@
-import { runtimeError } from "@vibe/errors"
+import { runtimeError } from "vibe/errors"
 
 import type { ExecutionEngine } from "./execution-engine"
 import type { ExecutionId, ExecutionResult, ScheduleOptions, Scheduler, TaskId } from "./types"

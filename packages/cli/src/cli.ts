@@ -2,10 +2,9 @@
 import { existsSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-
-import { createDevBuilder, type DevBuilder } from "@vibe/build"
-import { formatDiagnostic } from "@vibe/errors"
 import chokidar from "chokidar"
+import { createDevBuilder, type DevBuilder } from "vibe/build"
+import { formatDiagnostic } from "vibe/errors"
 
 import { buildApp, summarizeManifest } from "./actions"
 import { createProgram } from "./program"

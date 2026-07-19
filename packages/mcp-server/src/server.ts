@@ -10,7 +10,7 @@ import {
   ListToolsRequestSchema,
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js"
-import type { Logger } from "@vibe/logger"
+import type { Logger } from "vibe/logger"
 import { z } from "zod"
 import { getPrompt, prompts } from "./prompts"
 import { readResource, resources } from "./resources"

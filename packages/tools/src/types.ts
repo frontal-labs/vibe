@@ -1,7 +1,7 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
-import type { Logger } from "@vibe/logger"
-import type { ToolSchema } from "@vibe/model"
-import type { CancellationToken } from "@vibe/runtime"
+import type { Logger } from "vibe/logger"
+import type { ToolSchema } from "vibe/model"
+import type { CancellationToken } from "vibe/runtime"
 
 /** Ambient services handed to a tool handler for the duration of one call. */
 export interface ToolContext {
@@ -13,7 +13,7 @@ export interface ToolContext {
   readonly logger?: Logger
   /**
    * A secrets source for the handler (injected by the security layer). Structural
-   * so `@vibe/tools` needn't depend on `@vibe/security`; `SecretsProvider` satisfies it.
+   * so `vibe/tools` needn't depend on `vibe/security`; `SecretsProvider` satisfies it.
    */
   readonly secrets?: { get(name: string): Promise<string | undefined> }
 }

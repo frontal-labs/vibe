@@ -1,1 +1,1 @@
-export * from "@vibe/agent"
+export * from "vibe/agent"

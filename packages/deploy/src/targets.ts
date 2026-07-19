@@ -1,5 +1,5 @@
-import type { AgentLike } from "@vibe/adapters"
-import { toFetchHandler } from "@vibe/adapters"
+import type { AgentLike } from "vibe/adapters"
+import { toFetchHandler } from "vibe/adapters"
 
 import type { LambdaHttpEvent, LambdaHttpResult } from "./types"
 

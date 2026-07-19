@@ -1,1 +1,1 @@
-export * from "@vibe/tools"
+export * from "vibe/tools"

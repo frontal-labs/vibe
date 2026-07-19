@@ -1,5 +1,5 @@
 import { join } from "node:path"
-import type { BuildManifest } from "@vibe/build"
+import type { BuildManifest } from "vibe/build"
 import { describe, expect, it } from "vitest"
 
 import { summarizeManifest } from "../src/actions"

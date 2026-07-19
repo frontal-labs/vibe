@@ -4,9 +4,9 @@ import {
   providerRateLimitError,
   runtimeError,
   validationError,
-} from "@vibe/errors"
+} from "vibe/errors"
 
-/** Map an OpenAI-compatible HTTP status to a typed `@vibe/errors` error. */
+/** Map an OpenAI-compatible HTTP status to a typed `vibe/errors` error. */
 export function mapOpenAIError(status: number | undefined, message: string, cause?: Error): Error {
   switch (status) {
     case 401:

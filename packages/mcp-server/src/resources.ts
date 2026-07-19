@@ -13,7 +13,7 @@ export const resources: readonly McpResource[] = [
     uri: "vibe://packages",
     name: "Workspace packages",
     mimeType: "application/json",
-    description: "The @vibe/* package list and acyclic dependency graph.",
+    description: "The vibe/* package list and acyclic dependency graph.",
   },
   {
     uri: "vibe://model-catalog",

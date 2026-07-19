@@ -9,7 +9,7 @@ import type { ModelProvider } from "./types"
  * (no magic string names):
  *
  * ```ts
- * import { openai, anthropic } from "@vibe/model"
+ * import { openai, anthropic } from "vibe/model"
  * createSystem({ provider: openai({ apiKey }) })  // or openai() to read OPENAI_API_KEY
  * createSystem({ provider: anthropic() })          // reads ANTHROPIC_API_KEY
  * ```

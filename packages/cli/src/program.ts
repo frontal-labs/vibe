@@ -1,8 +1,7 @@
 import { join } from "node:path"
-
-import type { BuildManifest, BuildOptions, BuildTarget } from "@vibe/build"
-import { scaffold } from "@vibe/generators"
 import { Command } from "commander"
+import type { BuildManifest, BuildOptions, BuildTarget } from "vibe/build"
+import { scaffold } from "vibe/generators"
 
 import { appInfo, formatAnalysis, summarizeManifest } from "./actions"
 

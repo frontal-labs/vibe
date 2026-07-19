@@ -1,12 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs"
 import { join, relative } from "node:path"
-import { agentsMissingError } from "@vibe/errors"
 import {
   type BuildOptions as EsbuildOptions,
   build as esbuild,
   context as esbuildContext,
   type Metafile,
 } from "esbuild"
+import { agentsMissingError } from "vibe/errors"
 
 import { discoverApp } from "./discover"
 import { toolEdges } from "./graph"

@@ -1,5 +1,5 @@
-import type { Logger } from "@vibe/logger"
-import type { ModelProvider, StopReason, TokenUsage } from "@vibe/model"
+import type { Logger } from "vibe/logger"
+import type { ModelProvider, StopReason, TokenUsage } from "vibe/model"
 import type { z } from "zod"
 
 /** A configured agent run's terminal result, normalized for MCP/agent output. */
@@ -58,7 +58,7 @@ export interface ToolSession {
   stop(): Promise<void>
 }
 
-/** Minimal shape of `@vibe/core`'s `System` we depend on. */
+/** Minimal shape of `vibe/core`'s `System` we depend on. */
 export interface SystemLike {
   readonly info: {
     readonly name: string
@@ -78,7 +78,7 @@ export interface ToolContext {
 
 /**
  * One capability, defined once. Exposed to MCP by the server and to the meta agent
- * by wrapping it as a `@vibe/tools` `Tool` — one schema, two consumers.
+ * by wrapping it as a `vibe/tools` `Tool` — one schema, two consumers.
  */
 export interface McpTool<Schema extends z.ZodTypeAny = z.ZodTypeAny> {
   readonly name: string

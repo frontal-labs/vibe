@@ -1,1 +1,1 @@
-export * from "@vibe/ontology"
+export * from "vibe/ontology"

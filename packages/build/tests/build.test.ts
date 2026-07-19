@@ -94,7 +94,7 @@ describe("createDevBuilder (incremental)", () => {
 
 describe("toolEdges (agent→tool graph)", () => {
   const AGENT = `
-import { createAgent } from "frontal-vibe/agent"
+import { createAgent } from "@frontal-labs/vibe/agent"
 import getOrder from "../tools/get-order"
 import { z } from "zod"
 export default createAgent({ tools: [getOrder] })

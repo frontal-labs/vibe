@@ -1,4 +1,4 @@
-import type { RetryPolicy } from "@vibe/runtime"
+import type { RetryPolicy } from "vibe/runtime"
 
 import type { WorkflowContext, WorkflowStep } from "./types"
 

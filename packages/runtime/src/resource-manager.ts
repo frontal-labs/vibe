@@ -1,4 +1,4 @@
-import { timeoutError } from "@vibe/errors"
+import { timeoutError } from "vibe/errors"
 
 import type { ResourceHandle, ResourceManager } from "./types"
 

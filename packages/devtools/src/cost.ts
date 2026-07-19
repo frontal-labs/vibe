@@ -1,4 +1,4 @@
-import type { TokenUsage } from "@vibe/model"
+import type { TokenUsage } from "vibe/model"
 
 /** USD per 1M tokens, by model id. Cached snapshot; override via `estimateCost`. */
 export const MODEL_PRICING: Readonly<Record<string, { input: number; output: number }>> = {

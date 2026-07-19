@@ -1,4 +1,4 @@
-import { nativeAddon } from "@vibe/shared"
+import { nativeAddon } from "vibe/shared"
 
 /** A tool an agent imports: its module specifier and local binding. */
 export interface ToolEdge {

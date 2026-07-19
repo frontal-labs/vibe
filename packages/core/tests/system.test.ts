@@ -1,5 +1,5 @@
-import { createFakeProvider } from "@vibe/model"
-import type { Plugin, PluginHooks } from "@vibe/plugin"
+import { createFakeProvider } from "vibe/model"
+import type { Plugin, PluginHooks } from "vibe/plugin"
 import { describe, expect, it } from "vitest"
 import { createSystem } from "../src/system"
 import { vibe } from "../src/vibe"

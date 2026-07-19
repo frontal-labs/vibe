@@ -1,1 +1,1 @@
-export * from "@vibe/workflows"
+export * from "vibe/workflows"

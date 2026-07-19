@@ -1,4 +1,4 @@
-import type { Message } from "@vibe/model"
+import type { Message } from "vibe/model"
 
 export type { Message }
 

@@ -1,4 +1,4 @@
-import { diCircularDependency, diResolutionFailed } from "@vibe/errors"
+import { diCircularDependency, diResolutionFailed } from "vibe/errors"
 
 import type { ServiceToken } from "./token"
 import type { Container, Factory, Registration, ServiceScope } from "./types"

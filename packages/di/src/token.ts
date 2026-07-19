@@ -1,4 +1,4 @@
-import type { Brand } from "@vibe/shared"
+import type { Brand } from "vibe/shared"
 
 export type ServiceToken<T> = Brand<string, `ServiceToken`> & {
   readonly __type: T

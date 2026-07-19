@@ -3,13 +3,13 @@ import type {
   ObservabilityConfig,
   OntologyConfig,
   SecurityConfig,
-} from "@vibe/config"
-import type { LogLevel } from "@vibe/logger"
-import type { Effort, ModelProvider } from "@vibe/model"
-import type { Plugin } from "@vibe/plugin"
-import type { AnySkill } from "@vibe/skills"
-import type { AnyTool } from "@vibe/tools"
-import type { Workflow } from "@vibe/workflows"
+} from "vibe/config"
+import type { LogLevel } from "vibe/logger"
+import type { Effort, ModelProvider } from "vibe/model"
+import type { Plugin } from "vibe/plugin"
+import type { AnySkill } from "vibe/skills"
+import type { AnyTool } from "vibe/tools"
+import type { Workflow } from "vibe/workflows"
 
 export interface SystemConfig {
   name: string
