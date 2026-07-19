@@ -1,11 +1,11 @@
 ---
 title: "Release & Versioning"
-description: "How Vibe versions and ships the `@vibe/*` packages. The stack is"
+description: "How Vibe versions and ships the `vibe/*` packages. The stack is"
 ---
 
 # Release & Versioning
 
-How Vibe versions and ships the `@vibe/*` packages. The stack is
+How Vibe versions and ships the `vibe/*` packages. The stack is
 [Changesets](https://github.com/changesets/changesets) for versioning +
 changelogs, conventional commits enforced by commitlint, and a Turborepo-driven
 release script. This document is the source of truth for the flow and the policy —
@@ -24,7 +24,7 @@ change and the semver bump it warrants, per affected package.
    ```bash
    bun changeset
    ```
-   Pick the affected `@vibe/*` packages, choose `patch` / `minor` / `major` for
+   Pick the affected `vibe/*` packages, choose `patch` / `minor` / `major` for
    each, and write a human-readable summary. This writes a file under `.changeset/`
    that you commit alongside the code.
 3. **Open the PR.** The changeset travels with it; reviewers see the intended bump.
@@ -43,7 +43,7 @@ change and the semver bump it warrants, per affected package.
    to npm.
 
 `.changeset/config.json` sets `"access": "public"` and
-`"updateInternalDependencies": "patch"` — when one `@vibe/*` package bumps, its
+`"updateInternalDependencies": "patch"` — when one `vibe/*` package bumps, its
 internal `workspace:*` dependents get at least a patch, so the graph stays
 consistent.
 
@@ -55,10 +55,10 @@ consistent.
 - **Does not need one:** internal refactors with no surface change, test-only
   changes, docs, CI/tooling config. (These still go through the normal PR + CI gate.)
 
-## Semver policy for the `@vibe/*` monorepo
+## Semver policy for the `vibe/*` monorepo
 
 Packages are versioned **independently** — Changesets is not configured with
-`fixed` or `linked` groups, so `@vibe/agent` and `@vibe/model` move on their own
+`fixed` or `linked` groups, so `vibe/agent` and `vibe/model` move on their own
 cadence. The policy per package:
 
 | Bump | Meaning | Examples |
@@ -89,7 +89,7 @@ test(shared): migrate tsd assertions to expectAssignable
 
 - **Common types:** `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `style`,
   `perf`, `build`, `ci`.
-- **Scope** is the package name without the `@vibe/` prefix (`agent`, `model`,
+- **Scope** is the package name without the `vibe/` prefix (`agent`, `model`,
   `tools`, `core`, …). See the recent history (`feat(lifecycle): …`,
   `fix(plugin): …`) for the house style.
 - **Breaking changes** get a `!` (`feat(model)!: …`) and/or a `BREAKING CHANGE:`

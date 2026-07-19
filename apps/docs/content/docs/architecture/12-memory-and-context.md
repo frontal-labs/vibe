@@ -5,7 +5,7 @@ description: "Two different things wear the word \"memory,\" and Vibe keeps them
 
 # Memory & Context
 
-> 🚧 Planned — package `@vibe/memory`. The message history and request assembly the
+> 🚧 Planned — package `vibe/memory`. The message history and request assembly the
 > [agent loop](./09-agent-loop.md) runs over, built on `shared`'s
 > [`ContextStore`](../../packages/shared/src/context-store.ts).
 
@@ -30,7 +30,7 @@ a **snapshot** yields an immutable copy for logging, replay, or handing to a
 sub-agent.
 
 ```ts
-import type { Message, ContentBlock } from "@vibe/model"
+import type { Message, ContentBlock } from "vibe/model"
 
 interface Conversation {
   appendUser(text: string): void

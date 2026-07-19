@@ -42,34 +42,34 @@ bun run dev
 
 | Package | Description |
 |---------|-------------|
-| `frontal-vibe` | Barrel package — import everything from `frontal-vibe` or `frontal-vibe/*` |
-| `@vibe/core` | Central orchestrator that wires all modules together |
-| `@vibe/agent` | Agent definition, lifecycle, and execution |
-| `@vibe/model` | LLM provider abstraction layer |
-| `@vibe/tools` | Tool and function-calling system |
-| `@vibe/memory` | Agent memory and state management |
-| `@vibe/runtime` | Execution runtime for agents |
-| `@vibe/skills` | Composable skill definitions |
-| `@vibe/workflows` | Multi-step workflow orchestration |
-| `@vibe/ontology` | Semantic layer — entities, relations, and retrieval grounding |
-| `@vibe/governance` | Policy engine and safety controls |
-| `@vibe/security` | Security primitives and sandboxing |
-| `@vibe/evals` | Evaluation and benchmarking utilities |
-| `@vibe/observability` | Logging, tracing, and metrics |
-| `@vibe/plugin` | Plugin system for extensibility |
-| `@vibe/di` | Dependency injection container |
-| `@vibe/config` | Configuration management |
-| `@vibe/cli` | CLI tool for scaffolding and managing projects |
-| `@vibe/build` | Build tooling and bundling |
-| `@vibe/deploy` | Deployment utilities |
-| `@vibe/devtools` | Developer experience tools |
-| `@vibe/tracing` | Distributed tracing |
-| `@vibe/errors` | Structured error handling |
-| `@vibe/logger` | Structured logging |
-| `@vibe/shared` | Shared types and utilities |
-| `@vibe/adapters` | Third-party service adapters |
-| `@vibe/lifecycle` | Startup/shutdown lifecycle management |
-| `@vibe/mcp-server` | MCP server that lets AI agents operate and extend Vibe |
+| `@frontal-labs/vibe` | Barrel package — import everything from `@frontal-labs/vibe` or `@frontal-labs/vibe/*` |
+| `vibe/core` | Central orchestrator that wires all modules together |
+| `vibe/agent` | Agent definition, lifecycle, and execution |
+| `vibe/model` | LLM provider abstraction layer |
+| `vibe/tools` | Tool and function-calling system |
+| `vibe/memory` | Agent memory and state management |
+| `vibe/runtime` | Execution runtime for agents |
+| `vibe/skills` | Composable skill definitions |
+| `vibe/workflows` | Multi-step workflow orchestration |
+| `vibe/ontology` | Semantic layer — entities, relations, and retrieval grounding |
+| `vibe/governance` | Policy engine and safety controls |
+| `vibe/security` | Security primitives and sandboxing |
+| `vibe/evals` | Evaluation and benchmarking utilities |
+| `vibe/observability` | Logging, tracing, and metrics |
+| `vibe/plugin` | Plugin system for extensibility |
+| `vibe/di` | Dependency injection container |
+| `vibe/config` | Configuration management |
+| `@frontal-labs/vibe-cli` | CLI tool for scaffolding and managing projects |
+| `vibe/build` | Build tooling and bundling |
+| `vibe/deploy` | Deployment utilities |
+| `vibe/devtools` | Developer experience tools |
+| `vibe/tracing` | Distributed tracing |
+| `vibe/errors` | Structured error handling |
+| `vibe/logger` | Structured logging |
+| `vibe/shared` | Shared types and utilities |
+| `vibe/adapters` | Third-party service adapters |
+| `vibe/lifecycle` | Startup/shutdown lifecycle management |
+| `vibe/mcp-server` | MCP server that lets AI agents operate and extend Vibe |
 
 ## Project Structure
 
@@ -93,7 +93,7 @@ vibe/
 
 - **Runtime:** [Bun](https://bun.sh) v1.3+
 - **Language:** TypeScript 5.6+ / Rust
-- **Build:** Turborepo + tsup
+- **Build:** Turborepo + Vite
 - **Linting:** Biome
 - **Testing:** Vitest
 - **Versioning:** Changesets

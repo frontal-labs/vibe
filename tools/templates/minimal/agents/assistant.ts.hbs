@@ -1,5 +1,5 @@
-import { createAgent } from "frontal-vibe/agent"
-import { createAnthropicProvider, createFakeProvider } from "frontal-vibe/model"
+import { createAgent } from "@frontal-labs/vibe/agent"
+import { createAnthropicProvider, createFakeProvider } from "@frontal-labs/vibe/model"
 
 const provider = process.env.ANTHROPIC_API_KEY
   ? createAnthropicProvider()

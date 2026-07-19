@@ -1,5 +1,5 @@
-import { createAgent } from "frontal-vibe/agent"
-import { createAnthropicProvider } from "frontal-vibe/model"
+import { createAgent } from "@frontal-labs/vibe/agent"
+import { createAnthropicProvider } from "@frontal-labs/vibe/model"
 
 import getOrder from "../tools/get-order"
 

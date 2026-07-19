@@ -1,8 +1,8 @@
 # Your first agent
 
 ```ts
-import { vibe } from "frontal-vibe/core"
-import { createAnthropicProvider } from "frontal-vibe/model"
+import { vibe } from "@frontal-labs/vibe/core"
+import { createAnthropicProvider } from "@frontal-labs/vibe/model"
 
 const system = vibe.system({
   name: "hello",

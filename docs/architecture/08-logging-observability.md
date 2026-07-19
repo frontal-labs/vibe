@@ -1,6 +1,6 @@
-# Logging & Observability — `@vibe/logger`
+# Logging & Observability — `vibe/logger`
 
-`@vibe/logger` is structured, leveled logging with two features that make it a real
+`vibe/logger` is structured, leveled logging with two features that make it a real
 observability substrate rather than a `console.log` wrapper: **default metadata**
 (bound per-logger, merged into every entry) and an **`AsyncLocalStorage`-backed
 correlation id** that threads through async call stacks without being passed by
@@ -77,7 +77,7 @@ system it came from (see [Lifecycle wiring](./04-lifecycle.md#how-core-wires-plu
 
 Distinct from `defaultMeta` (bound at construction), the **correlation id** flows
 through the async call stack via `AsyncLocalStorage` — built on the
-[`ContextStore<T>` from `@vibe/shared`](./02-package-topology.md):
+[`ContextStore<T>` from `vibe/shared`](./02-package-topology.md):
 
 ```ts
 export interface LogContext {

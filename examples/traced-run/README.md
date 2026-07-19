@@ -10,4 +10,4 @@ bun run --filter @example/traced-run start
 
 `createTracer({ exporter })` with `createConsoleExporter()` prints spans; use
 `createMemoryExporter()` to assert on them in tests, or `createOTLPExporter`
-(from `@vibe/observability`) to ship them to an OTLP collector.
+(from `vibe/observability`) to ship them to an OTLP collector.

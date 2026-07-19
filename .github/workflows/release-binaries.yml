@@ -3,7 +3,7 @@ name: Release binaries
 # Cross-compile the bundler's native analysis addon (napi) on tag and attach it to
 # the GitHub release. The `vibe` CLI and the whole runtime ship as npm packages;
 # the `.vibe` language + its Rust compiler/LSP/wasm were retired — Vibe apps are
-# plain TypeScript, and the addon is an optional accelerator for `@vibe/build`.
+# plain TypeScript, and the addon is an optional accelerator for `vibe/build`.
 on:
   push:
     tags: ["v*"]

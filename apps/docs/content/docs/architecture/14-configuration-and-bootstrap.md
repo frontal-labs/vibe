@@ -7,7 +7,7 @@ description: "The design goal is a **zero-ceremony happy path with a fully-typed
 
 > 🚧 Planned surface. In Vibe, configuration is plain TypeScript: a
 > `defineConfig({…})` in `vibe.config.ts` and/or options passed straight to
-> `createSystem(…)`. `@vibe/config` resolves it into a `VibeConfig` that bootstraps
+> `createSystem(…)`. `vibe/config` resolves it into a `VibeConfig` that bootstraps
 > the runtime. The entry point is the `createSystem(resolved)` call you make
 > yourself — there is no separate compiler entry point.
 
@@ -23,7 +23,7 @@ the TypeScript modules that define your agents, tools, and models:
 
 ```ts
 // vibe.config.ts
-import { defineConfig } from "@vibe/config"
+import { defineConfig } from "vibe/config"
 
 export default defineConfig({
   name: "support-bot",
@@ -35,12 +35,12 @@ export default defineConfig({
 })
 ```
 
-Your agents, tools, and models are ordinary TypeScript, defined with the `@vibe/*`
+Your agents, tools, and models are ordinary TypeScript, defined with the `vibe/*`
 APIs and imported where you compose the system:
 
 ```ts
 // support.ts
-import { defineTool, createAgent } from "@vibe/core"
+import { defineTool, createAgent } from "vibe/core"
 import { z } from "zod"
 
 export const getOrder = defineTool({
@@ -58,7 +58,7 @@ export const support = createAgent({
 ```
 
 Tools are wired by passing them to the agent (or `createSystem`) that uses them;
-`@vibe/build` traces those `import` edges to code-split tools into lazily-loaded
+`vibe/build` traces those `import` edges to code-split tools into lazily-loaded
 chunks. See [Core concepts](./01-core-concepts.md).
 
 ## Passing config directly to `createSystem`
@@ -69,7 +69,7 @@ to the **same** `VibeConfig`:
 
 ```ts
 // vibe.config.ts
-import { createSystem } from "@vibe/core"
+import { createSystem } from "vibe/core"
 
 const system = createSystem({
   name: "support-bot",
@@ -79,7 +79,7 @@ const system = createSystem({
 })
 ```
 
-`defineConfig` (from `@vibe/config`) is an identity helper (like Vite/Vitest's) — it
+`defineConfig` (from `vibe/config`) is an identity helper (like Vite/Vitest's) — it
 does nothing at runtime; it exists purely to give `vibe.config.ts` full
 type-checking and autocomplete. The file resolves as
 `vibe.config.{ts,mts,cts,js,mjs,cjs}` and TypeScript is loaded natively (no build
@@ -87,7 +87,7 @@ step). A `vibe.config.ts` and an inline `createSystem({…})` object are two spe
 of one thing; pick whichever fits. (If both exist, the object passed to
 `createSystem` is merged on top of the file — explicit overrides win.)
 
-## The `@vibe/config` package — the resolver
+## The `vibe/config` package — the resolver
 
 A dedicated package so the resolver is testable and reusable, and so
 `defineConfig`'s types and the `VibeConfig` schema live in one place. It provides:
@@ -122,7 +122,7 @@ interface VibeConfig {
   /** Default agent's system prompt. */
   system?: string
 
-  /** Tools — passed to the agents that use them; imports traced by @vibe/build. */
+  /** Tools — passed to the agents that use them; imports traced by vibe/build. */
   tools?: Tool[]
 
   /** Agents — created with `createAgent(…)`; resolvable by name. */
@@ -139,7 +139,7 @@ interface VibeConfig {
 
   /** Runtime defaults applied to model & tool executions. */
   runtime?: {
-    retry?: Partial<RetryPolicy>         // default: @vibe/runtime defaultRetryPolicy
+    retry?: Partial<RetryPolicy>         // default: vibe/runtime defaultRetryPolicy
     limits?: Record<string, number>      // named ResourceManager concurrency limits
     defaultTimeoutMs?: number
   }
@@ -156,14 +156,14 @@ Each field maps to an existing runtime seam: `provider` → the
 [model layer](./10-model-provider-layer.md), `tools` → the
 [tool registry](./11-tools-and-mcp.md), `plugins` →
 [the plugin host](./06-plugin-system.md), `runtime` →
-[`@vibe/runtime`](./05-runtime-execution.md), `agent` →
+[`vibe/runtime`](./05-runtime-execution.md), `agent` →
 [the agent loop](./09-agent-loop.md). Config is a thin, declarative front for
 wiring that already exists — it does not introduce a second way to do things, it
 removes the boilerplate.
 
-You populate `tools`/`agents`/`plugins` by constructing them with the `@vibe/*`
+You populate `tools`/`agents`/`plugins` by constructing them with the `vibe/*`
 APIs and passing them in (or attaching them to the agents that use them) — ordinary
-TypeScript, checked by `tsc` and traced by `@vibe/build` for code-splitting.
+TypeScript, checked by `tsc` and traced by `vibe/build` for code-splitting.
 
 Resolution validates the object (a Zod schema under the hood) and fails **loudly
 with a typed error** on a bad config — a missing provider key, an unknown model
@@ -192,20 +192,20 @@ the first match in the order `vibe.config.ts → .mts → .cts → .js → .mjs 
 ## Bootstrap flow — `createSystem` is the entry point
 
 There is no separate compiler entry point. You call `createSystem(resolved)`
-yourself — directly, or from a thin entry module that `@vibe/build` bundles:
+yourself — directly, or from a thin entry module that `vibe/build` bundles:
 
 ```
 vibe.config.ts  (defineConfig default)     createSystem({…})  (inline object)
         │                                          │
         └──────────────┬───────────────────────────┘
                        ▼   resolve to VibeConfig
-        @vibe/config.loadConfig()
+        vibe/config.loadConfig()
         discover → transpile → validate → normalize
                        │
                        ▼   merge with env + explicit overrides   (mergeConfig)
                    ResolvedConfig
                        │
-                       ▼   @vibe/core.createSystem(resolved)
+                       ▼   vibe/core.createSystem(resolved)
         build container · lifecycle · logger · plugin host · runtime
         register provider, tool registry, memory as DI tokens
                        │
@@ -217,19 +217,19 @@ The `vibe` CLI wraps this flow:
 
 - **`vibe dev`** — watch + run: resolves config, starts the system with verbose
   logs, and hot-reloads on change.
-- **`vibe build`** — bundle to `dist/` for production via `@vibe/build` (optionally
+- **`vibe build`** — bundle to `dist/` for production via `vibe/build` (optionally
   accelerated by the `vibe_bundler`/`vibe_napi` Rust crates for tool code-splitting).
 
 See [Quickstart](../dx/03-quickstart.md) for the end-to-end flow.
 
 ## Calling `createSystem` directly
 
-`createSystem(resolved)` against [`@vibe/core`](../../packages/core/src/system.ts)
+`createSystem(resolved)` against [`vibe/core`](../../packages/core/src/system.ts)
 **is** the entry point. It is the one, supported way to bootstrap Vibe — whether you
 run a standalone Vibe app or embed the runtime inside an existing app:
 
 ```ts
-import { createSystem } from "@vibe/core"
+import { createSystem } from "vibe/core"
 
 const system = createSystem({
   name: "support-bot",
@@ -261,5 +261,5 @@ once.
 
 See the [Quickstart](../dx/03-quickstart.md) for the end-to-end flow,
 [Core concepts](./01-core-concepts.md) for the nouns, and
-[Roadmap](../plan/00-roadmap.md) for where `@vibe/config` and `@vibe/build` land in
+[Roadmap](../plan/00-roadmap.md) for where `vibe/config` and `vibe/build` land in
 the build order.

@@ -6,19 +6,19 @@ description: "The ordered engineering work to take Vibe from \"tested infrastruc
 # Build Plan
 
 The ordered engineering work to take Vibe from "tested infrastructure with a
-stubbed `ask()`" to a **TypeScript-native agent framework** — a set of `@vibe/*`
+stubbed `ask()`" to a **TypeScript-native agent framework** — a set of `vibe/*`
 packages you compose into plain-TypeScript agent apps. Phases are sequential where
 they must be and parallelizable where noted. Each phase has an exit gate — nothing
 proceeds until the gate is green.
 
-The work is a single workstream — **the `@vibe/*` runtime** (Phases 0–7): the
+The work is a single workstream — **the `vibe/*` runtime** (Phases 0–7): the
 model, tools, memory, agent, and front-door packages that an app imports and calls
 directly. Everything is written and consumed in TypeScript; an app is authored in
 `.ts` and composed from these APIs (`createSystem`, `defineTool`, `createAgent`).
 
 An optional native accelerator lives in `crates/` — `vibe_bundler` (an oxc-based
 static analyzer that extracts a Vibe app's agent→tool import edges) and `vibe_napi`
-(its napi-rs binding) — which powers tool code-splitting in `@vibe/build`. It is a
+(its napi-rs binding) — which powers tool code-splitting in `vibe/build`. It is a
 build-time performance optimization, not part of the runtime, and the framework
 works without it. See [Cross-cutting rules](#cross-cutting-rules-for-every-phase).
 
@@ -42,7 +42,7 @@ in-progress, uncommitted config refactor. Finish it before adding packages.
 **Exit gate:** `bun ci:check` (lint → typecheck → build → test) green on `master`;
 CI runs on push; working tree clean and committed.
 
-## Phase 1 — Model layer (`@vibe/model`)
+## Phase 1 — Model layer (`vibe/model`)
 
 Deliver the [ModelProvider interface](../architecture/10-model-provider-layer.md)
 and the Anthropic reference provider.
@@ -54,7 +54,7 @@ and the Anthropic reference provider.
 - [ ] Anthropic provider: request mapping (adaptive thinking, effort, tools,
       streaming for large `max_tokens`), response normalization, stop-reason
       normalization, `countTokens`.
-- [ ] Typed errors mapped from provider HTTP codes → `@vibe/errors`
+- [ ] Typed errors mapped from provider HTTP codes → `vibe/errors`
       (`RateLimitError`, `InvalidRequestError`, `OverloadedError`, `ModelRefusalError`).
 - [ ] Deterministic **fake provider** for tests (scripted responses/tool calls).
 - [ ] DI token `modelProviderToken`; lifecycle wiring for warm-up/teardown.
@@ -63,7 +63,7 @@ and the Anthropic reference provider.
 **Exit gate:** unit + type tests green; fake provider drives a scripted 2-turn
 exchange; a live smoke test (guarded by `ANTHROPIC_API_KEY`) returns text.
 
-## Phase 2 — Tools layer (`@vibe/tools`)
+## Phase 2 — Tools layer (`vibe/tools`)
 
 Deliver [typed tool definitions and the registry](../architecture/11-tools-and-mcp.md).
 
@@ -81,7 +81,7 @@ Deliver [typed tool definitions and the registry](../architecture/11-tools-and-m
 **Exit gate:** define → register → execute a tool end-to-end; type test proves
 handler args are inferred from the schema; a throwing tool yields `isError`.
 
-## Phase 3 — Memory layer (`@vibe/memory`)
+## Phase 3 — Memory layer (`vibe/memory`)
 
 Deliver [conversation + memory + context management](../architecture/12-memory-and-context.md).
 
@@ -96,7 +96,7 @@ Deliver [conversation + memory + context management](../architecture/12-memory-a
 **Exit gate:** a conversation round-trips through the request builder; budget
 trimming has a unit test.
 
-## Phase 4 — Agent layer (`@vibe/agent`)
+## Phase 4 — Agent layer (`vibe/agent`)
 
 Deliver [the agent loop](../architecture/09-agent-loop.md).
 
@@ -128,14 +128,14 @@ releases and returns; iteration ceiling raises the typed error.
 answer; a tool-using example works; the [quickstart](../dx/03-quickstart.md) runs
 verbatim.
 
-## Phase 5b — Config resolver (`@vibe/config`)
+## Phase 5b — Config resolver (`vibe/config`)
 
 Deliver the resolved-configuration layer: the schema and loader that turn a
 `vibe.config.ts` file into a validated, normalized `VibeConfig` the `System`
 consumes at boot. See
 [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md).
 
-- [ ] `@vibe/config`: `VibeConfig` schema (Zod-validated), `defineConfig` identity
+- [ ] `vibe/config`: `VibeConfig` schema (Zod-validated), `defineConfig` identity
       helper, `loadConfig` (discover `vibe.config.{ts,mts,cts,js,mjs,cjs}`,
       transpile TS in-memory, import default, validate, normalize), `mergeConfig`
       (defaults → file → env → explicit overrides).
@@ -169,7 +169,7 @@ logs show nested traces.
 - [ ] `create-vibe` scaffolder (Phase-gated by DX readiness).
 - [ ] Docs kept in lockstep; API reference generated from types.
 - [ ] Perf pass using `tools/profiling`.
-- [ ] Optional native accelerator: harden `vibe_bundler`/`vibe_napi` so `@vibe/build`
+- [ ] Optional native accelerator: harden `vibe_bundler`/`vibe_napi` so `vibe/build`
       can code-split tools into lazily-loaded chunks; keep the pure-TS fallback path
       green when the addon is absent.
 
@@ -178,14 +178,14 @@ logs show nested traces.
 These apply to every runtime phase (0–7). The optional native accelerator crates
 (`vibe_bundler`, `vibe_napi`) carry their own Rust ground rules —
 `#![forbid(unsafe_code)]`, an acyclic crate graph, and `cargo test`/`clippy` in CI —
-but they are a build-time optimization for `@vibe/build`, not part of the runtime
+but they are a build-time optimization for `vibe/build`, not part of the runtime
 contract below.
 
 1. **Preserve the acyclic graph** — packages depend down, never up. See
    [Package topology](../architecture/02-package-topology.md).
-2. **No bare `throw new Error`** — use `@vibe/errors` factories.
-3. **No `console.log`** in library code — use `@vibe/logger`.
-4. **Execution semantics come from `@vibe/runtime`** — the loop does not hand-roll
+2. **No bare `throw new Error`** — use `vibe/errors` factories.
+3. **No `console.log`** in library code — use `vibe/logger`.
+4. **Execution semantics come from `vibe/runtime`** — the loop does not hand-roll
    retry/cancellation.
 5. **Ship `tests/` + `type-tests/` with every package**; the CI gate stays green.
 6. **Changesets** for every user-facing change (versioning is already configured).

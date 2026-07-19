@@ -22,7 +22,7 @@ Companion docs: [Build plan](./01-build-plan.md) (per-phase exit gates),
 
 ## The two test surfaces per package
 
-Every `@vibe/*` package has two independent test directories, each with its own
+Every `vibe/*` package has two independent test directories, each with its own
 runner:
 
 | Surface | Directory | Runner | Script | What it proves |
@@ -61,7 +61,7 @@ Guidelines:
   state. Time-dependent logic takes an injectable clock; randomness (jittered
   backoff) is seeded or asserted by range.
 - **Errors are asserted by type and code**, not by message string — use the
-  `@vibe/errors` factories and check `error.code` / `retryable` / `fatal`.
+  `vibe/errors` factories and check `error.code` / `retryable` / `fatal`.
 
 ## Type-tests (tsd / `expectAssignable`)
 
@@ -98,7 +98,7 @@ to lock in the negative cases that make branded types and inference valuable.
 ## The deterministic fake ModelProvider
 
 The agent loop cannot be tested against a live model — that would be slow,
-non-deterministic, and cost money on every CI run. Instead, `@vibe/model` ships a
+non-deterministic, and cost money on every CI run. Instead, `vibe/model` ships a
 **fake provider** (`fake/provider.ts`) driven by a script:
 
 ```ts
@@ -117,7 +117,7 @@ Anthropic.
 
 ## Tool-execution tests
 
-`@vibe/tools` tests the full define → register → execute path:
+`vibe/tools` tests the full define → register → execute path:
 
 - **Round-trip.** `defineTool` → `registry.register` → `runToolCall` returns the
   handler's typed result.
@@ -177,7 +177,7 @@ dedicated tests, all driven by the fake provider (see
 
 The only native code in the repo is a small, optional build accelerator: `vibe_bundler`
 (an oxc-based static analyzer that extracts a Vibe app's agent→tool import edges so
-`@vibe/build` can build a dependency graph and code-split tools into lazily-loaded chunks)
+`vibe/build` can build a dependency graph and code-split tools into lazily-loaded chunks)
 and `vibe_napi` (its napi-rs binding, behind a `node` feature). It is **not** a language
 front end — there is no lexer, parser, or emitter to test — so its test story is
 correspondingly small.
@@ -186,11 +186,11 @@ correspondingly small.
 |---|---|---|
 | Unit + integration | `cargo test` | `tool_edges(source, marker)` extracts the right import/agent→tool edges from a TS module |
 | Lints | `cargo clippy --all-targets -D warnings` | The crates stay warning-clean; `#![forbid(unsafe_code)]` holds |
-| Binding | `vibe_napi` `node`-feature tests | The addon surface (`tool_edges`, `version`) matches what `@vibe/build` calls |
+| Binding | `vibe_napi` `node`-feature tests | The addon surface (`tool_edges`, `version`) matches what `vibe/build` calls |
 
-The accelerator is a performance optimization, so `@vibe/build` also keeps a pure-TS
+The accelerator is a performance optimization, so `vibe/build` also keeps a pure-TS
 fallback path that runs when the addon is absent — and that fallback is exercised by the
-`@vibe/build` Vitest suite, so the framework is proven correct with or without the native
+`vibe/build` Vitest suite, so the framework is proven correct with or without the native
 crate.
 
 ## What CI runs
@@ -209,7 +209,7 @@ packages are cached:
 **Native accelerator.** When the `crates/` workspace changes, a small parallel job
 runs `cargo fmt --check`, `cargo clippy --all-targets -D warnings`, and `cargo test`
 over the two crates (`vibe_bundler`, `vibe_napi`). This is a lightweight check on the
-optional build accelerator, not a second language toolchain — and because `@vibe/build`
+optional build accelerator, not a second language toolchain — and because `vibe/build`
 keeps a pure-TS fallback, a change here never blocks a runtime-only merge.
 
 > **Note:** CI currently triggers on `main` while the default branch is `master`,

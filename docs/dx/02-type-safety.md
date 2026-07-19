@@ -17,7 +17,7 @@ The mechanisms:
 TypeScript is structural: two types with the same shape are interchangeable. That
 is usually convenient and occasionally catastrophic — an `ExecutionId` and a
 `TraceId` are both `string`, so nothing stops you passing one where the other is
-required. Vibe closes this with a single tiny primitive in `@vibe/shared`:
+required. Vibe closes this with a single tiny primitive in `vibe/shared`:
 
 ```ts
 export type Brand<Base, BrandName extends string> = Base & {
@@ -106,7 +106,7 @@ Zod schema, and that single schema drives two consumers:
   provider sends to the model.
 
 ```ts
-import { defineTool } from "@vibe/tools" // 🚧
+import { defineTool } from "vibe/tools" // 🚧
 import { z } from "zod"
 
 const transfer = defineTool({
@@ -157,7 +157,7 @@ subclass with a machine-readable `ErrorCode`, so `catch` blocks branch on a type
 rather than a substring:
 
 ```ts
-import { ProviderRateLimitError, TimeoutError, VibeError } from "@vibe/errors"
+import { ProviderRateLimitError, TimeoutError, VibeError } from "vibe/errors"
 ```
 
 **Before (stringly-typed):**
@@ -197,7 +197,7 @@ nominal, a handler's args stop matching its schema.
 ```ts
 // packages/tools/type-tests/define-tool.test-d.ts  🚧
 import { expectAssignable, expectError } from "tsd"
-import { defineTool } from "@vibe/tools"
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 
 const t = defineTool({
@@ -223,7 +223,7 @@ expectError(
 )
 ```
 
-Existing packages already carry these — e.g. `@vibe/shared` migrated its assertions
+Existing packages already carry these — e.g. `vibe/shared` migrated its assertions
 to `expectAssignable`. Type tests are part of `bun ci:check`, so a change that
 silently weakens a type is a **red build**, not a latent bug. See the
 [testing strategy](../plan/03-testing-strategy.md).

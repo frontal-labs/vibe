@@ -1,15 +1,15 @@
 ---
-title: "Errors — `@vibe/errors`"
+title: "Errors — `vibe/errors`"
 description: "Vibe's error model has one principle: **errors are values with codes.** Every"
 ---
 
-# Errors — `@vibe/errors`
+# Errors — `vibe/errors`
 
 Vibe's error model has one principle: **errors are values with codes.** Every
 failure is a `VibeError` subclass carrying a machine-readable `ErrorCode`, boolean
 `fatal`/`retryable` flags, an optional `cause` chain, and a JSON serialization.
 Retry logic, telemetry, and user messaging branch on the **code and flags**, never
-on a parsed message string. `@vibe/errors` sits just above `@vibe/shared` so every
+on a parsed message string. `vibe/errors` sits just above `vibe/shared` so every
 layer above it can throw typed — there is never an excuse for `throw new Error()`
 in library code.
 

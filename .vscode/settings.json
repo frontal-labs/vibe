@@ -40,5 +40,5 @@
     "**/node_modules": true,
     "**/coverage": true
   },
-  "cSpell.words": ["biomejs", "changesets", "semver", "turborepo", "typecheck", "vitest", "tsup"]
+  "cSpell.words": ["biomejs", "changesets", "semver", "turborepo", "typecheck", "vitest"]
 }

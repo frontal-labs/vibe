@@ -1,6 +1,6 @@
 # ontology-rag
 
-Retrieval-augmented grounding with `@vibe/ontology`: upsert records into a semantic
+Retrieval-augmented grounding with `vibe/ontology`: upsert records into a semantic
 store and let an agent retrieve them by similarity to ground its answers.
 
 ```sh

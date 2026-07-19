@@ -16,7 +16,7 @@ Companion docs: [Build plan](./01-build-plan.md) (per-phase exit gates),
 
 ## The two test surfaces per package
 
-Every `@vibe/*` package has two independent test directories, each with its own
+Every `vibe/*` package has two independent test directories, each with its own
 runner:
 
 | Surface | Directory | Runner | Script | What it proves |
@@ -55,7 +55,7 @@ Guidelines:
   state. Time-dependent logic takes an injectable clock; randomness (jittered
   backoff) is seeded or asserted by range.
 - **Errors are asserted by type and code**, not by message string — use the
-  `@vibe/errors` factories and check `error.code` / `retryable` / `fatal`.
+  `vibe/errors` factories and check `error.code` / `retryable` / `fatal`.
 
 ## Type-tests (tsd / `expectAssignable`)
 
@@ -92,7 +92,7 @@ to lock in the negative cases that make branded types and inference valuable.
 ## The deterministic fake ModelProvider
 
 The agent loop cannot be tested against a live model — that would be slow,
-non-deterministic, and cost money on every CI run. Instead, `@vibe/model` ships a
+non-deterministic, and cost money on every CI run. Instead, `vibe/model` ships a
 **fake provider** (`fake/provider.ts`) driven by a script:
 
 ```ts
@@ -111,7 +111,7 @@ Anthropic.
 
 ## Tool-execution tests
 
-`@vibe/tools` tests the full define → register → execute path:
+`vibe/tools` tests the full define → register → execute path:
 
 - **Round-trip.** `defineTool` → `registry.register` → `runToolCall` returns the
   handler's typed result.
@@ -172,7 +172,7 @@ dedicated tests, all driven by the fake provider (see
 The build accelerator is Rust, so it is tested with the Rust toolchain, not Vitest. It
 is a small workspace — two crates, no source language: `vibe_bundler` (oxc-based static
 analysis of an app's agent/tool TypeScript modules — extracts `import` declarations and
-agent→tool edges so `@vibe/build` can build the dependency graph and code-split tools)
+agent→tool edges so `vibe/build` can build the dependency graph and code-split tools)
 and `vibe_napi` (its optional napi-rs binding to JS, exposing `tool_edges(source, marker)`
 and `version()`). The philosophy mirrors the TypeScript side — deterministic, exhaustive
 on the parts that can hurt you.
@@ -190,9 +190,9 @@ module — so a change to the analysis shows up as a reviewable diff (`cargo ins
 review`). A corpus of representative and intentionally-broken input modules pins the
 extraction against real-world code.
 
-**Cross-language contract tests.** `@vibe/build`'s TypeScript tests call the `vibe_napi`
+**Cross-language contract tests.** `vibe/build`'s TypeScript tests call the `vibe_napi`
 binding (`tool_edges`, `version`) and assert the graph it returns matches what the app
-expects — proving the native accelerator and the JS consumer agree. Because `@vibe/build`
+expects — proving the native accelerator and the JS consumer agree. Because `vibe/build`
 degrades gracefully when the native addon is absent, there is also a test that the
 pure-JS path produces an equivalent graph.
 
@@ -213,7 +213,7 @@ the build-accelerator (Rust) track — because they have independent toolchains.
 cached:
 
 - **`ci:check`** = `turbo run lint typecheck build test` — Biome lint, `tsc
-  --noEmit`, `tsup` build, and Vitest unit tests, in dependency order.
+  --noEmit`, `vite` build, and Vitest unit tests, in dependency order.
 - **`bun test:types`** — the tsd type-tests (a separate CI step, since tsd is not
   part of `ci:check`).
 - **`bun format:check`** — Biome formatting is verified, not fixed, in CI.
@@ -230,7 +230,7 @@ toolchain for `vibe_bundler`/`vibe_napi`:
 
 Both tracks must be green for a merge. They are largely independent — a framework-only
 change need not rebuild the Rust workspace and vice versa — but the `vibe_napi` contract
-couples them: a change to the shape `vibe_bundler` returns can break `@vibe/build`'s
+couples them: a change to the shape `vibe_bundler` returns can break `vibe/build`'s
 cross-language contract tests, which is exactly the signal you want.
 
 > **Note:** CI currently triggers on `main` while the default branch is `master`,

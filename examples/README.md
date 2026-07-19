@@ -16,7 +16,7 @@ ANTHROPIC_API_KEY=sk-... bun run --filter @example/hello-agent start   # any exa
 | [tool-use](./tool-use) | A typed Zod tool the agent calls |
 | [streaming](./streaming) | `agent.stream()` — text/thinking/tool events live |
 | [multi-agent](./multi-agent) | Coordinator → worker delegation via `createDelegateTool` |
-| [http-server](./http-server) | Serve an agent over HTTP/SSE with `@vibe/adapters` |
+| [http-server](./http-server) | Serve an agent over HTTP/SSE with `vibe/adapters` |
 
 ## Building real apps
 
@@ -33,7 +33,7 @@ ANTHROPIC_API_KEY=sk-... bun run --filter @example/hello-agent start   # any exa
 |---------|-------|
 | [governance](./governance) | Policy engine + `guardTool` (deny / require approval) |
 | [observability](./observability) | `observeAgent`: metrics, audit trail, USD cost |
-| [eval-suite](./eval-suite) | Score an agent against cases with `@vibe/evals` |
-| [traced-run](./traced-run) | Span tree per run with `@vibe/tracing` |
+| [eval-suite](./eval-suite) | Score an agent against cases with `vibe/evals` |
+| [traced-run](./traced-run) | Span tree per run with `vibe/tracing` |
 
 Each directory has its own README with details and run commands.

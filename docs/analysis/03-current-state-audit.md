@@ -8,8 +8,8 @@ truthful about where it is.
 ## Summary
 
 > **Update (runtime built):** the agentic layer described below as "does not exist
-> yet" **now exists and is green.** `@vibe/model`, `@vibe/tools`, `@vibe/memory`,
-> and `@vibe/agent` are implemented; `system.ask()` runs the real agent loop
+> yet" **now exists and is green.** `vibe/model`, `vibe/tools`, `vibe/memory`,
+> and `vibe/agent` are implemented; `system.ask()` runs the real agent loop
 > through a configured provider; one-level multi-agent delegation works. Workspace
 > gates pass: `bun lint` / `format:check` / `typecheck` / `build` (13/13) and
 > `bun test` (205 tests) / `test:types` (25/25). See the
@@ -31,7 +31,7 @@ docs) should be fixed early because they undermine trust.
 ## Findings
 
 ### The headline API is now implemented (was 🔴 unimplemented)
-`packages/core/src/system.ts` — `ask(prompt)` now runs the real `@vibe/agent`
+`packages/core/src/system.ts` — `ask(prompt)` now runs the real `vibe/agent`
 loop: `createSystem` registers the model provider, tool registry, and memory in
 its container, `ask()` delegates to `system.agent().run({ text })`, and returns
 the assistant text. Without a configured `provider` it throws a clear
@@ -94,20 +94,20 @@ that stamps time on read. Harmless; noted so no one caches it expecting stabilit
 
 ### 🟡 Package `description` fields are empty
 Every `packages/*/package.json` has `"description": ""`. Fill these before any
-publish; they surface on npm and in `@vibe/*` discovery.
+publish; they surface on npm and in `vibe/*` discovery.
 
 ### ✅ The Rust bundler accelerator — a real Cargo workspace
-Vibe ships a small Rust side that accelerates `@vibe/build`. The `crates/`/`.cargo/`
+Vibe ships a small Rust side that accelerates `vibe/build`. The `crates/`/`.cargo/`
 directories are a real Cargo workspace:
 - Root `Cargo.toml` workspace (`members = ["crates/*", "benchmarks"]`) +
   `rust-toolchain.toml` + `.cargo/config.toml`.
 - **Two crates.** `vibe_bundler` — oxc-based static analysis of a Vibe app's
   agent/tool TypeScript modules; it extracts `import` declarations and the
-  agent→tool edges so `@vibe/build` can build the dependency graph and code-split
+  agent→tool edges so `vibe/build` can build the dependency graph and code-split
   tools into lazily-loaded chunks (small cold starts). `vibe_napi` — a napi-rs
   binding (behind the `node` feature) exposing `tool_edges(source, marker)` and
   `version()` to JavaScript. `#![forbid(unsafe_code)]`.
-- The native binding is an **optional accelerator**; `@vibe/build` works without it.
+- The native binding is an **optional accelerator**; `vibe/build` works without it.
 - Verified green: `cargo build`, `cargo fmt --check`, `cargo clippy -D warnings`,
   `cargo test`. `target/` gitignored; `Cargo.lock` committed.
 - A `rust` job added to `ci.yml`; `rust-analyzer` added to the editor recommendations.

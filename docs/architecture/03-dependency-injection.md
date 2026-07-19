@@ -1,6 +1,6 @@
-# Dependency Injection — `@vibe/di`
+# Dependency Injection — `vibe/di`
 
-`@vibe/di` is a small, explicit, type-safe container. There is no decorator magic,
+`vibe/di` is a small, explicit, type-safe container. There is no decorator magic,
 no reflection, no metadata. Services are keyed by **branded tokens** that carry
 their own value type, so `resolve(token)` returns the right type with no cast. This
 is the seam that makes the agentic layer testable: the loop resolves a
@@ -26,7 +26,7 @@ export function createToken<T>(name: string): ServiceToken<T> {
 Two things are happening:
 
 - **Branding.** `ServiceToken<T>` is a `Brand<string, "ServiceToken">` (from
-  [`@vibe/shared`](./02-package-topology.md)) intersected with a phantom
+  [`vibe/shared`](./02-package-topology.md)) intersected with a phantom
   `__type: T`. At runtime it is just a string; at compile time the `T` rides along
   so the container can return `T` from `resolve`. You cannot pass a plain string
   where a `ServiceToken<T>` is expected.
@@ -43,7 +43,7 @@ in the process. Uniqueness is therefore *process-local*, not global:
 - Tokens are **not stable across processes or restarts** — `logger__2` in one run
   may be `logger__5` in another. Never serialize a token or persist it as a
   durable key.
-- Tokens are **not portable across module-graph duplication** — if `@vibe/di` were
+- Tokens are **not portable across module-graph duplication** — if `vibe/di` were
   loaded twice (duplicate installs, some bundler edge cases), each copy has its own
   `counter` and its own token identity. Mint tokens once and share the reference.
 

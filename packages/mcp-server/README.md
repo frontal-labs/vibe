@@ -1,4 +1,4 @@
-# @vibe/mcp-server
+# vibe/mcp-server
 
 The **framework-facing MCP server** that lets any Model Context Protocol client
 (Claude Code, Cursor, Kilo, …) **operate, build, and generate Vibe** — and,
@@ -25,11 +25,11 @@ Two tool namespaces, plus resources and prompts:
 ## Run it
 
 ```bash
-pnpm -F @vibe/mcp-server build
+pnpm -F vibe/mcp-server build
 # stdio (default — what coding agents connect to):
 node packages/mcp-server/dist/server.js
 # or via the inspector:
-pnpm -F @vibe/mcp-server inspect
+pnpm -F vibe/mcp-server inspect
 
 # streamable HTTP:
 VIBE_MCP_TRANSPORT=http VIBE_MCP_PORT=3000 node packages/mcp-server/dist/server.js
@@ -41,5 +41,5 @@ Set `ANTHROPIC_API_KEY` so the agent-running tools can reach a provider.
 
 Every capability is defined **once** as an `McpTool` in `src/tools/*`. The
 server registers it for MCP, and `src/agent/vibe-engineer.ts` wraps the same
-definitions as `@vibe/tools` `Tool`s for the meta agent — one schema, two
+definitions as `vibe/tools` `Tool`s for the meta agent — one schema, two
 consumers, mirroring Vibe's `defineTool` philosophy.

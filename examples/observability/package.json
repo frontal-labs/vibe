@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "frontal-vibe": "workspace:*",
+    "@frontal-labs/vibe": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 # Reference production image for a Vibe agent app (Bun). Two-stage: install then run.
-# `@vibe/deploy`'s generateDockerfile() emits a per-project variant of this.
+# `vibe/deploy`'s generateDockerfile() emits a per-project variant of this.
 # syntax=docker/dockerfile:1
 FROM oven/bun:1-slim AS deps
 WORKDIR /app

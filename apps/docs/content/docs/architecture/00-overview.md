@@ -34,8 +34,8 @@ in [the agentic implementation plan](../plan/02-agentic-implementation-plan.md).
 └───────────────────────────────────────────────────────────────┘
 ```
 
-Boxes with **planned** are the packages the agentic build adds: `@vibe/model`,
-`@vibe/tools`, `@vibe/agent`, `@vibe/memory`. Everything else exists today.
+Boxes with **planned** are the packages the agentic build adds: `vibe/model`,
+`vibe/tools`, `vibe/agent`, `vibe/memory`. Everything else exists today.
 
 ## The request path: `system.ask(prompt)`
 
@@ -81,7 +81,7 @@ See [The agent loop](./09-agent-loop.md) for the detailed design.
 1. **Acyclic dependencies.** Enforced by the graph in [Package topology](./02-package-topology.md).
    The agentic packages may depend on foundations/orchestration, never the reverse.
 2. **The runtime owns execution semantics.** The agent loop does not implement its
-   own retry/cancellation — it schedules work through `@vibe/runtime`.
+   own retry/cancellation — it schedules work through `vibe/runtime`.
 3. **The model layer is an interface.** The loop depends on `ModelProvider`, not on
    `@anthropic-ai/sdk` directly. See [Model & provider layer](./10-model-provider-layer.md).
 4. **Everything observable is logged with context.** No bare `console.log` in

@@ -12,11 +12,11 @@ and the compiler is on your side the whole way.**
 
 | Principle | The promise | The mechanism |
 |---|---|---|
-| One-line happy path + escape hatch | `vibe.system({name}).ask("…")` works with zero ceremony; every layer under it is public | `@vibe/core` `vibe.system()` → default agent; DI tokens expose the internals |
+| One-line happy path + escape hatch | `vibe.system({name}).ask("…")` works with zero ceremony; every layer under it is public | `vibe/core` `vibe.system()` → default agent; DI tokens expose the internals |
 | Type inference over configuration | Describe data once, get types everywhere | One Zod schema per tool → handler args *and* JSON Schema 🚧 |
 | Errors as typed values | Branch on a code, never parse a string | `VibeError` subclasses with `ErrorCode` |
-| Observability built in | Every model/tool call is a structured log line with a trace id | `@vibe/logger` context store threaded through the loop |
-| Modular install | Use one package without dragging in the rest | Acyclic `@vibe/*` graph; `shared` depends on nothing |
+| Observability built in | Every model/tool call is a structured log line with a trace id | `vibe/logger` context store threaded through the loop |
+| Modular install | Use one package without dragging in the rest | Acyclic `vibe/*` graph; `shared` depends on nothing |
 | Progressive disclosure | Learn one concept at a time, in the order you need it | Layered API: `ask()` → `defineTool` 🚧 → `createAgent` 🚧 → custom provider |
 
 ## One-line happy path, always-available escape hatch
@@ -24,7 +24,7 @@ and the compiler is on your side the whole way.**
 The happy path is a single expression:
 
 ```ts
-import { vibe } from "@vibe/core"
+import { vibe } from "vibe/core"
 
 const system = vibe.system({ name: "support-bot" })
 await system.start()
@@ -62,7 +62,7 @@ to **describe a thing once and infer the rest**. The canonical example is a tool
 Schema *and* the static type of your handler's arguments.
 
 ```ts
-import { defineTool } from "@vibe/tools" // 🚧
+import { defineTool } from "vibe/tools" // 🚧
 import { z } from "zod"
 
 const getWeather = defineTool({
@@ -89,7 +89,7 @@ machine-readable `ErrorCode`, so retry logic, telemetry, and user messaging can 
 branch on the same value:
 
 ```ts
-import { ProviderRateLimitError, VibeError } from "@vibe/errors"
+import { ProviderRateLimitError, VibeError } from "vibe/errors"
 
 try {
   await system.ask("…")
@@ -128,18 +128,18 @@ No wiring, no `console.log`, no bolt-on APM to make an agent observable.
 
 ## Modular install: use one package without the rest
 
-Modularity is enforced by the dependency graph, not by convention. `@vibe/shared`
-depends on nothing; `@vibe/core` is the composition root that depends on everything.
+Modularity is enforced by the dependency graph, not by convention. `vibe/shared`
+depends on nothing; `vibe/core` is the composition root that depends on everything.
 The layers between are acyclic and independently installable, so you can take a
 single piece to solve a single problem:
 
 ```ts
-import { retry } from "@vibe/runtime"   // just the durable-execution primitives
-import { createContainer } from "@vibe/di" // just the DI container
+import { retry } from "vibe/runtime"   // just the durable-execution primitives
+import { createContainer } from "vibe/di" // just the DI container
 ```
 
 You pay only for what you import. The [package topology](../architecture/02-package-topology.md)
-rules make "use `@vibe/runtime` without `@vibe/agent`" a supported path, not an
+rules make "use `vibe/runtime` without `vibe/agent`" a supported path, not an
 accident. Foundations (`shared`, `errors`, `di`, `lifecycle`, `logger`) and
 orchestration (`plugin`, `runtime`) ship today; the agentic packages layer on top.
 

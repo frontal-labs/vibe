@@ -2,7 +2,7 @@
 
 Native token counting for Vibe's context-window budgeting. A pure Rust library
 (`#![forbid(unsafe_code)]`) exposed to JavaScript through the `vibe_napi` addon and consumed
-by `@vibe/memory`'s request builder.
+by `vibe/memory`'s request builder.
 
 ## Why
 
@@ -22,5 +22,5 @@ on every dropped turn.
 Anthropic publishes no tokenizer, but this tracks far closer than a flat ratio), `cl100k`, or
 `heuristic` (the flat ~4 chars/token fallback, identical to the TS path).
 
-The framework works without this crate: when the native addon is absent, `@vibe/memory` uses its
+The framework works without this crate: when the native addon is absent, `vibe/memory` uses its
 TypeScript `estimateTokens` fallback.

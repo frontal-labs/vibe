@@ -9,8 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@vibe/build": "workspace:*",
-    "frontal-vibe": "workspace:*",
+    "vibe/build": "workspace:*",
+    "@frontal-labs/vibe": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

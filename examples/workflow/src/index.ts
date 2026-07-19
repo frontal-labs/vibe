@@ -4,7 +4,7 @@ import {
   parallel,
   runWorkflow,
   step,
-} from "frontal-vibe/workflows"
+} from "@frontal-labs/vibe/workflows"
 
 // ── A code-first DAG: fetch → (summarize ‖ classify) → assemble ────────────────
 const triage = defineWorkflow({

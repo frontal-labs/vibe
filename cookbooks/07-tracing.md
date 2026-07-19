@@ -1,7 +1,7 @@
 # Tracing & observability
 
 ```ts
-import { createTracer, createConsoleExporter, traceAgentRun } from "frontal-vibe/tracing"
+import { createTracer, createConsoleExporter, traceAgentRun } from "@frontal-labs/vibe/tracing"
 
 const tracer = createTracer({ exporter: createConsoleExporter() })
 const result = await traceAgentRun(agent, "Do the thing.", tracer)

@@ -1,11 +1,11 @@
 ---
 title: "Model Spec"
-description: "The contract for `@vibe/model` and the exact Anthropic API rules the reference"
+description: "The contract for `vibe/model` and the exact Anthropic API rules the reference"
 ---
 
 # Model Spec
 
-The contract for `@vibe/model` and the exact Anthropic API rules the reference
+The contract for `vibe/model` and the exact Anthropic API rules the reference
 provider must honor. This is the authoritative reference for anyone implementing or
 reviewing a provider. Companion: [Model & provider layer](../architecture/10-model-provider-layer.md).
 
@@ -28,7 +28,7 @@ is per-agent and per-sub-agent; the default agent uses `claude-opus-4-8`.
 | `model` | `model` | Exact id string. |
 | `system` | `system` | Optional. Keep frozen for prompt-cache stability. |
 | `messages` | `messages` | First message `user`; roles as sent. |
-| `tools` | `tools` | JSON Schemas from `@vibe/tools`. |
+| `tools` | `tools` | JSON Schemas from `vibe/tools`. |
 | `toolChoice` | `tool_choice` | `auto` \| `any` \| `{type:"tool",name}` \| `none`. |
 | `maxTokens` | `max_tokens` | Default ~16000 non-streaming; up to 128K streaming. |
 | `thinking` | `thinking` | **Default `{ type: "adaptive" }`.** See rules below. |
@@ -84,7 +84,7 @@ The provider maps Anthropic `stop_reason` → Vibe `StopReason`:
 - Vibe surfaces refusals as a typed `ModelRefusalError` when no fallback is
   configured or the whole chain refuses.
 
-## Errors (HTTP → `@vibe/errors`)
+## Errors (HTTP → `vibe/errors`)
 
 | Status / condition | Typed error | Retryable |
 |---|---|---|
@@ -97,7 +97,7 @@ The provider maps Anthropic `stop_reason` → Vibe `StopReason`:
 | `stop_reason:"refusal"` | `ModelRefusalError` | Via fallback |
 
 The runtime's `retry` retries the retryable set with jittered backoff and never
-retries `CancelledError`/`AbortError` (already true in `@vibe/runtime`).
+retries `CancelledError`/`AbortError` (already true in `vibe/runtime`).
 
 ## Token usage
 

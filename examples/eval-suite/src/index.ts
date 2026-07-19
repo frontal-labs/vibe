@@ -1,6 +1,6 @@
-import { createAgent } from "frontal-vibe/agent"
-import { includes, runEval } from "frontal-vibe/evals"
-import { createAnthropicProvider } from "frontal-vibe/model"
+import { createAgent } from "@frontal-labs/vibe/agent"
+import { includes, runEval } from "@frontal-labs/vibe/evals"
+import { createAnthropicProvider } from "@frontal-labs/vibe/model"
 
 // A tiny eval: does the agent's answer contain the expected keyword?
 const agent = createAgent({ provider: createAnthropicProvider() })

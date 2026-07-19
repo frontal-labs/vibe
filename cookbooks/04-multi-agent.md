@@ -3,7 +3,7 @@
 Expose a worker sub-agent to a coordinator as a `delegate` tool:
 
 ```ts
-import { createAgent, createDelegateTool } from "frontal-vibe/agent"
+import { createAgent, createDelegateTool } from "@frontal-labs/vibe/agent"
 
 const research = createDelegateTool({
   provider,

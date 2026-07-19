@@ -1,15 +1,15 @@
 # Agentic Implementation Plan
 
-> **Status: ✅ all six packages implemented and green.** `@vibe/model`,
-> `@vibe/tools`, `@vibe/memory`, `@vibe/agent`, the wired `core.ask()`, and
+> **Status: ✅ all six packages implemented and green.** `vibe/model`,
+> `vibe/tools`, `vibe/memory`, `vibe/agent`, the wired `core.ask()`, and
 > one-level multi-agent delegation are built and tested. Workspace gates pass:
 > `bun build` (13/13), `bun test` (205 tests), `bun test:types` (25/25),
 > `bun typecheck` (23/23). Per-package status notes are inline below; deferred
-> items (live-API smoke tests, MCP adapter, deep `@vibe/plugin` wiring, token-level
+> items (live-API smoke tests, MCP adapter, deep `vibe/plugin` wiring, token-level
 > streaming through retry, nested delegation) are called out where they belong.
 
-The detailed, code-level plan to build the agentic layer: `@vibe/model` →
-`@vibe/tools` → `@vibe/memory` → `@vibe/agent` → `core.ask()` → multi-agent. This
+The detailed, code-level plan to build the agentic layer: `vibe/model` →
+`vibe/tools` → `vibe/memory` → `vibe/agent` → `core.ask()` → multi-agent. This
 is the "how" behind [Build plan](./01-build-plan.md) Phases 1–6, grounded in the
 existing packages and the current Anthropic API.
 
@@ -21,9 +21,9 @@ Read alongside: [The agent loop](../architecture/09-agent-loop.md),
 
 ## This plan builds the core of the framework
 
-Vibe is a **pure-TypeScript agent framework**: you build an app by importing `@vibe/core`
+Vibe is a **pure-TypeScript agent framework**: you build an app by importing `vibe/core`
 and defining tools and agents against typed APIs. The packages built here
-(`@vibe/model`, `@vibe/tools`, `@vibe/memory`, `@vibe/agent`) are that core — the surface
+(`vibe/model`, `vibe/tools`, `vibe/memory`, `vibe/agent`) are that core — the surface
 a user calls directly (`defineTool`, `createAgent`, `createSystem`).
 
 Keep the API clean and hand-writable: these are the functions users type by hand, so the
@@ -43,7 +43,7 @@ before a live model is wired.
 - **Everything typed.** Tool I/O inferred from one Zod schema; branded ids; typed
   errors.
 
-## Package 1 — `@vibe/model`
+## Package 1 — `vibe/model`
 
 **Status:** implemented and green. `packages/model` ships `types.ts`,
 `provider-token.ts`, the `fake/` scripted provider, and the SDK-backed
@@ -51,7 +51,7 @@ before a live model is wired.
 `map-response.ts` (unit-testable offline). 13 tests pass
 (`npx vitest run packages/model`), `tsc --noEmit` clean, `tsd` green, and it is
 wired into the root `vitest.config.ts` alias map. The live smoke test is deferred
-until an `ANTHROPIC_API_KEY` is present. `@vibe/errors` already exposed the needed
+until an `ANTHROPIC_API_KEY` is present. `vibe/errors` already exposed the needed
 factories (`providerAuthError`/`providerRateLimitError`/`validationError`/
 `runtimeError`), so no new error codes were required; the `fallbacks` beta option
 is deferred to when live requests are exercised.
@@ -66,7 +66,7 @@ packages/model/src/
     provider.ts       createAnthropicProvider(opts)
     map-request.ts    ModelRequest → Anthropic MessageCreateParams
     map-response.ts   Anthropic Message → ModelResponse (normalize blocks + stopReason)
-    errors.ts         HTTP status → @vibe/errors typed errors
+    errors.ts         HTTP status → vibe/errors typed errors
   fake/
     provider.ts       createFakeProvider(script) — deterministic, for tests
 ```
@@ -81,7 +81,7 @@ packages/model/src/
   `max_tokens`, `refusal`, `pause_turn`) to Vibe's `StopReason`.
 - **Errors:** `429 → RateLimitError`, `529 → OverloadedError`, `400 → InvalidRequestError`,
   `401 → AuthenticationError`, `stop_reason:"refusal" → ModelRefusalError` (category
-  attached). All added to `@vibe/errors` `error-codes.ts` + factories.
+  attached). All added to `vibe/errors` `error-codes.ts` + factories.
 - **Fallbacks:** provider accepts a `fallbacks` option; when set, emits the
   server-side `fallbacks` beta param so a refusal is transparently re-served by
   `claude-opus-4-8`.
@@ -91,11 +91,11 @@ packages/model/src/
 - `map-request` type test: options → params shape.
 - Live smoke test guarded by `ANTHROPIC_API_KEY` (skipped in CI without a key).
 
-## Package 2 — `@vibe/tools`
+## Package 2 — `vibe/tools`
 
 **Status:** implemented and green. `packages/tools` ships `types.ts`,
 `define-tool.ts` (Zod schema → typed handler + `z.toJSONSchema` model schema),
-`registry.ts` (duplicate-name rejection, `toSchemas()` → `@vibe/model`
+`registry.ts` (duplicate-name rejection, `toSchemas()` → `vibe/model`
 `ToolSchema[]`), and `execute.ts` (`runToolCall` with input validation, timeout,
 and cooperative cancellation). Handler errors, invalid input, and timeouts become
 `{ isError: true }` results (surfaced to the model, never thrown); genuine
@@ -112,7 +112,7 @@ packages/tools/src/
   types.ts            Tool, ToolContext, ToolResult, ToolSchema, ToolChoice
   define-tool.ts      defineTool({ name, description, schema, execute })
   registry.ts         createToolRegistry()
-  execute.ts          runToolCall(tool, input, ctx) — via @vibe/runtime
+  execute.ts          runToolCall(tool, input, ctx) — via vibe/runtime
   mcp/adapter.ts      MCP server tools → Tool[]  (flagged)
 ```
 
@@ -131,7 +131,7 @@ packages/tools/src/
 - Define → register → execute round-trip; inferred-arg-type type test; throwing
   tool → `isError`; cancellation aborts a long tool.
 
-## Package 3 — `@vibe/memory`
+## Package 3 — `vibe/memory`
 
 **Status:** implemented and green. `packages/memory` ships `types.ts`
 (`Conversation`, `Memory`), `conversation.ts` (append-only with defensive
@@ -163,14 +163,14 @@ packages/memory/src/
 ### Tests
 - Round-trip a conversation; budget trimming; snapshot immutability.
 
-## Package 4 — `@vibe/agent`
+## Package 4 — `vibe/agent`
 
 **Status:** implemented and green — this is the working agentic loop. `packages/agent`
 ships `types.ts` (`Agent`, `AgentInput`, `RunOptions`, `AgentResult`, `AgentEvent`),
 `loop.ts` (`runLoop` — an **async generator** shared by `run()` and `stream()`),
 `agent.ts` (`createAgent`), `events.ts` (`drain`), and `hooks.ts` (stable `agent:*`
 hook-name contract for the future plugin bridge). The loop: appends the user turn,
-builds a request via `@vibe/memory`, calls the provider through
+builds a request via `vibe/memory`, calls the provider through
 `executeWithRetry` (transient-error backoff + cancellation), sums usage, then on
 `tool_use` runs every call in **parallel** via `runToolCall` and appends all
 results as one user message; it ends on `end_turn`/`max_tokens`/`refusal` or raises
@@ -179,7 +179,7 @@ past `maxIterations`. Unknown-tool and thrown-handler errors come back as
 (`npx vitest run packages/agent`) covering the scripted `tool_use → tool_result →
 end_turn` path, parallel calls into one message, unknown-tool recovery, the
 iteration ceiling, mid-run cancellation, and `stream()`; `tsc --noEmit` clean,
-`tsd` green, wired into the root `vitest.config.ts` alias map. Deep `@vibe/plugin`
+`tsd` green, wired into the root `vitest.config.ts` alias map. Deep `vibe/plugin`
 wiring and true token-level streaming through the retry path are deferred (the
 `hooks.ts` contract and `stream()` event surface are in place for both).
 
@@ -242,11 +242,11 @@ async function run(input, options) {
 `modelProviderToken`, `toolRegistryToken`, and `memoryToken` in the container
 (the provider only when one is configured), exposes `system.agent(overrides?)` for
 custom agents, and implements `ask(prompt)` as `agent().run({ text }).text` —
-running the real `@vibe/agent` loop. `SystemConfig` gained `provider`, `model`,
+running the real `vibe/agent` loop. `SystemConfig` gained `provider`, `model`,
 `system`, `effort`, and `tools`. Without a provider, `ask()`/`agent()` throw a
 clear `configError`. Core tests updated: one asserts the no-provider config error,
 a new one drives `ask()` with a `createFakeProvider` and gets the scripted text
-back. Full workspace suite is 203 tests green; `@vibe/core` typechecks and builds.
+back. Full workspace suite is 203 tests green; `vibe/core` typechecks and builds.
 
 In `packages/core/src/system.ts`:
 - During `createSystem`, register `modelProviderToken`, the tool registry token,
@@ -267,7 +267,7 @@ Update `SystemConfig` to accept model/provider options and an initial tool set.
 
 ## Package 6 — Multi-agent
 
-**Status:** implemented and green. `@vibe/agent` ships `createDelegateTool(config)`
+**Status:** implemented and green. `vibe/agent` ships `createDelegateTool(config)`
 — a `Tool` that wraps a sub-agent (its own provider/model/prompt/tools) behind a
 `{ task: string }` schema and returns the sub-agent's `AgentResult.text`. Drop it
 into a coordinator's tool set for the coordinator/worker pattern; pair with a cheap
@@ -300,13 +300,13 @@ needs all three.
 - ✅ A custom tool defined with `defineTool` is called by the model and its typed
   result flows back (agent loop tests: `tool_use → tool_result → end_turn`).
 - ✅ Cancellation, retry, timeouts, and structured logs demonstrably work in a run
-  (covered across `@vibe/tools` and `@vibe/agent` tests).
+  (covered across `vibe/tools` and `vibe/agent` tests).
 - ⏳ The [quickstart](../dx/03-quickstart.md) runs verbatim — needs a live key; the
   public API it targets is now in place.
 - ✅ Workspace green (`bun build` / `test` / `test:types` / `typecheck`); every new
   package (`model`, `tools`, `memory`, `agent`) has `tests/` + `type-tests/`.
 
 **Deferred (tracked, not blocking):** live-API smoke tests, the MCP tool adapter
-(`@vibe/tools` `mcp/adapter.ts`), deep `@vibe/plugin` hook wiring (the `agent:*`
+(`vibe/tools` `mcp/adapter.ts`), deep `vibe/plugin` hook wiring (the `agent:*`
 contract exists), token-level streaming through the retry path (the `stream()`
 event surface exists), and nested (>1 level) delegation.

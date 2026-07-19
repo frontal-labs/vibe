@@ -64,7 +64,7 @@ threads a trace id and token usage through it. See [Logging & observability](./0
 
 ## The agentic nouns (planned)
 
-### Model & ModelProvider (🚧 `@vibe/model`)
+### Model & ModelProvider (🚧 `vibe/model`)
 A **ModelProvider** is the interface the loop depends on: `generate(request)` and
 `stream(request)`, taking messages + tool schemas + options, returning content
 blocks + `stopReason` + `usage`. The reference implementation wraps
@@ -72,31 +72,31 @@ blocks + `stopReason` + `usage`. The reference implementation wraps
 **Model** is a provider bound to a specific model id + options. See
 [Model & provider layer](./10-model-provider-layer.md).
 
-### Tool & ToolRegistry (🚧 `@vibe/tools`)
+### Tool & ToolRegistry (🚧 `vibe/tools`)
 A **Tool** is a name + description + input schema (Zod) + a typed `execute`
 handler. Defining it once yields both the model-facing JSON Schema and the
 handler's argument types. The **ToolRegistry** holds the tools available to an
 agent. MCP servers surface as tools through an adapter. See [Tools & MCP](./11-tools-and-mcp.md).
 
-### Agent (🚧 `@vibe/agent`)
+### Agent (🚧 `vibe/agent`)
 An **Agent** binds a model, a system prompt, a tool set, and memory, and exposes
 `run(input)` — the [agent loop](./09-agent-loop.md). `system.ask()` delegates to a
 default agent. Agents can delegate to sub-agents. See [Multi-agent](./13-multi-agent.md).
 
-### Memory & Conversation (🚧 `@vibe/memory`)
+### Memory & Conversation (🚧 `vibe/memory`)
 **Conversation** is the ordered message history for one run. **Memory** is
 optional cross-run persistence. Both feed the request builder and respect context
 limits (with compaction/context-editing hooks). Built on `shared`'s context-store.
 See [Memory & context](./12-memory-and-context.md).
 
-### Config & bootstrap (🚧 `@vibe/config`, `@vibe/cli`)
+### Config & bootstrap (🚧 `vibe/config`, `@frontal-labs/vibe-cli`)
 The **surface** developers actually write is plain TypeScript. You declare agents,
-tools, models, memory, plugins, and config with the `@vibe/*` APIs —
+tools, models, memory, plugins, and config with the `vibe/*` APIs —
 `defineAgent`, `defineTool`, `defineConfig`, `createSystem` — and import the
 framework directly. **VibeConfig** — the resolved wiring (name, model, provider,
 tools, plugins, memory, logging, runtime limits) — comes from `defineConfig` in a
-`vibe.config.ts` file (or is passed straight to `createSystem`). The `@vibe/cli`
-TypeScript CLI (`new`/`dev`/`build`) drives it, and `@vibe/build` code-splits an
+`vibe.config.ts` file (or is passed straight to `createSystem`). The `@frontal-labs/vibe-cli`
+TypeScript CLI (`new`/`dev`/`build`) drives it, and `vibe/build` code-splits an
 app's tools into lazily-loaded chunks. See
 [Configuration & bootstrap](./14-configuration-and-bootstrap.md).
 

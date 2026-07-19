@@ -12,7 +12,7 @@ them.
 
 ## Package structure
 
-Every `@vibe/*` package has the same skeleton:
+Every `vibe/*` package has the same skeleton:
 
 ```
 packages/<name>/
@@ -97,14 +97,14 @@ type TraceId  = Brand<string, "TraceId">
 // SystemId is not assignable to TraceId — enforced at compile time
 ```
 
-The DI `ServiceToken<T>` and the `Brand` helper (in `@vibe/shared`) are the
+The DI `ServiceToken<T>` and the `Brand` helper (in `vibe/shared`) are the
 canonical examples. New ids in the agentic layer (trace ids, run ids) follow the
 same pattern, with an `expectError` type-test proving distinct brands don't
 cross-assign.
 
 ## Errors: factories, not `new Error`
 
-Never `throw new Error(...)` in library code. Use the `@vibe/errors` factories, which
+Never `throw new Error(...)` in library code. Use the `vibe/errors` factories, which
 produce errors carrying a stable `code` and `retryable`/`fatal` flags:
 
 ```ts
@@ -120,7 +120,7 @@ to them. Type-tests assert the serialized shape (see
 
 ## Logging with context
 
-Use `@vibe/logger`, never `console.*`. Log structured context, not interpolated
+Use `vibe/logger`, never `console.*`. Log structured context, not interpolated
 strings — carry the run's trace id so events correlate:
 
 ```ts
@@ -171,7 +171,7 @@ Concretely:
 - Foundation packages (`shared`, `errors`, …) know nothing about the agentic layer.
 - Agentic packages depend on foundations and on each other in one direction
   (`model` → `tools`/`memory` → `agent`), and are composed at `core`.
-- **Execution semantics live in `@vibe/runtime`.** Anything needing retry, backoff,
+- **Execution semantics live in `vibe/runtime`.** Anything needing retry, backoff,
   cancellation, timeout, or resource limits imports the runtime — it does not
   reimplement them. The agent loop and the tool-execution adapter are consumers of
   the runtime, not competitors to it.
@@ -185,7 +185,7 @@ full graph and rationale.
 
 ## Rust conventions (the bundler accelerator)
 
-The only Rust in the repo is the native build accelerator for `@vibe/build`, living
+The only Rust in the repo is the native build accelerator for `vibe/build`, living
 in the `crates/*` Cargo workspace — two crates, `vibe_bundler` (oxc-based static
 analysis that extracts agent→tool edges for tool code-splitting) and `vibe_napi`
 (its napi-rs binding). It is not a language compiler. These conventions are the Rust

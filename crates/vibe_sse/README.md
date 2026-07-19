@@ -2,7 +2,7 @@
 
 Native SSE frame splitting and OpenAI streaming fold — the Rust analogue of
 `packages/model/src/openai/stream.ts`. A pure Rust library (`#![forbid(unsafe_code)]`) exposed to
-JavaScript through the `vibe_napi` addon and consumed by `@vibe/model`'s OpenAI provider.
+JavaScript through the `vibe_napi` addon and consumed by `vibe/model`'s OpenAI provider.
 
 ## Why
 
@@ -18,5 +18,5 @@ streams.
   the TS `ModelStreamEvent` / `ModelResponse` shapes exactly (including the `finish_reason` →
   `stopReason` mapping and lenient tool-argument parsing).
 
-The framework works without this crate: `@vibe/model`'s `createOpenAIStreamAccumulator` fallback
+The framework works without this crate: `vibe/model`'s `createOpenAIStreamAccumulator` fallback
 produces identical output when the native addon is absent.

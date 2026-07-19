@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
-  "description": "Evaluate an agent with @vibe/evals",
+  "description": "Evaluate an agent with vibe/evals",
   "scripts": {
     "start": "bun src/index.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "frontal-vibe": "workspace:*"
+    "@frontal-labs/vibe": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.6.3"

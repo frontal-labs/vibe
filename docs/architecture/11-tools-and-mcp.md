@@ -1,6 +1,6 @@
 # Tools & MCP
 
-> 🚧 Planned — package `@vibe/tools`. The tool contract the [agent loop](./09-agent-loop.md)
+> 🚧 Planned — package `vibe/tools`. The tool contract the [agent loop](./09-agent-loop.md)
 > executes, plus the MCP adapter and server-side (provider) tools.
 
 A tool is the model's way of doing something in the world. Vibe's tool layer has one
@@ -8,7 +8,7 @@ opinionated job: **define a tool once, from a single Zod schema, and get both th
 model-facing JSON Schema and the fully-typed handler for free.** No hand-written
 JSON Schema drifting away from the handler signature; no `any` in the execute body.
 
-Every tool call runs as a [`@vibe/runtime`](./05-runtime-execution.md) execution, so
+Every tool call runs as a [`vibe/runtime`](./05-runtime-execution.md) execution, so
 tools inherit cancellation, timeout, and named concurrency limits — and a thrown
 tool error becomes a `tool_result` returned to the model, never an exception thrown
 out of the loop.
@@ -17,7 +17,7 @@ out of the loop.
 
 ```ts
 import type { z } from "zod"
-import type { CancellationToken, Logger } from "@vibe/runtime"
+import type { CancellationToken, Logger } from "vibe/runtime"
 
 interface Tool<TSchema extends z.ZodTypeAny = z.ZodTypeAny> {
   readonly name: string                       // model-visible, unique in a registry
@@ -63,7 +63,7 @@ sends to the model. **The types can never drift, because there is only one schem
 
 ```ts
 import { z } from "zod"
-import { defineTool } from "@vibe/tools"
+import { defineTool } from "vibe/tools"
 
 export const getWeather = defineTool({
   name: "get_weather",
@@ -236,7 +236,7 @@ lists its tools, and wraps each one as an ordinary Vibe `Tool` — so from the l
 point of view an MCP tool is indistinguishable from a local one.
 
 ```ts
-import { mcpToolset } from "@vibe/tools/mcp"
+import { mcpToolset } from "vibe/tools/mcp"
 
 // Connect on system start; the connection is a lifecycle resource (init/stop).
 const fsTools = await mcpToolset({
@@ -297,7 +297,7 @@ if (response.stopReason === "pause") {
 Agent.run
   └─ request builder ── registry.toSchemas() (sorted) ──▶ ModelRequest.tools
         model returns tool_use blocks
-  └─ loop ── runToolCall ──▶ @vibe/runtime execution
+  └─ loop ── runToolCall ──▶ vibe/runtime execution
                               ├─ native   → tool.execute(args, ctx)
                               ├─ mcp       → proxy over transport
                               └─ (server-side tools resolve inside the provider)

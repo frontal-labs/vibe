@@ -7,7 +7,7 @@ them.
 
 ## Package structure
 
-Every `@vibe/*` package has the same skeleton:
+Every `vibe/*` package has the same skeleton:
 
 ```
 packages/<name>/
@@ -19,7 +19,7 @@ packages/<name>/
   type-tests/         tsd type-tests (*.test-d.ts)
   package.json
   tsconfig.json
-  tsup.config.ts
+  vite.config.ts
 ```
 
 `src/index.ts` is the barrel: it is the package's entire public API. If it isn't
@@ -28,18 +28,20 @@ consumers only ever see the barrel.
 
 ### Build & package.json
 
-Packages build with **tsup** to dual ESM + CJS with declarations:
+Packages build with **Vite** (library mode) to dual ESM + CJS with declarations:
 
 ```ts
-// tsup.config.ts
-import { defineConfig } from "tsup"
+// vite.config.ts
+import { defineConfig } from "vite"
 
 export default defineConfig({
-  entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
-  dts: true,
-  clean: true,
-  sourcemap: true,
+  build: {
+    target: "node20",
+    lib: { entry: { index: "src/index.ts" }, formats: ["es", "cjs"] },
+    outDir: "dist",
+    emptyOutDir: true,
+    sourcemap: true,
+  },
 })
 ```
 
@@ -92,14 +94,14 @@ type TraceId  = Brand<string, "TraceId">
 // SystemId is not assignable to TraceId — enforced at compile time
 ```
 
-The DI `ServiceToken<T>` and the `Brand` helper (in `@vibe/shared`) are the
+The DI `ServiceToken<T>` and the `Brand` helper (in `vibe/shared`) are the
 canonical examples. New ids in the agentic layer (trace ids, run ids) follow the
 same pattern, with an `expectError` type-test proving distinct brands don't
 cross-assign.
 
 ## Errors: factories, not `new Error`
 
-Never `throw new Error(...)` in library code. Use the `@vibe/errors` factories, which
+Never `throw new Error(...)` in library code. Use the `vibe/errors` factories, which
 produce errors carrying a stable `code` and `retryable`/`fatal` flags:
 
 ```ts
@@ -115,7 +117,7 @@ to them. Type-tests assert the serialized shape (see
 
 ## Logging with context
 
-Use `@vibe/logger`, never `console.*`. Log structured context, not interpolated
+Use `vibe/logger`, never `console.*`. Log structured context, not interpolated
 strings — carry the run's trace id so events correlate:
 
 ```ts
@@ -166,7 +168,7 @@ Concretely:
 - Foundation packages (`shared`, `errors`, …) know nothing about the agentic layer.
 - Agentic packages depend on foundations and on each other in one direction
   (`model` → `tools`/`memory` → `agent`), and are composed at `core`.
-- **Execution semantics live in `@vibe/runtime`.** Anything needing retry, backoff,
+- **Execution semantics live in `vibe/runtime`.** Anything needing retry, backoff,
   cancellation, timeout, or resource limits imports the runtime — it does not
   reimplement them. The agent loop and the tool-execution adapter are consumers of
   the runtime, not competitors to it.
@@ -188,7 +190,7 @@ the TypeScript ones above — match them the same way.
 
 - **One responsibility per crate.** Each crate does one job: `vibe_bundler` is the
   oxc-based static analyzer (extracting `import` declarations and agent→tool edges
-  for `@vibe/build`), and `vibe_napi` is the napi-rs binding that exposes that
+  for `vibe/build`), and `vibe_napi` is the napi-rs binding that exposes that
   analysis to JS. This mirrors "one cohesive concept per file" on the TS side.
 - **Module docs with `//!`.** Every crate and module opens with a `//!` doc comment
   stating what it owns — the Rust equivalent of the package barrel telling you the

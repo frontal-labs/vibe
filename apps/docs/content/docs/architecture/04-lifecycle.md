@@ -1,12 +1,12 @@
 ---
-title: "Lifecycle — `@vibe/lifecycle`"
+title: "Lifecycle — `vibe/lifecycle`"
 description: "Every long-lived thing in Vibe — the system, and later providers, MCP connections,"
 ---
 
-# Lifecycle — `@vibe/lifecycle`
+# Lifecycle — `vibe/lifecycle`
 
 Every long-lived thing in Vibe — the system, and later providers, MCP connections,
-and tool resources — moves through the same small state machine. `@vibe/lifecycle`
+and tool resources — moves through the same small state machine. `vibe/lifecycle`
 is that machine: a typed set of states, a transition table, ordered before/after
 handlers, and **idempotent** transitions so `start()`/`stop()` are safe to call
 more than once.

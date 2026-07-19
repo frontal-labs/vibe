@@ -31,7 +31,7 @@ models process lifecycle this explicitly. See [Lifecycle](../architecture/04-lif
 ### 3. A durable execution runtime under the agent loop
 Cancellation tokens, retry policies with jittered backoff, a resource manager with
 concurrency limits, checkpoints, and streamable executions already exist in
-[`@vibe/runtime`](../architecture/05-runtime-execution.md). The agent loop *uses*
+[`vibe/runtime`](../architecture/05-runtime-execution.md). The agent loop *uses*
 these instead of reinventing them — so agent runs get cancellation, retry, and
 backpressure for free.
 

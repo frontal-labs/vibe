@@ -2,8 +2,8 @@
 
 > 🚧 Planned surface. Configuration is a plain-TypeScript construct: a
 > `defineConfig` call in a `vibe.config.ts` file (or the same object passed
-> straight to `createSystem`). `@vibe/config` resolves it into a `VibeConfig`
-> that bootstraps the runtime. The entry points are `@vibe/cli` — `vibe dev` /
+> straight to `createSystem`). `vibe/config` resolves it into a `VibeConfig`
+> that bootstraps the runtime. The entry points are `@frontal-labs/vibe-cli` — `vibe dev` /
 > `vibe build` — over an ordinary `createSystem(...)` call.
 
 The design goal is a **zero-ceremony happy path with a fully-typed escape hatch**:
@@ -14,11 +14,11 @@ registration, no glue — the resolved `VibeConfig` *is* the wiring.
 ## The primary surface: `defineConfig` in `vibe.config.ts`
 
 Configuration lives in a `vibe.config.ts` alongside the agents and tools it
-configures, defined with the `@vibe/*` APIs:
+configures, defined with the `vibe/*` APIs:
 
 ```ts
 // vibe.config.ts
-import { defineConfig, defineAgent, defineTool, defineModel } from "frontal-vibe"
+import { defineConfig, defineAgent, defineTool, defineModel } from "@frontal-labs/vibe"
 import { z } from "zod"
 
 const Fast = defineModel({ id: "claude-haiku-4-5", effort: "low" })
@@ -63,7 +63,7 @@ config with other tooling, or embed the runtime in an existing app. The same
 `VibeConfig` object can go straight to `createSystem`:
 
 ```ts
-import { createSystem } from "@vibe/core"
+import { createSystem } from "vibe/core"
 
 const system = createSystem({
   name: "support-bot",
@@ -78,7 +78,7 @@ one thing; pick whichever fits. The config file resolves as
 `vibe.config.{ts,mts,cts,js,mjs,cjs}` and TypeScript is loaded natively (no build
 step).
 
-## The `@vibe/config` package — the resolver
+## The `vibe/config` package — the resolver
 
 A dedicated package so the resolver is testable and reusable, and so
 `defineConfig`'s types and the `VibeConfig` schema live in one place. It provides:
@@ -130,7 +130,7 @@ interface VibeConfig {
 
   /** Runtime defaults applied to model & tool executions. */
   runtime?: {
-    retry?: Partial<RetryPolicy>         // default: @vibe/runtime defaultRetryPolicy
+    retry?: Partial<RetryPolicy>         // default: vibe/runtime defaultRetryPolicy
     limits?: Record<string, number>      // named ResourceManager concurrency limits
     defaultTimeoutMs?: number
   }
@@ -147,7 +147,7 @@ Each field maps to an existing runtime seam: `provider` → the
 [model layer](./10-model-provider-layer.md), `tools` → the
 [tool registry](./11-tools-and-mcp.md), `plugins` →
 [the plugin host](./06-plugin-system.md), `runtime` →
-[`@vibe/runtime`](./05-runtime-execution.md), `agent` →
+[`vibe/runtime`](./05-runtime-execution.md), `agent` →
 [the agent loop](./09-agent-loop.md). Config is a thin, declarative front for
 wiring that already exists — it does not introduce a second way to do things, it
 removes the boilerplate.
@@ -180,7 +180,7 @@ Config is progressive, not mandatory.
 
 ## Bootstrap flow — the CLI is the entry point
 
-You do not write a `vibe.boot()`. `@vibe/cli` is the entry point: it resolves
+You do not write a `vibe.boot()`. `@frontal-labs/vibe-cli` is the entry point: it resolves
 config, calls `createSystem(...)` on the runtime, and runs it.
 
 ```
@@ -188,13 +188,13 @@ vibe.config.ts  (defineConfig default)         createSystem(config)  (embedded)
         │                                                │
         └──────────────┬─────────────────────────────────┘
                        ▼   resolve to VibeConfig
-        @vibe/config.loadConfig()
+        vibe/config.loadConfig()
         discover → transpile → validate → normalize
                        │
                        ▼   merge with env + explicit overrides   (mergeConfig)
                    ResolvedConfig
                        │
-                       ▼   @vibe/core.createSystem(resolved)
+                       ▼   vibe/core.createSystem(resolved)
         build container · lifecycle · logger · plugin host · runtime
         register provider, tool registry, memory as DI tokens
                        │
@@ -204,7 +204,7 @@ vibe.config.ts  (defineConfig default)         createSystem(config)  (embedded)
 
 - **`vibe dev`** — watch + run: resolves config, starts the system with verbose
   logs, and hot-reloads on change.
-- **`vibe build`** — build for production with `@vibe/build`, which code-splits
+- **`vibe build`** — build for production with `vibe/build`, which code-splits
   tools into lazily-loaded chunks for small cold starts.
 
 See [Developer experience](../dx/00-developer-experience.md) for the full CLI.
@@ -212,12 +212,12 @@ See [Developer experience](../dx/00-developer-experience.md) for the full CLI.
 ## Embedding the runtime directly
 
 The bootstrap the CLI drives is an ordinary `createSystem(resolved)` call against
-[`@vibe/core`](../../packages/core/src/system.ts). That runtime entry point is a
+[`vibe/core`](../../packages/core/src/system.ts). That runtime entry point is a
 **first-class, supported way to embed Vibe directly** — for people who want to run
 the runtime inside an existing app rather than use the CLI:
 
 ```ts
-import { createSystem } from "@vibe/core"
+import { createSystem } from "vibe/core"
 
 const system = createSystem({
   name: "support-bot",
@@ -249,5 +249,5 @@ runtime into something that already exists.
 
 See the [Quickstart](../dx/03-quickstart.md) for the end-to-end flow,
 [Agent spec](../specs/agent-spec.md) for the agent surface, and
-[Build plan → Phase 5b](../plan/01-build-plan.md) for where `@vibe/config` and the
+[Build plan → Phase 5b](../plan/01-build-plan.md) for where `vibe/config` and the
 build tooling land in the build order.

@@ -14,17 +14,17 @@ of the planned agentic layer it is marked 🚧.
 
 | Pain (the DIY tax) | Vibe's answer | State |
 |---|---|---|
-| Retry loops copied from Stack Overflow | `@vibe/runtime` — `executeWithRetry`, jittered backoff, `retryable`-aware | ✅ |
-| "The tab closed" → no clean stop | `@vibe/runtime` — `CancellationToken` / `AbortController` | ✅ |
-| A hung tool call with no bound | `@vibe/runtime` — per-execution `timeoutMs` | ✅ |
-| Stringly-typed `catch (e)` | `@vibe/errors` — `VibeError` + `ErrorCode` + `retryable`/`fatal` | ✅ |
-| "Is the process ready?" ambiguity | `@vibe/lifecycle` — explicit state machine | ✅ |
-| Tool inputs/outputs typed as `any` | `@vibe/tools` — Zod schema → JSON Schema + inferred handler types 🚧 | 🚧 |
-| `console.log` as observability | `@vibe/logger` — leveled, structured, correlation-id context | ✅ |
-| A `Map` pretending to be a container | `@vibe/di` — branded `ServiceToken<T>`, scopes, cycle detection | ✅ |
-| No seam to extend without forking | `@vibe/plugin` — host + hooks + dependency validation | ✅ |
-| Unbounded fan-out melts the provider | `@vibe/runtime` — `ResourceManager` semaphore | ✅ |
-| No durable substrate under the loop | `@vibe/runtime` — executions, checkpoints, streaming (in-memory today) | ✅ / partial |
+| Retry loops copied from Stack Overflow | `vibe/runtime` — `executeWithRetry`, jittered backoff, `retryable`-aware | ✅ |
+| "The tab closed" → no clean stop | `vibe/runtime` — `CancellationToken` / `AbortController` | ✅ |
+| A hung tool call with no bound | `vibe/runtime` — per-execution `timeoutMs` | ✅ |
+| Stringly-typed `catch (e)` | `vibe/errors` — `VibeError` + `ErrorCode` + `retryable`/`fatal` | ✅ |
+| "Is the process ready?" ambiguity | `vibe/lifecycle` — explicit state machine | ✅ |
+| Tool inputs/outputs typed as `any` | `vibe/tools` — Zod schema → JSON Schema + inferred handler types 🚧 | 🚧 |
+| `console.log` as observability | `vibe/logger` — leveled, structured, correlation-id context | ✅ |
+| A `Map` pretending to be a container | `vibe/di` — branded `ServiceToken<T>`, scopes, cycle detection | ✅ |
+| No seam to extend without forking | `vibe/plugin` — host + hooks + dependency validation | ✅ |
+| Unbounded fan-out melts the provider | `vibe/runtime` — `ResourceManager` semaphore | ✅ |
+| No durable substrate under the loop | `vibe/runtime` — executions, checkpoints, streaming (in-memory today) | ✅ / partial |
 
 ---
 
@@ -35,7 +35,7 @@ someone pasted from Stack Overflow: fixed delay, no jitter (so every client retr
 in lockstep and hammers the provider), no cap, and — worst — it retries a `400`
 that will never succeed and swallows a cancellation that should stop immediately.
 
-**How Vibe solves it.** `@vibe/runtime`'s `executeWithRetry` is the one retry
+**How Vibe solves it.** `vibe/runtime`'s `executeWithRetry` is the one retry
 implementation. `defaultRetryPolicy()` is exponential (`backoffMultiplier: 2`,
 `initialDelayMs: 200`, capped at `maxDelayMs: 10_000`) with ~10% jitter via
 `calculateDelay`, and — critically — it does not retry blindly. `isRetryableError`
@@ -53,7 +53,7 @@ model and executing tools against a dead session — burning tokens, holding
 connections, and mutating state no one is watching. Retrofitting cancellation into
 a loop that wasn't built for it means threading a boolean through every function.
 
-**How Vibe solves it.** `@vibe/runtime` gives every execution a `CancellationToken`
+**How Vibe solves it.** `vibe/runtime` gives every execution a `CancellationToken`
 backed by `AbortController`. It exposes `cancelled`, `reason`, `onCancelled(listener)`,
 and `throwIfCancelled()`. The retry loop checks it before every attempt; even the
 backoff `sleep` is cancellable and rejects with a `cancelledError` the instant the
@@ -69,7 +69,7 @@ bound, the whole agent hangs; with an ad-hoc `Promise.race` bolted on per call
 site, the timeout and the underlying work are not linked, so the work keeps running
 after the timeout "fires."
 
-**How Vibe solves it.** Executions take a `timeoutMs`. `@vibe/runtime` races the
+**How Vibe solves it.** Executions take a `timeoutMs`. `vibe/runtime` races the
 handler against the timeout *and wires the abort back into the cancellation token*,
 so a timeout aborts the in-flight work rather than just abandoning the promise. A
 timeout produces a typed `TimeoutError` (which carries `timeoutMs`) — retryable,
@@ -82,7 +82,7 @@ and a bug in your tool are three different problems demanding three different
 responses (fail, back off, alert), but a stringly-typed `catch` can't tell them
 apart. Telemetry can't aggregate them. Retry logic can't branch on them.
 
-**How Vibe solves it.** `@vibe/errors` makes every failure a `VibeError` subclass
+**How Vibe solves it.** `vibe/errors` makes every failure a `VibeError` subclass
 with a machine-readable `ErrorCode` and two behavioral flags — `fatal` and
 `retryable` — set per class, plus a serializable `cause` chain (`toJSON`/`fromJSON`).
 Retry logic reads `retryable`; telemetry keys on `code`; user messaging branches on
@@ -99,7 +99,7 @@ Resources initialize in whatever order imports happen to resolve; shutdown is a
 `process.on("SIGTERM")` that may or may not release connections; calling start
 twice double-initializes; calling stop twice throws.
 
-**How Vibe solves it.** `@vibe/lifecycle` is a typed state machine —
+**How Vibe solves it.** `vibe/lifecycle` is a typed state machine —
 `created → initializing → ready → stopping → stopped` (plus `errored`) — with
 **idempotent** transitions (start-when-`ready` and stop-when-`stopped` are no-ops
 that don't re-fire handlers) and **auto-completing stop** (`stopping` folds to
@@ -117,12 +117,12 @@ once as a TypeScript type for the handler — and the two drift. The handler rec
 This is the single weakest spot in most TS agent stacks, including the big
 frameworks (see [Positioning & landscape](../vision/01-positioning-and-landscape.md)).
 
-**How Vibe solves it (🚧).** `@vibe/tools` defines a tool once with a Zod input
+**How Vibe solves it (🚧).** `vibe/tools` defines a tool once with a Zod input
 schema. That one definition yields *both* the model-facing JSON Schema *and* the
 handler's argument type, inferred — no second declaration, no drift. A `ToolRegistry`
 holds the tools available to an agent, and MCP servers surface as tools through an
 adapter. This is planned, not built; it is designed in [Tools & MCP](../architecture/11-tools-and-mcp.md).
-The foundation is already in place: `@vibe/errors` ships `ToolError`
+The foundation is already in place: `vibe/errors` ships `ToolError`
 (`VIBE_TOOL_EXECUTION_FAILED`, retryable) so a failing tool is an observable value,
 not a crash.
 
@@ -133,7 +133,7 @@ with no level, no structure, and no way to correlate the lines from one request
 across the async calls that produced them. You can't filter, can't ship it to a log
 pipeline, and can't answer "what did *this* request do?"
 
-**How Vibe solves it.** `@vibe/logger` is leveled (`Trace`…`Fatal`), structured
+**How Vibe solves it.** `vibe/logger` is leveled (`Trace`…`Fatal`), structured
 (every entry is `{ level, message, meta, timestamp, correlationId }`), and
 context-aware: the correlation id is pulled from an `AsyncLocalStorage`-backed
 `ContextStore` at log time, so it threads through `await` boundaries without being
@@ -151,11 +151,11 @@ Resolving a service returns `any`, so a typo in a key is a runtime `undefined`.
 There's no scoping, no cycle detection, and swapping a real provider for a fake in
 tests means monkey-patching a module.
 
-**How Vibe solves it.** `@vibe/di` is a container keyed by branded
+**How Vibe solves it.** `vibe/di` is a container keyed by branded
 `ServiceToken<T>` — the token *carries* its value type, so `resolve(token)` returns
 `T` with no cast and a mistyped registration won't compile. It supports `singleton`,
 `scoped`, and `transient` lifetimes, parent-chained scopes (`createScope()`), and
-throws `diCircularDependency` when a factory re-enters its own token. `@vibe/core`
+throws `diCircularDependency` when a factory re-enters its own token. `vibe/core`
 already registers the container, logger, lifecycle, and plugin host as tokens, so
 the agentic layer resolves its dependencies rather than importing them — which is
 also what makes the model provider swappable in a test. See
@@ -167,12 +167,12 @@ also what makes the model provider swappable in a test. See
 call. If the framework has no extension seam, you fork it or monkey-patch it, and
 now you own a divergent copy.
 
-**How Vibe solves it.** `@vibe/plugin` is a first-class extension point. A `Plugin`
+**How Vibe solves it.** `vibe/plugin` is a first-class extension point. A `Plugin`
 declares a `manifest` (name, version, `dependencies?`) and a `setup(hooks)` method;
 the `PluginHost` validates that declared dependencies are present (throwing
 `pluginNotFoundError` / `pluginConflictError`), runs `setup`, and dispatches
 lifecycle hooks (`onBefore`/`onAfter` on `init`/`start`/`stop`) and named hooks
-(`on(name, handler)`). `@vibe/core` registers configured plugins during `start`.
+(`on(name, handler)`). `vibe/core` registers configured plugins during `start`.
 Teams add tools, providers, and behavior without touching core. (Honest caveats:
 hook payloads are currently `unknown[]` and the host validates dependency *presence*
 but does not topologically *sort* — both noted in the
@@ -185,7 +185,7 @@ but does not topologically *sort* — both noted in the
 eight in parallel. Multiply by concurrent agents and you blow past provider rate
 limits, exhaust a connection pool, or OOM the process. There is no backpressure.
 
-**How Vibe solves it.** `@vibe/runtime`'s `ResourceManager` is a named semaphore.
+**How Vibe solves it.** `vibe/runtime`'s `ResourceManager` is a named semaphore.
 `acquire(name, limit, { timeoutMs })` bounds concurrency per resource (e.g. a
 `"anthropic"` pool or a `"db"` pool), queues waiters, rejects with `timeoutError`
 if a waiter waits too long, and drains the queue on `release()`. `getUsage(name)`
@@ -202,7 +202,7 @@ implementations model it as a single `async` function. If it fails on step 7,
 you restart from step 1 — re-paying every token spent so far. There's no
 execution record, no progress, no checkpoint, no way to stream partial results.
 
-**How Vibe solves it.** `@vibe/runtime` models work as **executions**: a registered
+**How Vibe solves it.** `vibe/runtime` models work as **executions**: a registered
 `Task` handler runs as an `Execution` with a branded `ExecutionId`, an
 `ExecutionContext` (carrying `attempt`, the cancellation token, `progress()`, and
 `checkpoint()`), and a typed `ExecutionResult` that records `state`, `attempts`,

@@ -1,6 +1,6 @@
 # http-server
 
-Expose an agent over HTTP with `@vibe/adapters`. Runs on Bun (`Bun.serve`) or Node
+Expose an agent over HTTP with `vibe/adapters`. Runs on Bun (`Bun.serve`) or Node
 (`http.createServer`).
 
 ```sh

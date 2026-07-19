@@ -5,7 +5,7 @@ description: "The loop must not import a vendor SDK directly. It depends on a `M
 
 # Model & Provider Layer
 
-> 🚧 Planned — package `@vibe/model`. The interface the [agent loop](./09-agent-loop.md)
+> 🚧 Planned — package `vibe/model`. The interface the [agent loop](./09-agent-loop.md)
 > depends on, plus a reference Anthropic provider.
 
 The loop must not import a vendor SDK directly. It depends on a `ModelProvider`
@@ -26,7 +26,7 @@ interface ModelRequest {
   model: string                          // e.g. "claude-opus-4-8"
   system?: string
   messages: Message[]
-  tools?: ToolSchema[]                   // model-facing JSON Schemas (from @vibe/tools)
+  tools?: ToolSchema[]                   // model-facing JSON Schemas (from vibe/tools)
   toolChoice?: ToolChoice
   maxTokens?: number
   thinking?: ThinkingConfig              // default: { type: "adaptive" }
@@ -89,7 +89,7 @@ for the API-drift rules the provider must honor.
 ### Sketch
 
 ```ts
-// @vibe/model — anthropic provider (illustrative)
+// vibe/model — anthropic provider (illustrative)
 import Anthropic from "@anthropic-ai/sdk"
 
 export function createAnthropicProvider(opts: AnthropicOptions): ModelProvider {

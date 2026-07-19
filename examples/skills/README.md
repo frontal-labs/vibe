@@ -1,6 +1,6 @@
 # skills
 
-Two kinds of skill with `@vibe/skills`, unified so an agent consumes both as tools:
+Two kinds of skill with `vibe/skills`, unified so an agent consumes both as tools:
 
 - **code** — `defineSkill`: a typed, validated handler (a tool) plus discovery
   metadata (tags, examples).

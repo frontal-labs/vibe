@@ -1,6 +1,6 @@
 # governance
 
-Put a policy engine in front of a tool with `@vibe/governance`. Sensitive tools can
+Put a policy engine in front of a tool with `vibe/governance`. Sensitive tools can
 be denied outright or gated behind human approval — without forking the agent loop.
 
 ```sh
