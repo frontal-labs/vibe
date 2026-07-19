@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/logger",
+  "name": "vibe/logger",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -16,22 +16,22 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
     "test": "vitest run",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/errors": "workspace:*",
-    "@vibe/shared": "workspace:*"
+    "vibe/errors": "workspace:*",
+    "vibe/shared": "workspace:*"
   },
   "tsd": {
     "directory": "type-tests"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5"
+    "vite": "^6.0.0"
   }
 }

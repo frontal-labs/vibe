@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/typescript-config",
+  "name": "vibe/typescript-config",
   "type": "module",
   "version": "0.0.0",
   "private": true,

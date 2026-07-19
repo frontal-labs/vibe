@@ -1,8 +1,8 @@
 {
-  "name": "frontal-vibe",
+  "name": "@frontal-labs/vibe",
   "version": "0.0.0",
   "type": "module",
-  "description": "The Vibe framework barrel — import from `frontal-vibe` and `frontal-vibe/*` instead of `@vibe/*`.",
+  "description": "The Vibe framework barrel — import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
   "keywords": [
     "ai",
     "agents",
@@ -160,41 +160,41 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
     "test": "vitest run",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/agent": "workspace:*",
-    "@vibe/tools": "workspace:*",
-    "@vibe/model": "workspace:*",
-    "@vibe/memory": "workspace:*",
-    "@vibe/core": "workspace:*",
-    "@vibe/errors": "workspace:*",
-    "@vibe/logger": "workspace:*",
-    "@vibe/runtime": "workspace:*",
-    "@vibe/plugin": "workspace:*",
-    "@vibe/di": "workspace:*",
-    "@vibe/adapters": "workspace:*",
-    "@vibe/tracing": "workspace:*",
-    "@vibe/evals": "workspace:*",
-    "@vibe/deploy": "workspace:*",
-    "@vibe/devtools": "workspace:*",
-    "@vibe/config": "workspace:*",
-    "@vibe/skills": "workspace:*",
-    "@vibe/workflows": "workspace:*",
-    "@vibe/ontology": "workspace:*",
-    "@vibe/governance": "workspace:*",
-    "@vibe/security": "workspace:*",
-    "@vibe/observability": "workspace:*"
+    "vibe/agent": "workspace:*",
+    "vibe/tools": "workspace:*",
+    "vibe/model": "workspace:*",
+    "vibe/memory": "workspace:*",
+    "vibe/core": "workspace:*",
+    "vibe/errors": "workspace:*",
+    "vibe/logger": "workspace:*",
+    "vibe/runtime": "workspace:*",
+    "vibe/plugin": "workspace:*",
+    "vibe/di": "workspace:*",
+    "vibe/adapters": "workspace:*",
+    "vibe/tracing": "workspace:*",
+    "vibe/evals": "workspace:*",
+    "vibe/deploy": "workspace:*",
+    "vibe/devtools": "workspace:*",
+    "vibe/config": "workspace:*",
+    "vibe/skills": "workspace:*",
+    "vibe/workflows": "workspace:*",
+    "vibe/ontology": "workspace:*",
+    "vibe/governance": "workspace:*",
+    "vibe/security": "workspace:*",
+    "vibe/observability": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "vite": "^6.0.0"
   },
   "tsd": {
     "directory": "type-tests"

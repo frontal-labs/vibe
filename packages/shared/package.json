@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/shared",
+  "name": "vibe/shared",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -16,8 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
     "test": "vitest run",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5"
+    "vite": "^6.0.0"
   }
 }
