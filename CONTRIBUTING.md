@@ -29,7 +29,13 @@ from everyone. By participating in this project, you agree to abide by our
    ```bash
    bun install
    ```
-3. Build all packages:
+3. Install the git hooks (replaces husky — language-agnostic, runs Biome,
+   commitlint, and the Rust toolchain so local checks match CI):
+   ```bash
+   bun run precommit:install
+   # or: pipx install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg
+   ```
+4. Build all packages:
    ```bash
    bun run build
    ```
@@ -87,7 +93,8 @@ Use descriptive branch names with a conventional prefix:
 
 ### Conventional Commits
 
-All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/)
+Commit messages are validated by a `commitlint` pre-commit hook (configured in
+`.pre-commit-config.yaml`). All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/)
 specification:
 
 ```

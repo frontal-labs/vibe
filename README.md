@@ -97,6 +97,7 @@ vibe/
 - **Linting:** Biome
 - **Testing:** Vitest
 - **Versioning:** Changesets
+- **Git hooks:** pre-commit (Biome, commitlint, Rust fmt/clippy)
 
 ## License
 

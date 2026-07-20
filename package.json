@@ -15,6 +15,8 @@
     "ultracite:fix": "ultracite format",
     "clean": "turbo run clean",
     "knip": "knip",
+    "precommit:install": "pre-commit install --hook-type pre-commit --hook-type commit-msg",
+    "precommit:run": "pre-commit run --all-files",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "turbo run build && changeset publish",
