@@ -1,6 +1,6 @@
 {
   "name": "@frontal-labs/vibe",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "The Vibe framework barrel — import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
   "keywords": [

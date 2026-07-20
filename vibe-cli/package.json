@@ -1,6 +1,6 @@
 {
   "name": "@frontal-labs/vibe-cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "bin": {
     "vibe": "./bin/vibe.js"

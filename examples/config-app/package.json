@@ -1,6 +1,6 @@
 {
   "name": "@example/config-app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
   "description": "Convention-based app: vibe.config.ts + auto-discovered agents/ and tools/",

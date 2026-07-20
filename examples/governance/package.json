@@ -1,6 +1,6 @@
 {
   "name": "@example/governance",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
   "description": "Policy engine + guardTool: deny or require approval for tool calls",

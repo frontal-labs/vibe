@@ -1,6 +1,6 @@
 {
   "name": "@example/eval-suite",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
   "description": "Evaluate an agent with vibe/evals",
