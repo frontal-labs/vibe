@@ -18,48 +18,24 @@ const vibeAliases = Object.fromEntries(
     }),
 )
 
-// Externalize workspace + third-party deps (third-party deps are externalized by default).
+// Externalize built-in + third-party deps (third-party are externalized by default).
+// Internal `vibe/*` workspace packages are bundled into the barrel so the
+// published `@frontal-labs/vibe` is self-contained.
 const external = (id) =>
   id.startsWith("node:") ||
   [
-    [
-      "util",
-      "path",
-      "fs",
-      "os",
-      "crypto",
-      "events",
-      "stream",
-      "url",
-      "http",
-      "https",
-      "child_process",
-    ],
-  ].some((b) => id === b || id.startsWith(`${b}/`)) ||
-  [
-    "vibe/agent",
-    "vibe/tools",
-    "vibe/model",
-    "vibe/memory",
-    "vibe/core",
-    "vibe/errors",
-    "vibe/logger",
-    "vibe/runtime",
-    "vibe/plugin",
-    "vibe/di",
-    "vibe/adapters",
-    "vibe/tracing",
-    "vibe/evals",
-    "vibe/deploy",
-    "vibe/devtools",
-    "vibe/config",
-    "vibe/skills",
-    "vibe/workflows",
-    "vibe/ontology",
-    "vibe/governance",
-    "vibe/security",
-    "vibe/observability",
-  ].some((d) => id === d || id.startsWith(`${d}/`))
+    "util",
+    "path",
+    "fs",
+    "os",
+    "crypto",
+    "events",
+    "stream",
+    "url",
+    "http",
+    "https",
+    "child_process",
+  ].some((b) => id === b || id.startsWith(`${b}/`))
 
 // Library build: emits ESM + CJS into dist/ via Vite.
 // .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
