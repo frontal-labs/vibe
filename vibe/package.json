@@ -2,7 +2,7 @@
   "name": "@frontal-labs/vibe",
   "version": "0.1.0",
   "type": "module",
-  "description": "The Vibe framework barrel — import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
+  "description": "The Vibe framework barrel \u2014 import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
   "keywords": [
     "ai",
     "agents",
@@ -192,7 +192,7 @@
     "vibe/tracing": "workspace:*",
     "vibe/workflows": "workspace:*",
     "tsd": "^0.31.2",
-    "vitest": "^2.1.8",
+    "vitest": "^3.0.0",
     "vite": "^6.0.0"
   },
   "tsd": {
