@@ -109,7 +109,7 @@
     {
       "includes": [
         "packages/logger/src/transports/**",
-        "packages/cli/**",
+        "vibe-cli/**",
         "packages/devtools/**",
         "packages/tracing/**",
         "examples/**",
