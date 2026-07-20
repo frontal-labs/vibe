@@ -23,7 +23,7 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite build --watch",
     "start": "node dist/server.js",
-    "test": "vitest run",
+    "test": "vitest run --config vite.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "inspect": "npx @modelcontextprotocol/inspector dist/server.js",
