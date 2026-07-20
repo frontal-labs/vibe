@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentInput, AgentResult } from "@vibe/agent"
+import type { AgentEvent, AgentInput, AgentResult } from "vibe/agent"
 import type { Tracer } from "./types"
 
 /** The minimal agent surface the bridge needs. */

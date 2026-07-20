@@ -1,12 +1,12 @@
 ---
 title: "Quickstart"
-description: "From nothing to a tool-using, custom-model agent — in plain TypeScript with @vibe/core."
+description: "From nothing to a tool-using, custom-model agent — in plain TypeScript with vibe/core."
 ---
 
 # Quickstart
 
 From nothing to a tool-using, custom-model agent — in plain **TypeScript**. You
-write ordinary `.ts` files that import from `@vibe/core` (`createSystem`,
+write ordinary `.ts` files that import from `vibe/core` (`createSystem`,
 `defineTool`, `createAgent`); `vibe dev` runs them on the runtime and `vibe build`
 bundles them for production. This page is meant to be read top to bottom and
 copy-pasted.
@@ -14,7 +14,7 @@ copy-pasted.
 > **Honesty first.** The runtime foundation (`System`, DI, lifecycle, plugins,
 > runtime, errors, logging) is **built and tested today**. The **agentic layer**
 > behind the agent loop and `system.ask()` is **planned** and marked 🚧.
-> `system.ask()` currently throws `notImplementedError` on purpose. The `@vibe/*`
+> `system.ask()` currently throws `notImplementedError` on purpose. The `vibe/*`
 > APIs you compose against are real; the loop that drives them is still landing.
 
 ## Prerequisites
@@ -45,16 +45,16 @@ support-bot/
   dist/                 # vibe build output
 ```
 
-`@vibe/core` is a normal dependency in your `package.json` — you import it directly.
+`vibe/core` is a normal dependency in your `package.json` — you import it directly.
 
 ## 2. Write `support.ts`
 
 One TypeScript module holds the tools, the agent, and the system wiring. You call
-the `@vibe/core` factories directly — `defineTool`, `createAgent`, `createSystem`:
+the `vibe/core` factories directly — `defineTool`, `createAgent`, `createSystem`:
 
 ```ts
 // src/support.ts
-import { createAgent, createSystem, defineTool } from "@vibe/core"
+import { createAgent, createSystem, defineTool } from "vibe/core"
 
 import { db } from "./db"
 
@@ -94,7 +94,7 @@ That is the entire application. Three things are worth calling out:
 - **`import { db } from "./db"`** brings your own TypeScript into the tool body.
   Your types flow through and are checked by the real TS compiler.
 - **`tools: [getOrder]`** is the wiring — you pass the tool into the agent
-  explicitly. There's one surface here: plain TypeScript calling `@vibe/*` APIs.
+  explicitly. There's one surface here: plain TypeScript calling `vibe/*` APIs.
 
 Your `db.ts` is just TypeScript:
 
@@ -156,8 +156,8 @@ agent follows — one edit.
 
 ## 5. Build (🚧)
 
-`vibe build` bundles the whole project to `dist/` for production via `@vibe/build`.
-When the optional `vibe_bundler` native addon is present, `@vibe/build` uses it to
+`vibe build` bundles the whole project to `dist/` for production via `vibe/build`.
+When the optional `vibe_bundler` native addon is present, `vibe/build` uses it to
 statically analyze your agent/tool modules and code-split tools into lazily loaded
 chunks; without it, the build still works, just without that acceleration:
 
@@ -176,7 +176,7 @@ in `createSystem({...})` — both are supported:
 
 ```ts
 // vibe.config.ts
-import { defineConfig } from "@vibe/core"
+import { defineConfig } from "vibe/core"
 
 export default defineConfig({
   name: "support-bot",
@@ -190,12 +190,12 @@ See [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.m
 
 | Piece | Status |
 |---|---|
-| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `@vibe/core` and friends) |
+| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `vibe/core` and friends) |
 | Plugins (manifest + `setup(hooks)`, dependency-ordered) | ✅ Built |
-| `@vibe/build` + optional `vibe_bundler` native addon (tool code-splitting) | 🚧 In progress |
+| `vibe/build` + optional `vibe_bundler` native addon (tool code-splitting) | 🚧 In progress |
 | The **agentic layer** — agent loop, `system.ask()`, tool execution, model providers | 🚧 Planned |
 
-The runtime is built and tested today; `@vibe/build` and the agentic layer are the
+The runtime is built and tested today; `vibe/build` and the agentic layer are the
 planned work on top.
 
 ## Where to go next

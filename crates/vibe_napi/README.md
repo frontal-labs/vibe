@@ -5,11 +5,11 @@ Node.js bindings for the Vibe bundler's static analysis.
 ## Overview
 
 `vibe_napi` exposes [`vibe_bundler`](../vibe_bundler)'s TypeScript import analysis to
-JavaScript/TypeScript via N-API (`napi-rs`). It compiles to a `.node` addon so `@vibe/build`
+JavaScript/TypeScript via N-API (`napi-rs`). It compiles to a `.node` addon so `vibe/build`
 can build an agent→tool graph in-process — without spawning a separate Rust process — and
 code-split tools into lazily-loaded chunks for small cold starts.
 
-The addon is an **optional accelerator**: `@vibe/build` works without it and falls back to a
+The addon is an **optional accelerator**: `vibe/build` works without it and falls back to a
 pure-TypeScript analysis. There is no `.vibe` language compiler here — Vibe apps are plain
 TypeScript.
 

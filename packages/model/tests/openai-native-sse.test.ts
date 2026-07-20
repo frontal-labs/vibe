@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
-import { resetNativeAddonCache } from "@vibe/shared"
+import { resetNativeAddonCache } from "vibe/shared"
 import { describe, expect, it } from "vitest"
 
 import { createOpenAIProvider } from "../src/openai/provider"

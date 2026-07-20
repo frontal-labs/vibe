@@ -1,6 +1,6 @@
 # Agent Spec
 
-> 🚧 Planned — package `@vibe/agent`. The authoritative contract for the `Agent`
+> 🚧 Planned — package `vibe/agent`. The authoritative contract for the `Agent`
 > interface, its inputs/options/results, its event stream, and the loop
 > guarantees. This spec is kept **100% consistent with**
 > [The agent loop](../architecture/09-agent-loop.md); that page explains the *why*
@@ -33,7 +33,7 @@ Construction (illustrative):
 const agent = createAgent({
   model: "claude-sonnet-4-6",   // id from the model catalog; default claude-opus-4-8
   system: "You are a concise support agent.",
-  tools: [getOrderStatus],       // Tool[] from @vibe/tools
+  tools: [getOrderStatus],       // Tool[] from vibe/tools
   memory,                        // optional; defaults to a fresh in-memory Conversation
 })
 ```
@@ -54,7 +54,7 @@ interface AgentInput {
 ```ts
 interface RunOptions {
   maxIterations?: number          // default 10 — hard ceiling on model↔tool round-trips
-  cancellationToken?: CancellationToken   // from @vibe/runtime; checked between steps
+  cancellationToken?: CancellationToken   // from vibe/runtime; checked between steps
   toolChoice?: ToolChoice         // auto | required | none | { tool: name }
   signalTimeoutMs?: number        // per model/tool call timeout, enforced by the runtime
 }
@@ -145,7 +145,7 @@ in the implementation plan. Until that lands, `ask()` throws `notImplementedErro
 ## Loop guarantees
 
 The loop is orchestration; execution goes through
-[`@vibe/runtime`](../architecture/05-runtime-execution.md). It guarantees:
+[`vibe/runtime`](../architecture/05-runtime-execution.md). It guarantees:
 
 ### 1. Bounded iterations
 

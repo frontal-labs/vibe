@@ -7,7 +7,7 @@ description: "Vibe's public surface is small on purpose, and its internals are s
 
 Vibe's public surface is small on purpose, and its internals are swappable on
 purpose. This page documents the conventions that make both true, grounded in the
-real `@vibe/core`, `@vibe/di`, and `@vibe/lifecycle` APIs that exist today.
+real `vibe/core`, `vibe/di`, and `vibe/lifecycle` APIs that exist today.
 
 The governing rule: **the public API is a handful of factory functions and readonly
 interfaces; the flexibility lives behind DI tokens.** You compose objects, you

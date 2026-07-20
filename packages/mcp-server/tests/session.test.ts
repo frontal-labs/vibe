@@ -1,8 +1,8 @@
 import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { createLogger, LogLevel } from "@vibe/logger"
-import { createFakeProvider } from "@vibe/model"
+import { createLogger, LogLevel } from "vibe/logger"
+import { createFakeProvider } from "vibe/model"
 import { expect, test } from "vitest"
 
 import { Session } from "../src/session"

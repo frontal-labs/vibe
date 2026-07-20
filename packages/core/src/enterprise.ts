@@ -3,16 +3,16 @@ import type {
   ObservabilityConfig,
   OntologyConfig,
   SecurityConfig,
-} from "@vibe/config"
-import { createPolicyEngine, type PolicyEngine, requireApprovalFor } from "@vibe/governance"
-import type { Logger } from "@vibe/logger"
-import { type AuditLog, createAuditLog, createMetrics, type Metrics } from "@vibe/observability"
+} from "vibe/config"
+import { createPolicyEngine, type PolicyEngine, requireApprovalFor } from "vibe/governance"
+import type { Logger } from "vibe/logger"
+import { type AuditLog, createAuditLog, createMetrics, type Metrics } from "vibe/observability"
 import {
   createEntityRegistry,
   createInMemoryOntologyStore,
   type EntityRegistry,
   type OntologyStore,
-} from "@vibe/ontology"
+} from "vibe/ontology"
 import {
   type ContentGuardOptions,
   createContentGuard,
@@ -21,10 +21,10 @@ import {
   type RateLimiter,
   redactPII,
   type SecretsProvider,
-} from "@vibe/security"
-import { type AnySkill, createSkillRegistry, type SkillRegistry } from "@vibe/skills"
-import type { AnyTool, ToolRegistry } from "@vibe/tools"
-import type { Workflow } from "@vibe/workflows"
+} from "vibe/security"
+import { type AnySkill, createSkillRegistry, type SkillRegistry } from "vibe/skills"
+import type { AnyTool, ToolRegistry } from "vibe/tools"
+import type { Workflow } from "vibe/workflows"
 
 /** Security services derived from the app's `security` config. */
 export interface SecurityServices {

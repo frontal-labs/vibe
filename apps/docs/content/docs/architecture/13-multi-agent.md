@@ -5,7 +5,7 @@ description: "Multi-agent in Vibe is not a new runtime. A **coordinator** agent 
 
 # Multi-Agent
 
-> 🚧 Planned — the coordinator/delegate pattern layered on `@vibe/agent`. Every
+> 🚧 Planned — the coordinator/delegate pattern layered on `vibe/agent`. Every
 > sub-agent is a plain [Agent](./09-agent-loop.md) running the same loop; delegation
 > is just a tool.
 
@@ -49,7 +49,7 @@ want to bound fan-out) a `ResourceManager` concurrency limit for free.
 
 ```ts
 import { z } from "zod"
-import { defineTool } from "@vibe/tools"
+import { defineTool } from "vibe/tools"
 
 function delegateTool(subAgents: Record<string, () => Agent>) {
   return defineTool({

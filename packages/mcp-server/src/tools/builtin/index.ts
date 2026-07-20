@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join } from "node:path"
-import type { AnyTool } from "@vibe/tools"
-import { defineTool } from "@vibe/tools"
+import type { AnyTool } from "vibe/tools"
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 
 import { exec } from "../../lib/exec"

@@ -32,9 +32,9 @@ No amount of framework engineering makes a five-turn agent faster than five mode
 round-trips plus the tool work between them.
 
 What Vibe does: it removes *added* latency and makes the unavoidable latency
-observable and cancellable. Streaming (🚧 `@vibe/model`) surfaces tokens as they
+observable and cancellable. Streaming (🚧 `vibe/model`) surfaces tokens as they
 arrive so time-to-first-token, not time-to-completion, is what the user feels;
-`@vibe/runtime` cancellation lets you abandon a slow run cleanly; the
+`vibe/runtime` cancellation lets you abandon a slow run cleanly; the
 [logger](../architecture/08-logging-observability.md) records per-call latency so
 you can find the slow step. What Vibe does **not** do: make the model think faster.
 Adaptive thinking (`thinking: { type: "adaptive" }`, the default) trades latency
@@ -47,7 +47,7 @@ Every message, tool schema, and thinking block is tokens, and tokens are billed.
 Long-running agents accumulate conversation history until it either costs a fortune
 or overflows the context window. This is a hard economic and physical ceiling.
 
-What Vibe does: `@vibe/memory` (🚧) owns the request builder and conversation
+What Vibe does: `vibe/memory` (🚧) owns the request builder and conversation
 history and is designed with compaction / context-editing hooks so history can be
 summarized or trimmed before it overflows; prompt caching (below) cuts the cost of
 the stable prefix. The defaults help too — `effort` (not raw `budget_tokens`) and
@@ -60,7 +60,7 @@ trade. See [Memory & context](../architecture/12-memory-and-context.md).
 
 An agent is a loop that runs "until it's done." Left truly open-ended, a model can
 loop forever — calling the same tool, oscillating between two, or never emitting
-`end_turn`. So the [agent loop](../architecture/09-agent-loop.md) (🚧 `@vibe/agent`)
+`end_turn`. So the [agent loop](../architecture/09-agent-loop.md) (🚧 `vibe/agent`)
 will enforce a **maximum-iteration bound**.
 
 The trade-off is unavoidable and it cuts both ways: too low a ceiling truncates
@@ -77,7 +77,7 @@ faster — but unbounded parallelism blows past provider rate limits, exhausts
 connection pools, and can OOM the process (see
 [Problems we solve](./01-problems-we-solve.md#10-unbounded-parallel-tool-calls-melt-the-provider)).
 
-Vibe's `@vibe/runtime` `ResourceManager` is a named semaphore that bounds
+Vibe's `vibe/runtime` `ResourceManager` is a named semaphore that bounds
 concurrency per resource pool, which resolves the safety half of the tension. The
 trade-off it leaves you is a **tuning problem, not a correctness one**: set the
 limit too low and you serialize work that could have been parallel; too high and you
@@ -116,7 +116,7 @@ one layer without the rest, and there are no cycles to reason around (see
 
 The cost is real ergonomic friction:
 
-- **No back-references.** `@vibe/shared` cannot depend on `@vibe/errors`, so its
+- **No back-references.** `vibe/shared` cannot depend on `vibe/errors`, so its
   guards throw bare `TypeError`, not `VibeError`. A lower layer can never reach up.
 - **Indirection.** Getting a shared capability where it's needed means DI or
   interface-passing, not a convenient import — more ceremony than a monolith.
@@ -135,7 +135,7 @@ front of the request (reordering tools, editing the system prompt, injecting a
 timestamp near the top) invalidates the cache and re-bills the whole prefix.
 
 This constrains the design more than it first appears: the request builder (🚧
-`@vibe/memory`) must keep the stable prefix — system prompt, tool schemas — fixed
+`vibe/memory`) must keep the stable prefix — system prompt, tool schemas — fixed
 and append new turns at the end; context compaction, which by definition rewrites
 history, is in direct tension with cache stability and must be applied
 deliberately, not every turn. Vibe's stance is to make the prefix stable by default
@@ -164,7 +164,7 @@ modularity; keeping it coherent is ongoing work, not a one-time setup.
 ## 🧱 "Durable" is a design promise, not yet a runtime property
 
 The [framework analysis](./00-framework-analysis.md#viberuntime) is explicit about
-this and it is the single most important expectation to set: `@vibe/runtime`'s
+this and it is the single most important expectation to set: `vibe/runtime`'s
 executions, results, and checkpoints live in in-memory `Map`s. The API is *shaped*
 for durability — `ExecutionId`, `checkpoint()`, `resumeFromCheckpoint`,
 `ExecutionResult` — but today:

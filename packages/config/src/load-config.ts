@@ -2,9 +2,8 @@ import { existsSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { basename, join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
-
-import { configError, withHint } from "@vibe/errors"
 import { build as esbuild } from "esbuild"
+import { configError, withHint } from "vibe/errors"
 
 import type { VibeConfig } from "./types"
 

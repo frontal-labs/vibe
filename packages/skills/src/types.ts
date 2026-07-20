@@ -1,5 +1,5 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
-import type { AnyTool, Tool } from "@vibe/tools"
+import type { AnyTool, Tool } from "vibe/tools"
 
 /**
  * How a skill is delivered to the model:

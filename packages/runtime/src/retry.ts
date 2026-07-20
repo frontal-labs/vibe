@@ -1,4 +1,4 @@
-import { cancelledError, timeoutError } from "@vibe/errors"
+import { cancelledError, timeoutError } from "vibe/errors"
 
 import type { CancellationToken, RetryPolicy } from "./types"
 

@@ -1,4 +1,4 @@
-import { nativeAddon } from "@vibe/shared"
+import { nativeAddon } from "vibe/shared"
 
 import type { ModelProvider, ModelRequest, ModelResponse, ModelStreamEvent } from "../types"
 import { mapOpenAIError } from "./errors"

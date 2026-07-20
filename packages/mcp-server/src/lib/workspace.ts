@@ -6,7 +6,7 @@ export interface PackageInfo {
   readonly vibeDependencies: string[]
 }
 
-/** Scan `packages/*` and return each package's `@vibe/*` dependencies (the acyclic graph). */
+/** Scan `packages/*` and return each package's `vibe/*` dependencies (the acyclic graph). */
 export function listPackages(repoRoot: string): PackageInfo[] {
   const dir = join(repoRoot, "packages")
   if (!existsSync(dir)) return []
@@ -17,7 +17,7 @@ export function listPackages(repoRoot: string): PackageInfo[] {
         name?: string
         dependencies?: Record<string, string>
       }
-      const deps = Object.keys(pkg.dependencies ?? {}).filter((d) => d.startsWith("@vibe/"))
+      const deps = Object.keys(pkg.dependencies ?? {}).filter((d) => d.startsWith("vibe/"))
       return { name: pkg.name ?? name, vibeDependencies: deps }
     })
 }

@@ -1,5 +1,5 @@
-import type { AgentResult } from "@vibe/agent"
-import type { Message, TokenUsage } from "@vibe/model"
+import type { AgentResult } from "vibe/agent"
+import type { Message, TokenUsage } from "vibe/model"
 
 import { estimateCost } from "./cost"
 

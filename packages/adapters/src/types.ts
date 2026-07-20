@@ -1,4 +1,4 @@
-import type { Agent } from "@vibe/agent"
+import type { Agent } from "vibe/agent"
 
 /** The minimal surface an adapter needs: run to completion, or stream events. */
 export type AgentLike = Pick<Agent, "run" | "stream">

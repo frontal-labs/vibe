@@ -1,4 +1,4 @@
-import { KNOWN_MODEL_IDS } from "@vibe/model"
+import { KNOWN_MODEL_IDS } from "vibe/model"
 
 import type { AgentLike } from "./types"
 

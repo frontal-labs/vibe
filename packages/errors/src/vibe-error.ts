@@ -1,4 +1,4 @@
-import { isError } from "@vibe/shared"
+import { isError } from "vibe/shared"
 
 import type { ErrorCode } from "./error-codes"
 import type { ErrorFactoryOptions, ErrorSerialized } from "./types"

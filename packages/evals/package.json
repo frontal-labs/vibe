@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/evals",
+  "name": "vibe/evals",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -16,20 +16,20 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "test": "vitest run",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "test": "vitest run --config vite.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/shared": "workspace:*"
+    "vibe/shared": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "vite": "^6.0.0"
   },
   "tsd": {
     "directory": "type-tests"

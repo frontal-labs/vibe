@@ -1,10 +1,10 @@
 # Quickstart
 
 From nothing to a tool-using, custom-model agent — written in **plain
-TypeScript**. Vibe is a TypeScript-native agent framework: you import `@vibe/*`
+TypeScript**. Vibe is a TypeScript-native agent framework: you import `vibe/*`
 APIs (`defineTool`, `defineAgent`, `createSystem`) and write ordinary `.ts`
 files. There is no separate language and no compiler — you run your app with
-`node`/`bun` (or the `@vibe/cli`) and build it for production with `@vibe/build`.
+`node`/`bun` (or the `@frontal-labs/vibe-cli`) and build it for production with `vibe/build`.
 This page is meant to be read top to bottom and copy-pasted.
 
 > **Honesty first.** The runtime foundation (`System`, DI, lifecycle, plugins,
@@ -21,13 +21,13 @@ This page is meant to be read top to bottom and copy-pasted.
 
 ## 1. Create a project
 
-A Vibe app is a normal TypeScript project that depends on `@vibe/*`. Add the
+A Vibe app is a normal TypeScript project that depends on `vibe/*`. Add the
 barrel package (which re-exports the framework surface) and a config:
 
 ```bash
 mkdir support-bot && cd support-bot
 bun init -y
-bun add @vibe/core @vibe/tools @vibe/agent
+bun add vibe/core vibe/tools vibe/agent
 ```
 
 A minimal layout:
@@ -38,7 +38,7 @@ support-bot/
   db.ts                 # your ordinary TypeScript (imported by tool bodies)
   vibe.config.ts        # optional — framework config
   package.json
-  dist/                 # @vibe/build output
+  dist/                 # vibe/build output
 ```
 
 You import the framework directly. See
@@ -54,9 +54,9 @@ runnable system with `createSystem`.
 // support.ts
 import { z } from "zod"
 
-import { createSystem } from "@vibe/core"
-import { defineAgent } from "@vibe/agent"
-import { defineTool } from "@vibe/tools"
+import { createSystem } from "vibe/core"
+import { defineAgent } from "vibe/agent"
+import { defineTool } from "vibe/tools"
 
 import { db } from "./db" // interop: import your own TypeScript
 
@@ -139,7 +139,7 @@ Run it today and you'll see the runtime's structured startup/shutdown logs and a
 `notImplementedError` from the agent loop — proof the lifecycle and logger are
 real while the loop (`system.ask()` / agent run) is still 🚧.
 
-The `@vibe/cli` (a TypeScript CLI) wraps the same flow for convenience once the
+The `@frontal-labs/vibe-cli` (a TypeScript CLI) wraps the same flow for convenience once the
 agentic layer lands.
 
 ## 4. Swap a sub-agent's model
@@ -176,12 +176,12 @@ that agent follows — one edit.
 
 ## 5. Build for production
 
-`@vibe/build` bundles your app for production, code-splitting tools into
+`vibe/build` bundles your app for production, code-splitting tools into
 lazily-loaded chunks so cold starts stay small. It analyzes your agent/tool
 modules to build the dependency graph, then emits to `dist/`:
 
 ```bash
-bun run build   # invokes @vibe/build
+bun run build   # invokes vibe/build
 ```
 
 Typecheck and lint with the ordinary TypeScript toolchain (`tsc --noEmit`,
@@ -190,7 +190,7 @@ Biome) — the same gate the framework packages use.
 ## Embedding in an existing app
 
 Because Vibe is a library, embedding it in an existing TypeScript app is the
-normal case, not an escape hatch: import `@vibe/*`, call `createSystem`
+normal case, not an escape hatch: import `vibe/*`, call `createSystem`
 yourself, and start/stop it alongside the rest of your process. See
 [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md#embedding-the-runtime-directly).
 
@@ -198,7 +198,7 @@ yourself, and start/stop it alongside the rest of your process. See
 
 | Piece | Status |
 |---|---|
-| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `@vibe/core` and friends) |
+| Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `vibe/core` and friends) |
 | Plugins (manifest + `setup(hooks)`, dependency-ordered) | ✅ Built |
 | The **agentic layer** — agent loop, `system.ask()`, tool execution, model providers | 🚧 Planned |
 
@@ -211,5 +211,5 @@ planned work on top.
 - [Agent spec](../specs/agent-spec.md) · [Tool spec](../specs/tool-spec.md) ·
   [Model spec](../specs/model-spec.md) — the runtime contracts your app targets.
 - [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md) — `createSystem` vs `vibe.config.ts`.
-- [Package topology](../architecture/02-package-topology.md) — how the `@vibe/*` packages fit together.
+- [Package topology](../architecture/02-package-topology.md) — how the `vibe/*` packages fit together.
 - [Agentic implementation plan](../plan/02-agentic-implementation-plan.md) — the phased build of the agent loop.

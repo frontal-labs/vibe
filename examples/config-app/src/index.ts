@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 
-import { discoverApp, toolEdges } from "@vibe/build"
+import { discoverApp, toolEdges } from "vibe/build"
 
 import support from "../agents/support"
 
@@ -9,7 +9,7 @@ import support from "../agents/support"
 const root = fileURLToPath(new URL("..", import.meta.url))
 
 // 1. Convention-based discovery: resolve `vibe.config.*`, `agents/*`, `tools/*`,
-//    `skills/*`, and `workflows/*` into the build graph `@vibe/build` consumes.
+//    `skills/*`, and `workflows/*` into the build graph `vibe/build` consumes.
 const app = await discoverApp(root)
 console.log(`app:    ${app.config?.name ?? "(no config)"}`)
 console.log(`agents: ${app.agents.map((a) => a.name).join(", ") || "—"}`)

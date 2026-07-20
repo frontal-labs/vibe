@@ -1,4 +1,4 @@
-import { defineTool } from "frontal-vibe/tools"
+import { defineTool } from "@frontal-labs/vibe/tools"
 import { z } from "zod"
 
 const ORDERS: Record<string, string> = {

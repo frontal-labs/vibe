@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/mcp-server",
+  "name": "vibe/mcp-server",
   "version": "0.0.0",
   "description": "Model Context Protocol server that lets AI agents operate, build, and generate the Vibe framework.",
   "type": "module",
@@ -20,10 +20,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
     "start": "node dist/server.js",
-    "test": "vitest run",
+    "test": "vitest run --config vite.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "inspect": "npx @modelcontextprotocol/inspector dist/server.js",
@@ -31,20 +31,20 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
-    "@vibe/agent": "workspace:*",
-    "@vibe/core": "workspace:*",
-    "@vibe/errors": "workspace:*",
-    "@vibe/logger": "workspace:*",
-    "@vibe/memory": "workspace:*",
-    "@vibe/model": "workspace:*",
-    "@vibe/runtime": "workspace:*",
-    "@vibe/shared": "workspace:*",
-    "@vibe/tools": "workspace:*",
+    "vibe/agent": "workspace:*",
+    "vibe/core": "workspace:*",
+    "vibe/errors": "workspace:*",
+    "vibe/logger": "workspace:*",
+    "vibe/memory": "workspace:*",
+    "vibe/model": "workspace:*",
+    "vibe/runtime": "workspace:*",
+    "vibe/shared": "workspace:*",
+    "vibe/tools": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5"
+    "vite": "^6.0.0"
   },
   "tsd": {
     "directory": "type-tests"

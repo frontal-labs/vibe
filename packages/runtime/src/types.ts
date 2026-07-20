@@ -1,4 +1,4 @@
-import type { Brand } from "@vibe/shared"
+import type { Brand } from "vibe/shared"
 
 export type ExecutionId = Brand<string, "ExecutionId">
 

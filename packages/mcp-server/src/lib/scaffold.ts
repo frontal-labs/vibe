@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 
-import { configError } from "@vibe/errors"
+import { configError } from "vibe/errors"
 
 import { resolveWithin } from "./path"
 
@@ -23,8 +23,8 @@ const packageJson = (scoped: string) =>
       types: "./dist/index.d.ts",
       files: ["dist"],
       scripts: {
-        build: "tsup",
-        dev: "tsup --watch",
+        build: "vite build && tsc --emitDeclarationOnly",
+        dev: "vite build --watch",
         test: "vitest run",
         "test:types": "tsd",
         typecheck: "tsc --noEmit",
@@ -33,7 +33,7 @@ const packageJson = (scoped: string) =>
       dependencies: {},
       devDependencies: {
         tsd: "^0.31.2",
-        tsup: "^8.3.5",
+        vite: "^6.0.0",
         vitest: "^2.1.8",
       },
       tsd: { directory: "type-tests" },
@@ -53,29 +53,42 @@ const tsconfig = `${JSON.stringify(
   2,
 )}\n`
 
-const tsup = `import { defineConfig } from "tsup"
+const viteConfig = `import { defineConfig } from "vite"
 
 export default defineConfig({
-  entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
-  dts: true,
-  clean: true,
-  sourcemap: true,
+  build: {
+    target: "node20",
+    lib: {
+      entry: { index: "src/index.ts" },
+      formats: ["es", "cjs"],
+    },
+    outDir: "dist",
+    emptyOutDir: true,
+    sourcemap: true,
+    rollupOptions: {
+      external: (id) => id.startsWith("node:"),
+      output: {
+        entryFileNames: (chunk, format) => \`\${chunk.name}.\${format === "es" ? "js" : "cjs"}\`,
+        chunkFileNames: "chunk-[name].[format].js",
+        exports: "named",
+      },
+    },
+  },
 })
 `
 
 const indexTs = (scoped: string) => `export const name = "${scoped}"\n`
 
 /**
- * Generate a new `@vibe/*` package following the repo's conventions, so an agent
- * can extend Vibe without hand-wiring tsconfig/tsup/exports. Returns the created
+ * Generate a new `vibe/*` package following the repo's conventions, so an agent
+ * can extend Vibe without hand-wiring tsconfig/vite/exports. Returns the created
  * file paths. Refuses names that already exist or contain path separators.
  */
 export function scaffoldPackage(repoRoot: string, name: string): string[] {
   if (name.includes("/") || name.includes("\\") || name.trim() === "") {
     throw configError(`Invalid package name: "${name}". Use a bare name, e.g. "cache".`)
   }
-  const scoped = name.startsWith("@vibe/") ? name : `@vibe/${name}`
+  const scoped = name.startsWith("vibe/") ? name : `vibe/${name}`
   const dir = resolveWithin(repoRoot, join("packages", name))
 
   if (existsSync(dir)) {
@@ -85,7 +98,7 @@ export function scaffoldPackage(repoRoot: string, name: string): string[] {
   const files: Record<string, string> = {
     "package.json": packageJson(scoped),
     "tsconfig.json": tsconfig,
-    "tsup.config.ts": tsup,
+    "vite.config.ts": viteConfig,
     "src/index.ts": indexTs(scoped),
     "type-tests/.gitkeep": "",
   }
@@ -100,9 +113,9 @@ export function scaffoldPackage(repoRoot: string, name: string): string[] {
   return created
 }
 
-const agentTs = (name: string) => `import { defineTool } from "@vibe/tools"
-import { createAgent } from "@vibe/agent"
-import type { ModelProvider } from "@vibe/model"
+const agentTs = (name: string) => `import { defineTool } from "vibe/tools"
+import { createAgent } from "vibe/agent"
+import type { ModelProvider } from "vibe/model"
 import { z } from "zod"
 
 // A self-contained agent scaffold. Wire a real provider (e.g. createAnthropicProvider)
@@ -138,7 +151,7 @@ export function create${pascal(name)}Agent(provider: ModelProvider) {
 
 /**
  * Generate a runnable agent example module under `examples/`. Vibe apps are plain
- * TypeScript that run on the `@vibe/*` runtime; this emits a ready-to-run starter.
+ * TypeScript that run on the `vibe/*` runtime; this emits a ready-to-run starter.
  * Returns the created file path.
  */
 export function scaffoldAgent(repoRoot: string, name: string): string[] {

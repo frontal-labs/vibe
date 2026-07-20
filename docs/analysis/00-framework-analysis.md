@@ -49,7 +49,7 @@ modularity guarantee, not a convention.
 
 ---
 
-## `@vibe/shared`
+## `vibe/shared`
 
 **Purpose.** The zero-dependency base. Nominal-typing primitive, common utility
 types, runtime guards, an `AsyncLocalStorage` wrapper, and the package version
@@ -84,7 +84,7 @@ threading it by hand.
 
 ---
 
-## `@vibe/errors`
+## `vibe/errors`
 
 **Purpose.** The typed error hierarchy. Every fallible operation in the framework
 throws a `VibeError` subclass carrying a machine-readable `code`, so retry logic,
@@ -126,7 +126,7 @@ carrying errors across execution boundaries.
 
 ---
 
-## `@vibe/di`
+## `vibe/di`
 
 **Purpose.** A minimal, type-safe service container with branded tokens. The
 System registers itself and its subsystems as tokens so the (future) agentic layer
@@ -165,7 +165,7 @@ throws `diResolutionFailed`.
 
 ---
 
-## `@vibe/lifecycle`
+## `vibe/lifecycle`
 
 **Purpose.** A typed state machine for orderly startup and shutdown, with
 before/after handlers. This is what makes "initialize in order, shut down in
@@ -209,7 +209,7 @@ reverse, once" a guarantee rather than a hope. See [Lifecycle](../architecture/0
 
 ---
 
-## `@vibe/logger`
+## `vibe/logger`
 
 **Purpose.** Leveled, structured logging with a context store that threads a
 correlation id through async calls, and pluggable transports. This is the "no bare
@@ -246,7 +246,7 @@ comparison is a numeric `>=`, cheap and correct.
 
 ---
 
-## `@vibe/plugin`
+## `vibe/plugin`
 
 **Purpose.** The extension seam. A `PluginHost` registers plugins (validating their
 declared dependencies), runs their `setup`, and dispatches lifecycle and named
@@ -290,7 +290,7 @@ external code can subscribe safely.
 
 ---
 
-## `@vibe/runtime`
+## `vibe/runtime`
 
 **Purpose.** The durable execution engine that the agent loop schedules work
 through. Cancellation tokens, retry with jittered backoff, timeouts, a resource
@@ -358,7 +358,7 @@ agent loop. See [Runtime & execution](../architecture/05-runtime-execution.md).
 
 ---
 
-## `@vibe/core`
+## `vibe/core`
 
 **Purpose.** The composition root. `vibe.system({ name })` wires a container, a
 lifecycle, a logger, a plugin host, and a runtime into a single `System` object —
@@ -383,7 +383,7 @@ then logs. `start()` composes `init()` then `start()`, giving a one-call bring-u
 **Gaps / notes.**
 
 - **`ask()` is now implemented (was a deliberate stub).** It runs the real
-  `@vibe/agent` loop through a configured provider, as documented in the
+  `vibe/agent` loop through a configured provider, as documented in the
   [audit](./03-current-state-audit.md#the-headline-api-is-now-implemented-was--unimplemented) —
   the [agentic implementation plan](../plan/02-agentic-implementation-plan.md) has
   landed (Packages 1–6). Everything above exists to make that loop clean and
@@ -395,7 +395,7 @@ then logs. `start()` composes `init()` then `start()`, giving a one-call bring-u
 - `info` is a getter that stamps `Date.now()` on each read (🟡 in the audit) —
   harmless, but don't cache the object expecting a stable `uptimeMs`.
 - Configured plugins are registered in `onBefore("start")` in array order — this is
-  where the "register dependencies first" contract from `@vibe/plugin` bites, since
+  where the "register dependencies first" contract from `vibe/plugin` bites, since
   the host does not sort them.
 
 ---

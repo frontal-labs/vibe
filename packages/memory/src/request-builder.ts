@@ -1,5 +1,5 @@
-import type { Effort, Message, ModelId, ModelRequest, ToolSchema } from "@vibe/model"
-import { nativeAddon } from "@vibe/shared"
+import type { Effort, Message, ModelId, ModelRequest, ToolSchema } from "vibe/model"
+import { nativeAddon } from "vibe/shared"
 
 import type { Conversation } from "./types"
 

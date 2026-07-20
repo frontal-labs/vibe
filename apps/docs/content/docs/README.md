@@ -6,19 +6,19 @@ description: "Vibe is a TypeScript-native framework for building production AI a
 # Vibe Documentation
 
 > A TypeScript-native framework for building production AI agents. You write
-> plain TypeScript against a small set of `@vibe/*` packages and get a durable,
+> plain TypeScript against a small set of `vibe/*` packages and get a durable,
 > typed runtime underneath.
 
 Vibe is **a framework you import, in plain TypeScript.** You compose your app
 from first-class building blocks — agents, tools, models, memory, plugins,
-config — exposed as `@vibe/*` packages: dependency injection, a lifecycle state
+config — exposed as `vibe/*` packages: dependency injection, a lifecycle state
 machine, a plugin system, a durable execution runtime, structured errors, and
 structured logging. There is no separate source language and no compiler to
 learn; a Vibe app is an ordinary TypeScript project that runs on `bun`/`node`.
 
 ```typescript
 // support.ts
-import { createSystem, defineTool, createAgent } from "@vibe/core"
+import { createSystem, defineTool, createAgent } from "vibe/core"
 import { db } from "./db"                 // your own TypeScript
 
 const getOrder = defineTool({
@@ -114,7 +114,7 @@ sequence.
 | Composition root | `core` | ✅ Wired; `ask()` stubbed |
 | Agentic layer | `model`, `tools`, `agent`, `memory` | 🚧 Planned — see [Agentic implementation plan](./plan/02-agentic-implementation-plan.md) |
 | Framework front door | `config`, `vibe` (meta) | 🚧 Planned — see [Configuration & bootstrap](./architecture/14-configuration-and-bootstrap.md) |
-| Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | 🚧 In progress — optional native accelerator for `@vibe/build` |
+| Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | 🚧 In progress — optional native accelerator for `vibe/build` |
 
 The infrastructure is real and tested. The agentic layer is designed here and not
 yet built. `system.ask()` throws `notImplementedError` on purpose — this
@@ -127,6 +127,6 @@ documentation is the blueprint for making it work.
   default reasoning mode. See [Model spec](./specs/model-spec.md).
 - Code marked 🚧 is proposed API, not yet in `packages/`. Code without a marker
   reflects what exists today.
-- Package names use the `@vibe/*` scope as declared in each `package.json`.
+- Package names use the `vibe/*` scope as declared in each `package.json`.
 </content>
 </invoke>

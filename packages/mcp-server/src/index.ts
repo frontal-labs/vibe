@@ -1,4 +1,4 @@
-import { createLogger, LogLevel } from "@vibe/logger"
+import { createLogger, LogLevel } from "vibe/logger"
 
 import { resolveRepoRoot } from "./lib/path"
 import { startServer } from "./server"

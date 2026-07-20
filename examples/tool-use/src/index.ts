@@ -1,6 +1,6 @@
-import { createAgent } from "frontal-vibe/agent"
-import { createAnthropicProvider } from "frontal-vibe/model"
-import { defineTool } from "frontal-vibe/tools"
+import { createAgent } from "@frontal-labs/vibe/agent"
+import { createAnthropicProvider } from "@frontal-labs/vibe/model"
+import { defineTool } from "@frontal-labs/vibe/tools"
 import { z } from "zod"
 
 const weather = defineTool({

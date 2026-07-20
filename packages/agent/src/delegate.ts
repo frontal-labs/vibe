@@ -1,5 +1,5 @@
-import type { AnyTool } from "@vibe/tools"
-import { defineTool } from "@vibe/tools"
+import type { AnyTool } from "vibe/tools"
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 import type { AgentConfig } from "./agent"
 import { createAgent } from "./agent"

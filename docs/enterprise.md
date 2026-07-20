@@ -7,16 +7,16 @@ existing primitives (the `ModelProvider`, Standard-Schema tools, the streaming a
 loop, the runtime execution engine, the plugin hooks, tracing, and logging) rather
 than introducing parallel machinery.
 
-Import from the `vibe/*` barrel or the underlying `@vibe/*` packages directly.
+Import from the `vibe/*` barrel or the underlying `vibe/*` packages directly.
 
-## OpenAI-API compatibility (`@vibe/model`, `@vibe/adapters`)
+## OpenAI-API compatibility (`vibe/model`, `vibe/adapters`)
 
 Both directions are supported.
 
 **Consume any OpenAI-compatible backend** as a `ModelProvider`:
 
 ```ts
-import { createOpenAIProvider } from "frontal-vibe/model"
+import { createOpenAIProvider } from "@frontal-labs/vibe/model"
 
 const provider = createOpenAIProvider({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,7 +31,7 @@ reusing the same retry path as the Anthropic provider.
 **Expose a Vibe agent behind the OpenAI API** so existing OpenAI clients can call it:
 
 ```ts
-import { toOpenAICompatHandler } from "frontal-vibe/adapters"
+import { toOpenAICompatHandler } from "@frontal-labs/vibe/adapters"
 
 const handler = toOpenAICompatHandler(agent) // POST /v1/chat/completions + GET /v1/models
 ```
@@ -39,7 +39,7 @@ const handler = toOpenAICompatHandler(agent) // POST /v1/chat/completions + GET 
 Streaming emits `chat.completion.chunk` events ending in `data: [DONE]`; non-streaming
 returns a spec-shaped `chat.completion` with `usage`.
 
-## Workflows (`@vibe/workflows`)
+## Workflows (`vibe/workflows`)
 
 Durable, code-first, typed step graphs built on the runtime execution engine.
 Steps run sequentially (each output feeds the next); `parallel`, `conditional`, and
@@ -49,7 +49,7 @@ shared cancellation token stops the whole tree, and an optional tracer nests
 `workflow → step → agent` spans.
 
 ```ts
-import { defineWorkflow, runWorkflow, step, parallel } from "frontal-vibe/workflows"
+import { defineWorkflow, runWorkflow, step, parallel } from "@frontal-labs/vibe/workflows"
 
 const wf = defineWorkflow({
   name: "support",
@@ -63,7 +63,7 @@ const wf = defineWorkflow({
 const result = await runWorkflow(wf, { runId: "req-42", input: userMessage, store })
 ```
 
-## Skills (`@vibe/skills`)
+## Skills (`vibe/skills`)
 
 One registry for two authoring styles:
 
@@ -74,7 +74,7 @@ One registry for two authoring styles:
 Both are `Tool`s, so they run through `runToolCall` and drop straight into
 `createAgent({ tools })`.
 
-## Ontology (`@vibe/ontology`)
+## Ontology (`vibe/ontology`)
 
 Two layers:
 
@@ -87,7 +87,7 @@ Two layers:
   into a prompt. The `OntologyStore` interface is pluggable (pgvector, a graph DB, a
   hosted embedding model).
 
-## Governance (`@vibe/governance`)
+## Governance (`vibe/governance`)
 
 A policy engine evaluated before a tool runs — `allow` / `deny` / `require-approval`,
 strictest-wins. `guardTool(tool, engine)` wraps a tool so a denied/unapproved call
@@ -95,7 +95,7 @@ returns an error result instead of executing (it never forks the agent loop). Th
 `ApprovalGate` suspends a call until a human resolves it — pair it with workflow
 checkpoints for human-in-the-loop.
 
-## Security (`@vibe/security`)
+## Security (`vibe/security`)
 
 - **Secrets** — a `SecretsProvider` interface (env / in-memory built in; back it with
   Vault/AWS/etc.).
@@ -105,13 +105,13 @@ checkpoints for human-in-the-loop.
 - **Rate limiting** — `createRateLimiter` for per-tenant/per-actor fixed-window limits
   (complements the runtime `ResourceManager`'s concurrency caps).
 
-## Observability (`@vibe/observability`)
+## Observability (`vibe/observability`)
 
 - **Metrics** — counters + histograms (`createMetrics`) for tokens, latency, errors.
 - **Audit** — an append-only `AuditLog` with correlation ids and a pluggable sink.
 - **Cost** — `costOf(usage, model)` prices a run from the model catalog.
 - **OTLP** — `createOTLPExporter` converts tracer spans to OTLP for any collector; it
-  is structurally a `@vibe/tracing` `SpanExporter`.
+  is structurally a `vibe/tracing` `SpanExporter`.
 
 ## Configuration
 

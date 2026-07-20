@@ -2,7 +2,7 @@ import type { AgentEvent } from "./types"
 
 /**
  * Plugin-facing hook names for the agent lifecycle. The loop emits `AgentEvent`s
- * (see `stream()` / `RunOptions.onEvent`); a host that wires `@vibe/plugin` maps
+ * (see `stream()` / `RunOptions.onEvent`); a host that wires `vibe/plugin` maps
  * these names to those events. Kept as a stable contract so the plugin bridge and
  * the loop agree on vocabulary.
  */

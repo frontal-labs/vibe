@@ -1,4 +1,4 @@
-import type { AnyTool } from "@vibe/tools"
+import type { AnyTool } from "vibe/tools"
 
 import type { PolicyEngine, PolicyRequest } from "./policy"
 

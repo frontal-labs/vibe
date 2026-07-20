@@ -1,4 +1,4 @@
-import { createToken } from "@vibe/di"
+import { createToken } from "vibe/di"
 
 import type { ModelProvider } from "./types"
 

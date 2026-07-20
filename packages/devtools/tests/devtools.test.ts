@@ -1,5 +1,5 @@
-import type { AgentEvent, AgentResult } from "@vibe/agent"
-import type { Message } from "@vibe/model"
+import type { AgentEvent, AgentResult } from "vibe/agent"
+import type { Message } from "vibe/model"
 import { describe, expect, it } from "vitest"
 
 import { estimateCost, MODEL_PRICING } from "../src/cost"

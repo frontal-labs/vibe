@@ -4,9 +4,9 @@ import {
   providerRateLimitError,
   runtimeError,
   validationError,
-} from "@vibe/errors"
+} from "vibe/errors"
 
-/** Map an Anthropic HTTP status to a typed `@vibe/errors` error. */
+/** Map an Anthropic HTTP status to a typed `vibe/errors` error. */
 export function mapAnthropicError(
   status: number | undefined,
   message: string,

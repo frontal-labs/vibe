@@ -35,7 +35,7 @@ bun install
 ```
 
 This installs the workspace and wires the Husky hooks (via the `prepare` script).
-One install covers every `@vibe/*` package — it is a bun workspace + Turborepo
+One install covers every `vibe/*` package — it is a bun workspace + Turborepo
 monorepo.
 
 ## The dev loop
@@ -62,7 +62,7 @@ bun format:check
 ```
 
 To work on one package, scope with Turborepo's filter, e.g.
-`bun test --filter @vibe/agent`.
+`bun test --filter vibe/agent`.
 
 Before every push, run the same gate CI runs:
 
@@ -90,8 +90,8 @@ hook, so most style issues fix themselves before they ever reach a PR.
 
 ## Working on the bundler crates (Rust)
 
-The `@vibe/*` packages above are the whole framework. The only Rust in the repo is
-a small **native build accelerator** for `@vibe/build`, living in a separate Cargo
+The `vibe/*` packages above are the whole framework. The only Rust in the repo is
+a small **native build accelerator** for `vibe/build`, living in a separate Cargo
 workspace under `crates/*`. It is **not** a language compiler — it's an optional
 speedup. The repo has two workspaces side by side: the bun/Turborepo TypeScript
 workspace (`packages/*`) and the Cargo workspace (`crates/*`), whose members are
@@ -99,14 +99,14 @@ exactly two crates:
 
 - **`vibe_bundler`** — oxc-based static analysis of a Vibe app's agent/tool
   TypeScript modules. It extracts `import` declarations and agent→tool edges so
-  `@vibe/build` can build a dependency graph and code-split tools into lazily
+  `vibe/build` can build a dependency graph and code-split tools into lazily
   loaded chunks. Pure Rust library, `#![forbid(unsafe_code)]`.
 - **`vibe_napi`** — a napi-rs binding (behind the `node` feature) that exposes
-  `tool_edges(source, marker)` and `version()` to JS, powering `@vibe/build`. It's
+  `tool_edges(source, marker)` and `version()` to JS, powering `vibe/build`. It's
   an optional accelerator; the framework works without it.
 
 See [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md)
-for how `@vibe/build` uses these.
+for how `vibe/build` uses these.
 
 ### Prerequisites
 
@@ -149,7 +149,7 @@ Any change a consumer can observe needs a changeset:
 bun changeset
 ```
 
-Select the affected `@vibe/*` packages, choose the semver bump for each, and write
+Select the affected `vibe/*` packages, choose the semver bump for each, and write
 a clear summary. Commit the generated `.changeset/*.md` file with your code. See
 [Release & versioning](../plan/04-release-and-versioning.md#when-a-change-needs-a-changeset)
 for what does and doesn't need one.
@@ -165,7 +165,7 @@ type(scope): subject
 
 - **type:** `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `perf`, `style`,
   `build`, `ci`.
-- **scope:** the package name without the `@vibe/` prefix (`agent`, `model`,
+- **scope:** the package name without the `vibe/` prefix (`agent`, `model`,
   `tools`, `core`, …).
 - Breaking changes: `feat(model)!: …` and/or a `BREAKING CHANGE:` footer.
 
@@ -193,10 +193,10 @@ These are enforced by review (and, where possible, by tooling). They're the same
 [cross-cutting rules](../plan/01-build-plan.md#cross-cutting-rules-for-every-phase)
 the build plan applies to every phase:
 
-1. **No bare `throw new Error`.** Use the `@vibe/errors` factories so errors carry a
+1. **No bare `throw new Error`.** Use the `vibe/errors` factories so errors carry a
    stable `code`, and `retryable` / `fatal` flags the runtime and agent loop branch
    on. A raw `Error` breaks retry classification and serialization.
-2. **No `console.log` in library code.** Use `@vibe/logger` with structured context
+2. **No `console.log` in library code.** Use `vibe/logger` with structured context
    (e.g. the run's trace id). Ad-hoc logging is invisible to observability and can't
    be leveled or silenced.
 3. **Preserve the acyclic dependency graph.** Packages depend *down*, never up
@@ -204,7 +204,7 @@ the build plan applies to every phase:
    foundations, never the reverse). If you need something from a higher layer,
    you're modeling it in the wrong place. See
    [Package topology](../architecture/02-package-topology.md).
-4. **Execution semantics come from `@vibe/runtime`.** Retry, backoff, cancellation,
+4. **Execution semantics come from `vibe/runtime`.** Retry, backoff, cancellation,
    timeouts, and resource limits are the runtime's job. The agent loop and tool
    adapter *use* the runtime; they never hand-roll their own retry or cancellation.
 

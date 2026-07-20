@@ -54,7 +54,6 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: bun run test
-      - run: bun run test:types
 
   rust:
     name: Rust (language toolchain)

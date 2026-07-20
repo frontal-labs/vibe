@@ -1,5 +1,5 @@
-import type { Agent } from "@vibe/agent"
 import { expectAssignable, expectType } from "tsd"
+import type { Agent } from "vibe/agent"
 
 import { type AgentLike, toFetchHandler, toNodeListener } from "../src/index"
 

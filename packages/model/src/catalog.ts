@@ -1,6 +1,6 @@
 /**
  * The known models, with context windows and per-1M-token USD pricing. Used to
- * type `ModelId` (autocomplete) and to price runs (`@vibe/devtools`). Includes a
+ * type `ModelId` (autocomplete) and to price runs (`vibe/devtools`). Includes a
  * snapshot of common OpenAI-compatible models for use with `createOpenAIProvider`.
  * A snapshot — custom/newer ids are still accepted via `ModelId`'s `(string & {})`.
  */
@@ -45,7 +45,7 @@ export function tokenFamilyFor(model: string): "openai" | "anthropic" | "heurist
 
 /**
  * Total USD cost of token `usage` for a model, from the catalog's per-1M rates. Cache tokens are
- * priced at the input rate; unknown models cost 0. Lives here (not `@vibe/devtools`) so the agent
+ * priced at the input rate; unknown models cost 0. Lives here (not `vibe/devtools`) so the agent
  * loop can enforce a cost ceiling without depending up the graph.
  */
 export function priceUsd(

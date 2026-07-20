@@ -45,7 +45,7 @@ export const prompts: readonly McpPrompt[] = [
   },
   {
     name: "vibe/scaffold-package",
-    description: "Scaffold a new @vibe/* package following repo conventions.",
+    description: "Scaffold a new vibe/* package following repo conventions.",
     arguments: [{ name: "name", description: "Bare package name, e.g. 'cache'.", required: true }],
   },
 ] as const
@@ -66,7 +66,7 @@ export function getPrompt(
             role: "user",
             content: {
               type: "text",
-              text: `Design a Vibe agent that does: ${a.task}\n\nConstraints: ${a.constraints ?? "none"}\n\nProduce: (1) the agent's system prompt, (2) the tools it needs with Zod schemas, (3) where it fits in the @vibe/* graph. Use vibe_dev_scaffold_agent / vibe_dev_scaffold_package to generate it.`,
+              text: `Design a Vibe agent that does: ${a.task}\n\nConstraints: ${a.constraints ?? "none"}\n\nProduce: (1) the agent's system prompt, (2) the tools it needs with Zod schemas, (3) where it fits in the vibe/* graph. Use vibe_dev_scaffold_agent / vibe_dev_scaffold_package to generate it.`,
             },
           },
         ],
@@ -105,7 +105,7 @@ export function getPrompt(
             role: "user",
             content: {
               type: "text",
-              text: `Scaffold a new @vibe/${a.name} package following repo conventions using vibe_dev_scaffold_package, then make bun run ci:check pass for it.`,
+              text: `Scaffold a new vibe/${a.name} package following repo conventions using vibe_dev_scaffold_package, then make bun run ci:check pass for it.`,
             },
           },
         ],

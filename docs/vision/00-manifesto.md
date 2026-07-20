@@ -18,7 +18,7 @@ agentic application deserves — the thing you would build in-house on your thir
 agent project, extracted, hardened, and typed.
 
 **And it is a framework, not a DSL.** Vibe is TypeScript-native to the core: you
-import `@vibe/*` and write ordinary `.ts`. First-class constructs — agents, tools,
+import `vibe/*` and write ordinary `.ts`. First-class constructs — agents, tools,
 models, memory, plugins, config — are plain functions you call (`defineAgent`,
 `defineTool`, `defineConfig`, `createSystem`) with full type inference, not a
 separate syntax you have to learn or a compiler you have to run. Your app *is*
@@ -27,7 +27,7 @@ architectural guarantee (the [agent loop](../architecture/09-agent-loop.md), typ
 errors, the durable runtime) holds because you're using the documented runtime
 directly. The only native code in the repo is an **optional build accelerator**
 (the oxc-based `vibe_bundler` and its `vibe_napi` binding) that lets
-[`@vibe/build`](../architecture/02-package-topology.md) code-split tools for
+[`vibe/build`](../architecture/02-package-topology.md) code-split tools for
 smaller cold starts — the framework works without it.
 
 ## What "agentic TypeScript framework" means here
@@ -63,7 +63,7 @@ them, not reinvent them.
 
 2. **Modularity is enforced by the dependency graph.** `shared` depends on
    nothing. `core` depends on everything. The layers between are acyclic and
-   independently installable. You can use `@vibe/runtime` without `@vibe/agent`.
+   independently installable. You can use `vibe/runtime` without `vibe/agent`.
    See [Package topology](../architecture/02-package-topology.md).
 
 3. **The happy path is one line; the escape hatch is always there.**
@@ -95,7 +95,7 @@ parallel. Vibe is the shared answer.
 
 Vibe succeeds when a developer can:
 
-- Add `@vibe/*` to a project, write a TypeScript file with a `defineTool` and a
+- Add `vibe/*` to a project, write a TypeScript file with a `defineTool` and a
   `defineAgent`, and run it with `bun`/`node` — a tool-using agent from nothing in
   under five minutes.
 - Add a custom tool with full type inference and zero boilerplate.

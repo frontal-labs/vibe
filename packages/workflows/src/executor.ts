@@ -1,4 +1,4 @@
-import type { Logger } from "@vibe/logger"
+import type { Logger } from "vibe/logger"
 import {
   type CancellationToken,
   createCancellationTokenSource,
@@ -6,7 +6,7 @@ import {
   executeWithRetry,
   type RetryPolicy,
   type SerializedError,
-} from "@vibe/runtime"
+} from "vibe/runtime"
 
 import { type CheckpointStore, createMemoryCheckpointStore } from "./checkpoint-store"
 import type {

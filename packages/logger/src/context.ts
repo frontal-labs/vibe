@@ -1,4 +1,4 @@
-import { ContextStore } from "@vibe/shared"
+import { ContextStore } from "vibe/shared"
 
 export interface LogContext {
   correlationId?: string

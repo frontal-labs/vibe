@@ -2,8 +2,8 @@ import { existsSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
-import type { Message } from "@vibe/model"
-import { resetNativeAddonCache } from "@vibe/shared"
+import type { Message } from "vibe/model"
+import { resetNativeAddonCache } from "vibe/shared"
 import { describe, expect, it } from "vitest"
 
 import { createConversation } from "../src/conversation"

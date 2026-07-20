@@ -5,7 +5,7 @@ description: "A **Tool** is the unit of capability an agent can invoke: a name, 
 
 # Tool Spec
 
-> 🚧 Planned — package `@vibe/tools`. The authoritative contract for the `Tool`
+> 🚧 Planned — package `vibe/tools`. The authoritative contract for the `Tool`
 > interface, its context and result types, the single-Zod-schema inference rule,
 > `isError` semantics, parallel-safety and resource limits, and naming rules.
 > Consistent with [Tools & MCP](../architecture/11-tools-and-mcp.md) and the tool
@@ -33,7 +33,7 @@ infers `TInput` from the Zod schema so the interface's generics are filled in fo
 you:
 
 ```ts
-import { defineTool } from "@vibe/tools"
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 
 export const getWeather = defineTool({
@@ -85,7 +85,7 @@ observability into the handler:
 
 ```ts
 interface ToolContext {
-  readonly cancellationToken: CancellationToken  // from @vibe/runtime
+  readonly cancellationToken: CancellationToken  // from vibe/runtime
   readonly signal: AbortSignal                   // for fetch()/AbortController interop
   readonly logger: Logger                        // bound to the run's trace id
 }
@@ -193,7 +193,7 @@ reports a recoverable failure to the model, and lets an infrastructure failure
 propagate:
 
 ```ts
-import { defineTool } from "@vibe/tools"
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 
 export const searchDocs = defineTool({
@@ -233,7 +233,7 @@ export const searchDocs = defineTool({
 Registering and using it:
 
 ```ts
-import { createToolRegistry } from "@vibe/tools"
+import { createToolRegistry } from "vibe/tools"
 
 const registry = createToolRegistry()
 registry.register(searchDocs)              // duplicate names are rejected

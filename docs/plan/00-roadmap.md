@@ -5,11 +5,11 @@ becomes true at each step — not a task list. For the ordered engineering work 
 exit gates, see the [Build plan](./01-build-plan.md); for the code-level model →
 agent detail, see the [Agentic implementation plan](./02-agentic-implementation-plan.md).
 
-Vibe is a **pure-TypeScript agent framework**: a bun + Turborepo monorepo of `@vibe/*`
-packages. Apps built with Vibe are plain TypeScript — you import `@vibe/core`, define
+Vibe is a **pure-TypeScript agent framework**: a bun + Turborepo monorepo of `vibe/*`
+packages. Apps built with Vibe are plain TypeScript — you import `vibe/core`, define
 tools and agents against typed APIs, and run them on the runtime. The map has one main
 track — the **runtime and agentic layer** (M0–M6) — plus a small **build accelerator**
-concern: `@vibe/build`, backed by the two remaining Rust crates (`vibe_bundler` and its
+concern: `vibe/build`, backed by the two remaining Rust crates (`vibe_bundler` and its
 `vibe_napi` binding), which statically analyzes an app's agent/tool modules to
 code-split tools into lazily-loaded chunks for small cold starts.
 
@@ -30,7 +30,7 @@ The milestones (`M`) track maps to build-plan phases.
 | **M5** | DX, scaffolder, examples | [Phase 7](./01-build-plan.md#phase-7--hardening--dx-polish) | Bootstrap a working agent app in one command |
 | **M6** | 1.0 | (post-Phase 7) | Depend on Vibe in production, versioned |
 
-Everything is TypeScript. The build accelerator (`@vibe/build` + the `vibe_bundler`/
+Everything is TypeScript. The build accelerator (`vibe/build` + the `vibe_bundler`/
 `vibe_napi` crates) is an optional dependency of M5's DX story — the framework runs
 without it; it exists to shrink cold starts by code-splitting tools. 1.0 requires the
 full agentic layer through multi-agent, a reviewed public surface, and proven release
@@ -62,8 +62,8 @@ working tree.
 interface and the Anthropic reference provider (default `claude-opus-4-8`,
 adaptive thinking, `effort`, streaming for large outputs, refusal handling).
 
-**Headline deliverable.** `@vibe/model` — the provider interface, the Anthropic
-implementation with request/response normalization and HTTP-status → `@vibe/errors`
+**Headline deliverable.** `vibe/model` — the provider interface, the Anthropic
+implementation with request/response normalization and HTTP-status → `vibe/errors`
 mapping, and a **deterministic fake provider** for tests. See the
 [Model & provider layer](../architecture/10-model-provider-layer.md).
 
@@ -74,12 +74,12 @@ from the scripted fake provider, with typed errors instead of raw HTTP failures.
 ## M2 — Tools + memory
 
 **Goal.** Give the model things to *do* and something to *remember*. These two
-packages proceed in parallel once `@vibe/model`'s types exist.
+packages proceed in parallel once `vibe/model`'s types exist.
 
-**Headline deliverable.** `@vibe/tools` — `defineTool({ schema, execute })` where
+**Headline deliverable.** `vibe/tools` — `defineTool({ schema, execute })` where
 one Zod schema both types the handler args and emits the model-facing JSON Schema,
 plus a registry and a runtime-backed execution adapter (timeout, cancellation,
-errors → `tool_result(is_error)`). And `@vibe/memory` — an append-only
+errors → `tool_result(is_error)`). And `vibe/memory` — an append-only
 `Conversation` and a `buildRequest` that assembles `system + messages + tools`
 within a token budget. See [Tools & MCP](../architecture/11-tools-and-mcp.md) and
 [Memory & context](../architecture/12-memory-and-context.md).
@@ -93,7 +93,7 @@ without an agent loop yet.
 **Goal.** Assemble M1 + M2 into the run loop and remove the `ask()` stub. This is
 the milestone where Vibe stops being infrastructure and starts being a product.
 
-**Headline deliverable.** `@vibe/agent` — the loop (build request → model call via
+**Headline deliverable.** `vibe/agent` — the loop (build request → model call via
 runtime → stop-reason branch → parallel tool execution → append → iterate) with a
 `maxIterations` ceiling, cancellation checks between steps, `stream()` of
 `AgentEvent`s, and per-run trace ids — then `core.ask()` wired to construct and run
@@ -102,7 +102,7 @@ the default agent. See [The agent loop](../architecture/09-agent-loop.md).
 **You can now…**
 
 ```ts
-import { vibe } from "@vibe/core"
+import { vibe } from "vibe/core"
 
 const system = vibe.system({ name: "support-bot" })
 await system.start()
@@ -132,7 +132,7 @@ show the nested traces.
 
 **Headline deliverable.** An `examples/` workspace (support bot, research agent), a
 `create-vibe` scaffolder, generated API reference kept in lockstep with the types,
-and `@vibe/build` — the dependency-graph builder that statically analyzes an app's
+and `vibe/build` — the dependency-graph builder that statically analyzes an app's
 agent and tool modules (via the `vibe_bundler` Rust crate, exposed to JS through the
 `vibe_napi` binding) to extract agent→tool edges and code-split tools into
 lazily-loaded chunks for small cold starts. The bundler is an optional accelerator;
@@ -144,9 +144,9 @@ it by hand, and ship it with tools code-split for fast cold starts.
 
 ## M6 — 1.0
 
-**Goal.** Commit to a stable public surface for the `@vibe/*` packages.
+**Goal.** Commit to a stable public surface for the `vibe/*` packages.
 
-**Headline deliverable.** A `1.0.0` release of the `@vibe/*` packages, with a
+**Headline deliverable.** A `1.0.0` release of the `vibe/*` packages, with a
 documented stability policy covering the public API, a perf pass complete, and
 Changesets-driven release automation — proven on `master`. See
 [Release & versioning](./04-release-and-versioning.md).

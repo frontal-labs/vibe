@@ -11,7 +11,7 @@ export const devTools: McpTool[] = [
   {
     name: "vibe_dev_info",
     description:
-      "Summarize the Vibe monorepo: the repo root and every package with its @vibe/* dependencies (the acyclic package graph).",
+      "Summarize the Vibe monorepo: the repo root and every package with its vibe/* dependencies (the acyclic package graph).",
     schema: z.object({}),
     // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(_args, ctx) {
@@ -22,9 +22,9 @@ export const devTools: McpTool[] = [
   {
     name: "vibe_dev_scaffold_package",
     description:
-      "Generate a new @vibe/* package following the repo conventions (package.json, tsconfig, tsup, src barrel, type-tests). Returns the created file paths.",
+      "Generate a new vibe/* package following the repo conventions (package.json, tsconfig, vite, src barrel, type-tests). Returns the created file paths.",
     schema: z.object({
-      name: z.string().describe("Bare package name, e.g. 'cache' (becomes @vibe/cache)."),
+      name: z.string().describe("Bare package name, e.g. 'cache' (becomes vibe/cache)."),
     }),
     // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {

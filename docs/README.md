@@ -1,9 +1,9 @@
 # Vibe Documentation
 
 > A pure-TypeScript framework for building production AI agents. You write plain
-> TypeScript against the `@vibe/*` packages and it runs on a durable, typed runtime.
+> TypeScript against the `vibe/*` packages and it runs on a durable, typed runtime.
 
-Vibe is **a TypeScript framework** — a bun + Turborepo monorepo of `@vibe/*`
+Vibe is **a TypeScript framework** — a bun + Turborepo monorepo of `vibe/*`
 packages under `packages/`. You compose agents, tools, models, memory, and plugins
 from first-class TypeScript APIs that run on the runtime (dependency injection, a
 lifecycle state machine, a plugin system, a durable execution runtime, structured
@@ -12,7 +12,7 @@ projects — there is no separate source language to learn.
 
 ```ts
 // support.ts
-import { defineTool, defineAgent, createSystem } from "frontal-vibe"
+import { defineTool, defineAgent, createSystem } from "@frontal-labs/vibe"
 import { db } from "./db"                          // your own TypeScript
 
 const getOrder = defineTool({
@@ -34,7 +34,7 @@ const support = defineAgent({
 const system = createSystem({ agents: [support] })
 ```
 
-That is the whole application. You wire agents to tools by composition; `@vibe/build`
+That is the whole application. You wire agents to tools by composition; `vibe/build`
 statically analyzes the imports to code-split tools into lazily-loaded chunks for
 small cold starts.
 
@@ -107,7 +107,7 @@ sequence.
 | Composition root | `core` | ✅ Wired; `ask()` stubbed |
 | Agentic layer | `model`, `tools`, `agent`, `memory` | 🚧 Planned — see [Agentic implementation plan](./plan/02-agentic-implementation-plan.md) |
 | Framework front door | `config`, `vibe` (meta) | 🚧 Planned — see [Configuration & bootstrap](./architecture/14-configuration-and-bootstrap.md) |
-| Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | ✅ oxc-based tool-edge extraction for `@vibe/build` (optional native accelerator) |
+| Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | ✅ oxc-based tool-edge extraction for `vibe/build` (optional native accelerator) |
 
 The infrastructure is real and tested. The agentic layer is designed here and not
 yet built. `system.ask()` throws `notImplementedError` on purpose — this
@@ -120,4 +120,4 @@ documentation is the blueprint for making it work.
   default reasoning mode. See [Model spec](./specs/model-spec.md).
 - Code marked 🚧 is proposed API, not yet in `packages/`. Code without a marker
   reflects what exists today.
-- Package names use the `@vibe/*` scope as declared in each `package.json`.
+- Package names use the `vibe/*` scope as declared in each `package.json`.

@@ -1,8 +1,8 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
-import type { Logger } from "@vibe/logger"
-import type { ModelResponse, StopReason, TokenUsage } from "@vibe/model"
-import type { CancellationToken } from "@vibe/runtime"
-import type { AnyTool, Tool } from "@vibe/tools"
+import type { Logger } from "vibe/logger"
+import type { ModelResponse, StopReason, TokenUsage } from "vibe/model"
+import type { CancellationToken } from "vibe/runtime"
+import type { AnyTool, Tool } from "vibe/tools"
 
 /** What the caller sends into a run. */
 export type AgentInput = string | { text: string }
@@ -52,7 +52,7 @@ export interface AgentResult {
   /** Why the loop stopped: `end_turn` | `max_tokens` | `refusal`. */
   stopReason: StopReason
   /** Immutable snapshot of the full transcript. */
-  transcript: import("@vibe/model").Message[]
+  transcript: import("vibe/model").Message[]
   /** Where the run's wall-clock time went (model vs tools), per iteration and in total. */
   timings: RunTimings
 }
@@ -97,5 +97,5 @@ export interface Agent<Tools extends readonly AnyTool[] = readonly AnyTool[]> {
   stream(input: AgentInput, options?: RunOptions): AsyncGenerator<AgentEvent<Tools>, AgentResult>
 }
 
-export type { Conversation } from "@vibe/memory"
-export type { ContentBlock, Effort } from "@vibe/model"
+export type { Conversation } from "vibe/memory"
+export type { ContentBlock, Effort } from "vibe/model"

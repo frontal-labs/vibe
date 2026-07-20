@@ -1,9 +1,9 @@
-import { createAgent } from "@vibe/agent"
-import { createSystem, type System } from "@vibe/core"
-import { configError } from "@vibe/errors"
-import { createLogger, type Logger, LogLevel } from "@vibe/logger"
-import { createAnthropicProvider, type ModelProvider } from "@vibe/model"
-import { createToolRegistry, type Tool, type ToolRegistry } from "@vibe/tools"
+import { createAgent } from "vibe/agent"
+import { createSystem, type System } from "vibe/core"
+import { configError } from "vibe/errors"
+import { createLogger, type Logger, LogLevel } from "vibe/logger"
+import { createAnthropicProvider, type ModelProvider } from "vibe/model"
+import { createToolRegistry, type Tool, type ToolRegistry } from "vibe/tools"
 
 import { createBuiltinTools } from "./tools/builtin"
 import type {
@@ -17,7 +17,7 @@ import type {
 } from "./types"
 
 /**
- * One per server: owns the lazy `@vibe/core` System, the model provider (from
+ * One per server: owns the lazy `vibe/core` System, the model provider (from
  * `ANTHROPIC_API_KEY` or an injected one), and a shared `ToolRegistry` seeded with
  * the built-in operator tools. Runtime and dev tools, and the meta agent, all talk
  * to Vibe through this one object. Backed by the fake provider in tests.

@@ -1,4 +1,4 @@
-import { lifecycleError } from "@vibe/errors"
+import { lifecycleError } from "vibe/errors"
 
 import type { LifecycleEvent, LifecycleHandler, LifecycleState } from "./state"
 import { isValidTransition, transitionState } from "./state"

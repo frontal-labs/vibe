@@ -1,10 +1,10 @@
-import { createAgent } from "frontal-vibe/agent"
-import { createAnthropicProvider } from "frontal-vibe/model"
+import { createAgent } from "@frontal-labs/vibe/agent"
+import { createAnthropicProvider } from "@frontal-labs/vibe/model"
 import {
   createInMemoryOntologyStore,
   createRetrieveTool,
   retrieveContext,
-} from "frontal-vibe/ontology"
+} from "@frontal-labs/vibe/ontology"
 
 // A semantic store: records indexed for similarity retrieval. The default embedder
 // is a dependency-free hashing embedder; swap in pgvector or a hosted model in prod.

@@ -1,4 +1,4 @@
-import type { AnyTool, ToolContext, ToolResult } from "@vibe/tools"
+import type { AnyTool, ToolContext, ToolResult } from "vibe/tools"
 
 import type { GuardResult } from "./guardrails"
 import type { RateLimiter } from "./rate-limit"

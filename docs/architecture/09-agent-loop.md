@@ -1,6 +1,6 @@
 # The Agent Loop
 
-> 🚧 Planned — package `@vibe/agent`. This is the heart of the agentic layer and
+> 🚧 Planned — package `vibe/agent`. This is the heart of the agentic layer and
 > the thing `system.ask()` will delegate to.
 
 An agent is a loop. The model decides, calls tools, observes results, and decides
@@ -36,7 +36,7 @@ Agent.run(input)
 ```
 
 Steps 2 and 4 are the only places the loop leaves the process, and both go through
-[`@vibe/runtime`](./05-runtime-execution.md). That is the whole design insight:
+[`vibe/runtime`](./05-runtime-execution.md). That is the whole design insight:
 **the loop is orchestration; the runtime is execution.**
 
 ## Proposed types
@@ -81,7 +81,7 @@ The loop is bounded three ways, in order of preference:
 1. **`maxIterations`** — a hard ceiling on model↔tool round-trips (default 10).
    Hitting it raises a typed `AgentIterationLimitError`; the loop never spins
    forever.
-2. **Cancellation** — a `CancellationToken` from `@vibe/runtime`. Between every
+2. **Cancellation** — a `CancellationToken` from `vibe/runtime`. Between every
    step the loop calls `token.throwIfCancelled()`. A cancelled run releases
    resources and returns/raises promptly. This is how "the user closed the tab" is
    handled correctly.

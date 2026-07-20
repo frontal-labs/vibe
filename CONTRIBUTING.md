@@ -29,7 +29,13 @@ from everyone. By participating in this project, you agree to abide by our
    ```bash
    bun install
    ```
-3. Build all packages:
+3. Install the git hooks (replaces husky — language-agnostic, runs Biome,
+   commitlint, and the Rust toolchain so local checks match CI):
+   ```bash
+   bun run precommit:install
+   # or: pipx install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg
+   ```
+4. Build all packages:
    ```bash
    bun run build
    ```
@@ -38,13 +44,13 @@ from everyone. By participating in this project, you agree to abide by our
 
 Vibe is split across **two workspaces** in one repo:
 
-- **`packages/*` — TypeScript framework.** A bun + Turborepo monorepo of `@vibe/*`
+- **`packages/*` — TypeScript framework.** A bun + Turborepo monorepo of `vibe/*`
   packages. This is the whole framework — Vibe apps are plain TypeScript. The steps
   above set it up.
 - **`crates/*` — Rust bundler addon.** A small Cargo workspace with two crates:
   `vibe_bundler` (oxc-based static analysis of a Vibe app's agent/tool TypeScript
-  modules) and `vibe_napi` (its napi binding). They power `@vibe/build`'s agent→tool
-  graph and code-splitting. The addon is an optional accelerator — `@vibe/build` also
+  modules) and `vibe_napi` (its napi binding). They power `vibe/build`'s agent→tool
+  graph and code-splitting. The addon is an optional accelerator — `vibe/build` also
   has a pure-TypeScript path — so most contributors never touch Rust.
 
 If you're only touching the framework, the bun setup is all you need. To work on the
@@ -87,7 +93,8 @@ Use descriptive branch names with a conventional prefix:
 
 ### Conventional Commits
 
-All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/)
+Commit messages are validated by a `commitlint` pre-commit hook (configured in
+`.pre-commit-config.yaml`). All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/)
 specification:
 
 ```
@@ -152,7 +159,7 @@ All packages use [Vitest](https://vitest.dev/).
 bun test
 
 # Run tests for a specific package
-bun test --filter @vibe/core
+bun test --filter vibe/core
 
 # Run tests in watch mode
 cd packages/core && bun vitest --watch
@@ -233,7 +240,7 @@ vibe/
 │   └── …             # config, memory, workflows, skills, ontology, governance, …
 ├── crates/           # Rust bundler addon (Cargo workspace)
 │   ├── vibe_bundler/ # oxc-based static analysis of agent/tool TS modules
-│   └── vibe_napi/    # napi binding exposing the analysis to @vibe/build
+│   └── vibe_napi/    # napi binding exposing the analysis to vibe/build
 ├── docs/             # Documentation
 ├── tools/            # Build and development tools
 ├── turbo.json        # Turborepo configuration

@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs"
 import { isAbsolute, relative, resolve } from "node:path"
 
-import { configError } from "@vibe/errors"
+import { configError } from "vibe/errors"
 
 /**
  * Resolve `target` against `root`, refusing anything that escapes the workspace.

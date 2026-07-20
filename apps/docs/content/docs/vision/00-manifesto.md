@@ -27,13 +27,13 @@ vanish is not more ceremony but less: first-class building blocks you compose in
 plain TypeScript, so the wiring is just typed values, not boilerplate. You write
 `.ts`, run `tsc`, get `.js` — and Vibe rides on that unchanged toolchain. You
 compose your app from `agent`, `tool`, `model`, `memory`, `plugin`, and `config`
-building blocks exposed by the `@vibe/*` packages, and the runtime owns the hard
+building blocks exposed by the `vibe/*` packages, and the runtime owns the hard
 parts underneath. Because you build against the documented runtime directly,
 every architectural guarantee (the [agent loop](../architecture/09-agent-loop.md),
 typed errors, the durable runtime) holds by construction. The one place we reach
 for **Rust** is a small, optional build accelerator — `crates/vibe_bundler` (oxc
 static analysis of your agent/tool modules) and its `crates/vibe_napi` binding —
-that lets [`@vibe/build`](../architecture/02-package-topology.md) code-split tools
+that lets [`vibe/build`](../architecture/02-package-topology.md) code-split tools
 into lazily-loaded chunks for fast cold starts. It is an accelerator, not a
 requirement: the framework works without it.
 
@@ -70,7 +70,7 @@ them, not reinvent them.
 
 2. **Modularity is enforced by the dependency graph.** `shared` depends on
    nothing. `core` depends on everything. The layers between are acyclic and
-   independently installable. You can use `@vibe/runtime` without `@vibe/agent`.
+   independently installable. You can use `vibe/runtime` without `vibe/agent`.
    See [Package topology](../architecture/02-package-topology.md).
 
 3. **The happy path is one line; the escape hatch is always there.** `vibe.system({name}).ask("...")`

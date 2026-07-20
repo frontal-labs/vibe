@@ -1,6 +1,6 @@
-import { createAgent } from "@vibe/agent"
-import { createFakeProvider } from "@vibe/model"
-import { defineTool } from "@vibe/tools"
+import { createAgent } from "vibe/agent"
+import { createFakeProvider } from "vibe/model"
+import { defineTool } from "vibe/tools"
 import { describe, expect, it } from "vitest"
 import { z } from "zod"
 

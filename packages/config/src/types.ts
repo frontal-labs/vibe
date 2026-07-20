@@ -1,10 +1,10 @@
-import type { Agent } from "@vibe/agent"
-import type { Policy } from "@vibe/governance"
-import type { Effort, ModelId, ModelProvider } from "@vibe/model"
-import type { AnyEntity, OntologyStore } from "@vibe/ontology"
-import type { AnySkill } from "@vibe/skills"
-import type { AnyTool } from "@vibe/tools"
-import type { Workflow } from "@vibe/workflows"
+import type { Agent } from "vibe/agent"
+import type { Policy } from "vibe/governance"
+import type { Effort, ModelId, ModelProvider } from "vibe/model"
+import type { AnyEntity, OntologyStore } from "vibe/ontology"
+import type { AnySkill } from "vibe/skills"
+import type { AnyTool } from "vibe/tools"
+import type { Workflow } from "vibe/workflows"
 
 /** Governance: policies + which tools require human approval before running. */
 export interface GovernanceConfig {
@@ -58,7 +58,7 @@ export interface BuildOptions {
 /**
  * A Vibe app's configuration — the typed shape of `vibe.config.ts`. Both a config
  * file and inline `vibe.system(...)` resolve to this. Agents/tools may be listed
- * explicitly here or auto-discovered from `agents/` and `tools/` (see `@vibe/build`).
+ * explicitly here or auto-discovered from `agents/` and `tools/` (see `vibe/build`).
  */
 export interface VibeConfig {
   /** App name. */

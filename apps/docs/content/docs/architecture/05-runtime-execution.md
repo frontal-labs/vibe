@@ -1,11 +1,11 @@
 ---
-title: "Runtime & Execution — `@vibe/runtime`"
-description: "`@vibe/runtime` is the durable execution engine: register a **Task** (a handler),"
+title: "Runtime & Execution — `vibe/runtime`"
+description: "`vibe/runtime` is the durable execution engine: register a **Task** (a handler),"
 ---
 
-# Runtime & Execution — `@vibe/runtime`
+# Runtime & Execution — `vibe/runtime`
 
-`@vibe/runtime` is the durable execution engine: register a **Task** (a handler),
+`vibe/runtime` is the durable execution engine: register a **Task** (a handler),
 schedule an **Execution** (one run of it), and get back retry with jittered
 backoff, cancellation, timeouts, named concurrency limits, progress, checkpoints,
 and streaming — all typed. **This is what the agent loop runs on.** Steps 2 (model
@@ -38,7 +38,7 @@ export interface TaskDefinition<TInput = unknown, TOutput = unknown> {
 }
 ```
 
-The branded ids (via `Brand` from [`@vibe/shared`](./02-package-topology.md)) mean
+The branded ids (via `Brand` from [`vibe/shared`](./02-package-topology.md)) mean
 a raw string can't be passed where a `TaskId`/`ExecutionId` is expected. Note the
 engine mints ids with a `Date.now()` + module counter scheme
 (`` `exec_${Date.now()}_${n}` ``) — process-local, not globally unique.
@@ -117,7 +117,7 @@ export interface ExecutionContext {
 
 ## Retry with jittered backoff
 
-`@vibe/runtime` ships a default policy and the math to apply it:
+`vibe/runtime` ships a default policy and the math to apply it:
 
 ```ts
 export function defaultRetryPolicy(): RetryPolicy {

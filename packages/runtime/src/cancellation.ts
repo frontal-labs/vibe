@@ -1,4 +1,4 @@
-import { cancelledError } from "@vibe/errors"
+import { cancelledError } from "vibe/errors"
 
 import type { CancellationToken, CancellationTokenSource } from "./types"
 

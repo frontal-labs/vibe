@@ -1,6 +1,6 @@
 # workflow
 
-Durable, code-first workflows with `@vibe/workflows`: an ordered graph of `step`s
+Durable, code-first workflows with `vibe/workflows`: an ordered graph of `step`s
 with `parallel` fan-out, checkpointed after every step so a failed run **resumes**
 from where it stopped.
 

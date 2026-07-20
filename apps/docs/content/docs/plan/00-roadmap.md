@@ -11,10 +11,10 @@ exit gates, see the [Build plan](./01-build-plan.md); for the code-level model �
 agent detail, see the [Agentic implementation plan](./02-agentic-implementation-plan.md).
 
 Vibe is a **TypeScript-native agent framework**: apps are plain TypeScript (`.ts`)
-that compose the `@vibe/*` packages — you import and call `createSystem`,
-`defineTool`, and `createAgent` from `@vibe/core`. There is no separate language to
+that compose the `vibe/*` packages — you import and call `createSystem`,
+`defineTool`, and `createAgent` from `vibe/core`. There is no separate language to
 learn: everything is a typed function call. So the map has a single track — the
-**runtime** (`@vibe/*`, TypeScript, M0–M6) — built up milestone by milestone.
+**runtime** (`vibe/*`, TypeScript, M0–M6) — built up milestone by milestone.
 
 Milestones are cumulative: each one assumes the previous is green. Every milestone
 ships with `tests/` + `type-tests/` and keeps `bun ci:check` passing.
@@ -62,8 +62,8 @@ working tree.
 interface and the Anthropic reference provider (default `claude-opus-4-8`,
 adaptive thinking, `effort`, streaming for large outputs, refusal handling).
 
-**Headline deliverable.** `@vibe/model` — the provider interface, the Anthropic
-implementation with request/response normalization and HTTP-status → `@vibe/errors`
+**Headline deliverable.** `vibe/model` — the provider interface, the Anthropic
+implementation with request/response normalization and HTTP-status → `vibe/errors`
 mapping, and a **deterministic fake provider** for tests. See the
 [Model & provider layer](../architecture/10-model-provider-layer.md).
 
@@ -74,12 +74,12 @@ from the scripted fake provider, with typed errors instead of raw HTTP failures.
 ## M2 — Tools + memory
 
 **Goal.** Give the model things to *do* and something to *remember*. These two
-packages proceed in parallel once `@vibe/model`'s types exist.
+packages proceed in parallel once `vibe/model`'s types exist.
 
-**Headline deliverable.** `@vibe/tools` — `defineTool({ schema, execute })` where
+**Headline deliverable.** `vibe/tools` — `defineTool({ schema, execute })` where
 one Zod schema both types the handler args and emits the model-facing JSON Schema,
 plus a registry and a runtime-backed execution adapter (timeout, cancellation,
-errors → `tool_result(is_error)`). And `@vibe/memory` — an append-only
+errors → `tool_result(is_error)`). And `vibe/memory` — an append-only
 `Conversation` and a `buildRequest` that assembles `system + messages + tools`
 within a token budget. See [Tools & MCP](../architecture/11-tools-and-mcp.md) and
 [Memory & context](../architecture/12-memory-and-context.md).
@@ -93,7 +93,7 @@ without an agent loop yet.
 **Goal.** Assemble M1 + M2 into the run loop and remove the `ask()` stub. This is
 the milestone where Vibe stops being infrastructure and starts being a product.
 
-**Headline deliverable.** `@vibe/agent` — the loop (build request → model call via
+**Headline deliverable.** `vibe/agent` — the loop (build request → model call via
 runtime → stop-reason branch → parallel tool execution → append → iterate) with a
 `maxIterations` ceiling, cancellation checks between steps, `stream()` of
 `AgentEvent`s, and per-run trace ids — then `core.ask()` wired to construct and run
@@ -102,7 +102,7 @@ the default agent. See [The agent loop](../architecture/09-agent-loop.md).
 **You can now…**
 
 ```ts
-import { createSystem } from "@vibe/core"
+import { createSystem } from "vibe/core"
 
 const system = createSystem({ name: "support-bot" })
 await system.start()
@@ -140,14 +140,14 @@ it by hand.
 
 ## M6 — 1.0
 
-**Goal.** Commit to a stable public surface for the `@vibe/*` framework.
+**Goal.** Commit to a stable public surface for the `vibe/*` framework.
 
-**Headline deliverable.** A `1.0.0` release of the `@vibe/*` packages with a
+**Headline deliverable.** A `1.0.0` release of the `vibe/*` packages with a
 documented stability policy covering the public API surface, a perf pass complete,
 and Changesets-driven release automation — versioning the TypeScript packages in
 lockstep — proven on `master`. See
 [Release & versioning](./04-release-and-versioning.md).
 
-**You can now…** depend on Vibe in production — import `@vibe/*`, ship your app —
+**You can now…** depend on Vibe in production — import `vibe/*`, ship your app —
 and rely on semver: breaking changes to the framework API arrive only in major
 versions, with changelogs generated from Changesets.

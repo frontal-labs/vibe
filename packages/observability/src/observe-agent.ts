@@ -1,4 +1,4 @@
-import type { Agent, AgentEvent } from "@vibe/agent"
+import type { Agent, AgentEvent } from "vibe/agent"
 
 import type { AuditLog } from "./audit"
 import { costOf } from "./cost"

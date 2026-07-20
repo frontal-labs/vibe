@@ -1,5 +1,5 @@
 {
-  "name": "@vibe/plugin",
+  "name": "vibe/plugin",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -16,23 +16,23 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "test": "vitest run",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "test": "vitest run --config vite.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@vibe/errors": "workspace:*",
-    "@vibe/lifecycle": "workspace:*",
-    "@vibe/shared": "workspace:*"
+    "vibe/errors": "workspace:*",
+    "vibe/lifecycle": "workspace:*",
+    "vibe/shared": "workspace:*"
   },
   "tsd": {
     "directory": "type-tests"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "tsup": "^8.3.5"
+    "vite": "^6.0.0"
   }
 }

@@ -1,6 +1,6 @@
-# Plugin System — `@vibe/plugin`
+# Plugin System — `vibe/plugin`
 
-`@vibe/plugin` lets teams extend a Vibe system without forking `core`. A plugin
+`vibe/plugin` lets teams extend a Vibe system without forking `core`. A plugin
 declares a manifest (name, version, dependencies), gets a `setup(hooks)` call at
 registration, and attaches handlers to two kinds of hooks: **lifecycle hooks**
 (`onBefore`/`onAfter`, keyed to `LifecycleEvent`) and **named hooks** (`on`, keyed
@@ -59,7 +59,7 @@ hooks.on("startup", (...args) => { /* args: unknown[] — you must narrow */ })
 ```
 
 There is no per-hook payload map today, so a handler can't know statically what
-`args` it will receive. Narrow defensively (the [guards in `@vibe/shared`](./02-package-topology.md)
+`args` it will receive. Narrow defensively (the [guards in `vibe/shared`](./02-package-topology.md)
 — `isObject`, `isString` — are the tool for this). This is the seam the 🚧 agentic
 layer will close (below).
 

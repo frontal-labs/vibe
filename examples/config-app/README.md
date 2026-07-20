@@ -20,10 +20,10 @@ ANTHROPIC_API_KEY=sk-... bun run --filter @example/config-app start
 What it shows:
 
 - **`discoverApp(root)`** — resolves the config and scans `agents/`, `tools/`,
-  `skills/`, `workflows/` into the build graph `@vibe/build` consumes.
+  `skills/`, `workflows/` into the build graph `vibe/build` consumes.
 - **`toolEdges(source)`** — the agent→tool import edges the optimizer code-splits
   into per-tool lazy chunks (small serverless cold starts). This is what the Rust
   `vibe_bundler` accelerates.
 
-`vibe build` (from `@vibe/cli`) runs exactly this discovery + analysis to emit
+`vibe build` (from `@frontal-labs/vibe-cli`) runs exactly this discovery + analysis to emit
 optimized, tree-shaken, code-split bundles.

@@ -1,4 +1,4 @@
-import type { AgentResult } from "@vibe/agent"
+import type { AgentResult } from "vibe/agent"
 import { describe, expect, it } from "vitest"
 
 import { type StreamableAgent, traceAgentRun } from "../src/agent-bridge"

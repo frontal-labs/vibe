@@ -1,4 +1,4 @@
-import { MODEL_CATALOG, type TokenUsage } from "@vibe/model"
+import { MODEL_CATALOG, type TokenUsage } from "vibe/model"
 
 export interface CostBreakdown {
   readonly inputUsd: number

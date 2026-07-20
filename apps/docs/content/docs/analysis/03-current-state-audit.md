@@ -86,14 +86,14 @@ that stamps time on read. Harmless; noted so no one caches it expecting stabilit
 
 ### 🟡 Package `description` fields are empty
 Every `packages/*/package.json` has `"description": ""`. Fill these before any
-publish; they surface on npm and in `@vibe/*` discovery.
+publish; they surface on npm and in `vibe/*` discovery.
 
 ### ✅ The Rust crates — a small native build accelerator, not a language compiler
-The only Rust in the repo is a build accelerator for `@vibe/build`. The `crates/`
+The only Rust in the repo is a build accelerator for `vibe/build`. The `crates/`
 Cargo workspace holds **exactly two crates**:
 - **`vibe_bundler`** — oxc-based static analysis of a Vibe app's agent/tool
   TypeScript modules; extracts `import` declarations and agent→tool edges so
-  `@vibe/build` can build a dependency graph and code-split tools into lazily loaded
+  `vibe/build` can build a dependency graph and code-split tools into lazily loaded
   chunks. Pure Rust library, `#![forbid(unsafe_code)]`.
 - **`vibe_napi`** — a napi-rs binding (behind the `node` feature) exposing
   `tool_edges(source, marker)` and `version()` to JS. Optional accelerator; the
@@ -105,7 +105,7 @@ Cargo workspace holds **exactly two crates**:
   CI.
 
 This is a performance addon, not a language toolchain — there is no custom source
-language and no compiler. Vibe apps are plain TypeScript composing `@vibe/*` APIs.
+language and no compiler. Vibe apps are plain TypeScript composing `vibe/*` APIs.
 
 ### 🟡 Stray / mis-named ghost directories
 Several empty top-level directories were added and need triage:
@@ -145,6 +145,6 @@ choice is intentional (Apache-2.0) and fix the `release.yml` branch trigger (abo
 4. 🟡 Fill package `description` fields. (`bechmarks/`→`benchmarks/` rename and stray
    `errors/` removal — ✅ done.)
 5. ✅ ~~Stand up the `crates/` build accelerator (`vibe_bundler` + `vibe_napi`) with
-   Cargo workspace + CI~~ — **done**. It powers `@vibe/build`'s tool code-splitting.
+   Cargo workspace + CI~~ — **done**. It powers `vibe/build`'s tool code-splitting.
 6. 🔴 Build the agentic layer per the [agentic implementation plan](../plan/02-agentic-implementation-plan.md)
    (model → tools → agent → `ask()`).

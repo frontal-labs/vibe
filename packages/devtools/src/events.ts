@@ -1,4 +1,4 @@
-import type { AgentEvent } from "@vibe/agent"
+import type { AgentEvent } from "vibe/agent"
 
 /**
  * Build an event printer for `RunOptions.onEvent` / `stream()`: pretty one-liners

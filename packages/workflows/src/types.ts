@@ -1,5 +1,5 @@
-import type { Logger } from "@vibe/logger"
-import type { CancellationToken, RetryPolicy, SerializedError } from "@vibe/runtime"
+import type { Logger } from "vibe/logger"
+import type { CancellationToken, RetryPolicy, SerializedError } from "vibe/runtime"
 
 /**
  * Ambient context handed to every step. `steps` holds the outputs of already-
@@ -64,7 +64,7 @@ export interface WorkflowResult {
   readonly error?: SerializedError
 }
 
-/** A minimal tracer surface — structurally satisfied by `@vibe/tracing`'s `Tracer`. */
+/** A minimal tracer surface — structurally satisfied by `vibe/tracing`'s `Tracer`. */
 export interface WorkflowSpan {
   setAttribute(key: string, value: unknown): void
   setStatus(status: "ok" | "error"): void
