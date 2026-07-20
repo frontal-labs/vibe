@@ -33,5 +33,6 @@
   },
   "tsd": {
     "directory": "type-tests"
-  }
+  },
+  "private": true
 }
