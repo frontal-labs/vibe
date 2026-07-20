@@ -80,8 +80,11 @@ bun lint:fix   # biome check --write .
 bun format     # biome format --write .
 ```
 
-`lint-staged` runs Biome on staged files at commit time via the Husky `pre-commit`
-hook, so most style issues fix themselves before they ever reach a PR.
+`pre-commit` runs Biome on staged files at commit time via the `pre-commit`
+git hook (configured in `.pre-commit-config.yaml`), so most style issues fix
+themselves before they ever reach a PR. Hooks are installed automatically on
+`bun install`; to (re)install manually run `pre-commit install
+--hook-type pre-commit --hook-type commit-msg`.
 
 ## Working on the native accelerator (Rust)
 
@@ -150,7 +153,8 @@ for what does and doesn't need one.
 ## Commit message format
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/),
-enforced by commitlint on the `commit-msg` hook:
+enforced by commitlint on the `commit-msg` hook (configured in
+`.pre-commit-config.yaml` and `commitlint.config.js`):
 
 ```
 type(scope): subject

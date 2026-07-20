@@ -142,7 +142,7 @@ import { createLifecycle } from "../src/lifecycle"
 import type { LifecycleState } from "../src/state"
 ```
 
-Run `bun lint:fix` / `bun format` to apply it; `lint-staged` also fixes staged
+Run `bun lint:fix` / `bun format` to apply it; `pre-commit` also fixes staged
 files on commit.
 
 ## File naming

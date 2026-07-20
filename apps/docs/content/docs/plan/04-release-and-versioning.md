@@ -76,8 +76,9 @@ say so in the changeset.
 ## Conventional commits + commitlint
 
 Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/),
-enforced by commitlint (`.commitlintrc.json` extends
-`@commitlint/config-conventional`) via a Husky `commit-msg` hook. Format:
+enforced by commitlint (`commitlint.config.js` extends
+`@commitlint/config-conventional`) via the `commit-msg` hook in
+`.pre-commit-config.yaml`. Format:
 
 ```
 type(scope): subject
