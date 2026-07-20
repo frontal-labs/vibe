@@ -2,9 +2,14 @@ import { existsSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
 
-// The `vibe/*` workspace packages live in `packages/` or at the repo root
-// (the umbrella `@frontal-labs/vibe` package now lives at `./vibe`).
-const vibePackageDirs = [resolve(__dirname, "..", "packages"), resolve(__dirname, "..")]
+// The `vibe/*` workspace packages live in `packages/`, `tools/`, or at the repo root
+// (the umbrella `@frontal-labs/vibe` package now lives at `./vibe`, and
+// `vibe/generators` lives in `tools/generators`).
+const vibePackageDirs = [
+  resolve(__dirname, "..", "packages"),
+  resolve(__dirname, "..", "tools"),
+  resolve(__dirname, ".."),
+]
 const vibeAliases = Object.fromEntries(
   vibePackageDirs
     .flatMap((dir) => (existsSync(dir) ? readdirSync(dir).map((name) => [dir, name]) : []))
