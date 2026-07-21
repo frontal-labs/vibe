@@ -42,7 +42,8 @@ bun run dev
 
 | Package | Description |
 |---------|-------------|
-| `@frontal-labs/vibe` | Barrel package — import everything from `@frontal-labs/vibe` or `@frontal-labs/vibe/*` |
+| `@frontal-labs/vibe` | Barrel package |
+| `@frontal-labs/vibe-cli` | CLI tool for scaffolding and managing projects |
 | `vibe/core` | Central orchestrator that wires all modules together |
 | `vibe/agent` | Agent definition, lifecycle, and execution |
 | `vibe/model` | LLM provider abstraction layer |
@@ -59,7 +60,6 @@ bun run dev
 | `vibe/plugin` | Plugin system for extensibility |
 | `vibe/di` | Dependency injection container |
 | `vibe/config` | Configuration management |
-| `@frontal-labs/vibe-cli` | CLI tool for scaffolding and managing projects |
 | `vibe/build` | Build tooling and bundling |
 | `vibe/deploy` | Deployment utilities |
 | `vibe/devtools` | Developer experience tools |
@@ -86,7 +86,10 @@ vibe/
 ├── scripts/         # Build and CI scripts
 ├── skills/          # Built-in skill definitions
 ├── tests/           # Integration tests
-└── tools/           # Dev tooling and generators
+├── tools/           # Dev tooling and generators
+├── vibe/            # Barrel package
+├── vibe-cli/        # CLI tool for scaffolding and managing projects 
+└──
 ```
 
 ## Tech Stack

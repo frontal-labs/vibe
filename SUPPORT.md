@@ -4,11 +4,11 @@
 
 ### GitHub Issues
 
-Check existing [issues](https://github.com/vibeapp/vibe/issues) or open a new
+Check existing [issues](https://github.com/frontal-labs/vibe/issues) or open a new
 one for bug reports and feature requests.
 
-- [Bug Report Template](https://github.com/vibeapp/vibe/issues/new?template=bug_report.yml)
-- [Feature Request Template](https://github.com/vibeapp/vibe/issues/new?template=feature_request.yml)
+- [Bug Report Template](https://github.com/frontal-labs/vibe/issues/new?template=bug_report.yml)
+- [Feature Request Template](https://github.com/frontal-labs/vibe/issues/new?template=feature_request.yml)
 
 ## Bug Reports
 
@@ -24,7 +24,7 @@ Before submitting a bug report:
    - Expected vs. actual behavior
    - Logs or error messages
 
-[Open a Bug Report](https://github.com/vibeapp/vibe/issues/new?template=bug_report.yml)
+[Open a Bug Report](https://github.com/frontal-labs/vibe/issues/new?template=bug_report.yml)
 
 ## Feature Requests
 
@@ -34,7 +34,7 @@ We welcome feature requests! Before opening one:
 2. Consider how the feature fits into Vibe's scope.
 3. Describe the problem you're trying to solve, not just a solution.
 
-[Submit a Feature Request](https://github.com/vibeapp/vibe/issues/new?template=feature_request.yml)
+[Submit a Feature Request](https://github.com/frontal-labs/vibe/issues/new?template=feature_request.yml)
 
 ## Security Disclosures
 
