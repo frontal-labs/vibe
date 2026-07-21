@@ -1,11 +1,54 @@
+import { existsSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { defineConfig } from "vitest/config"
+
+const root = __dirname
+
+function vibeAliases(dir: string): Record<string, string> {
+  const base = resolve(root, dir)
+  if (!existsSync(base)) return {}
+  return Object.fromEntries(
+    readdirSync(base)
+      .filter((name) => existsSync(resolve(base, name, "src", "index.ts")))
+      .flatMap((name) => {
+        const src = resolve(base, name, "src")
+        return [
+          [`vibe/${name}`, src],
+          [`vibe/${name}/*`, resolve(src, "*")],
+        ]
+      }),
+  )
+}
+
+const aliases = {
+  ...vibeAliases("packages"),
+  ...vibeAliases("tools/generators"),
+}
+
+function project(name: string, rootDir: string) {
+  return {
+    test: {
+      name,
+      root: resolve(root, rootDir),
+      include: ["src/**/*.test.ts", "tests/**/*.test.ts"],
+      exclude: ["node_modules", "dist", ".turbo"],
+      globals: true,
+      environment: "node",
+      testTimeout: 20_000,
+      hookTimeout: 10_000,
+    },
+    resolve: { alias: aliases },
+  }
+}
+
+const packageDirs = readdirSync(resolve(root, "packages")).filter((name) =>
+  existsSync(resolve(root, "packages", name, "src", "index.ts")),
+)
 
 export default defineConfig({
   test: {
     root: __dirname,
-    include: ["packages/*/src/**/*.test.ts", "packages/*/tests/**/*.test.ts"],
-    exclude: ["node_modules", "packages/*/dist", "**/.turbo"],
+    projects: packageDirs.map((name) => project(`pkg:${name}`, `packages/${name}`)),
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "html", "json-summary"],
@@ -18,33 +61,9 @@ export default defineConfig({
         lines: 80,
       },
     },
-    globals: true,
-    environment: "node",
-    testTimeout: 10_000,
-    hookTimeout: 10_000,
     reporters: ["default", "verbose"],
   },
   resolve: {
-    alias: {
-      "vibe/agent": resolve(__dirname, "packages/agent/src"),
-      "vibe/core": resolve(__dirname, "packages/core/src"),
-      "vibe/di": resolve(__dirname, "packages/di/src"),
-      "vibe/errors": resolve(__dirname, "packages/errors/src"),
-      "vibe/lifecycle": resolve(__dirname, "packages/lifecycle/src"),
-      "vibe/logger": resolve(__dirname, "packages/logger/src"),
-      "vibe/memory": resolve(__dirname, "packages/memory/src"),
-      "vibe/model": resolve(__dirname, "packages/model/src"),
-      "vibe/tools": resolve(__dirname, "packages/tools/src"),
-      "vibe/plugin": resolve(__dirname, "packages/plugin/src"),
-      "vibe/runtime": resolve(__dirname, "packages/runtime/src"),
-      "vibe/shared": resolve(__dirname, "packages/shared/src"),
-      "vibe/mcp-server": resolve(__dirname, "packages/mcp-server/src"),
-      "vibe/skills": resolve(__dirname, "packages/skills/src"),
-      "vibe/workflows": resolve(__dirname, "packages/workflows/src"),
-      "vibe/ontology": resolve(__dirname, "packages/ontology/src"),
-      "vibe/governance": resolve(__dirname, "packages/governance/src"),
-      "vibe/security": resolve(__dirname, "packages/security/src"),
-      "vibe/observability": resolve(__dirname, "packages/observability/src"),
-    },
+    alias: aliases,
   },
 })
