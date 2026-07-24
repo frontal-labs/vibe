@@ -1,0 +1,10 @@
+{
+  "library": {
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "dev": "vite build --watch",
+    "test": "vitest run --config vite.config.ts",
+    "test:types": "tsd",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  }
+}
