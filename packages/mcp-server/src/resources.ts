@@ -1,3 +1,4 @@
+import { runtimeError } from "vibe/errors"
 import { listPackages } from "./lib/workspace"
 import type { ToolContext } from "./types"
 
@@ -47,6 +48,6 @@ export async function readResource(uri: string, ctx: ToolContext): Promise<strin
     case "vibe://runtime/status":
       return JSON.stringify(await ctx.session.status(), null, 2)
     default:
-      throw new Error(`Unknown resource: ${uri}`)
+      throw runtimeError(`Unknown resource: ${uri}`)
   }
 }

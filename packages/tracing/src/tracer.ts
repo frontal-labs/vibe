@@ -1,3 +1,4 @@
+import { runtimeError } from "vibe/errors"
 import type { ActiveSpan, Span, Tracer, TracerOptions } from "./types"
 
 let counter = 0
@@ -25,7 +26,7 @@ export function createTracer(options: TracerOptions = {}): Tracer {
       },
       end(): Span {
         if (ended) {
-          throw new Error(`Span "${name}" already ended`)
+          throw runtimeError(`Span "${name}" already ended`)
         }
         ended = true
         const endMs = now()

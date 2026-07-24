@@ -1,3 +1,4 @@
+import { validationError } from "vibe/errors"
 import type { Workflow, WorkflowStep } from "./types"
 
 export interface WorkflowDefinition {
@@ -14,12 +15,12 @@ export interface WorkflowDefinition {
  */
 export function defineWorkflow(def: WorkflowDefinition): Workflow {
   if (def.steps.length === 0) {
-    throw new Error(`Workflow "${def.name}" must have at least one step`)
+    throw validationError(`Workflow "${def.name}" must have at least one step`)
   }
   const ids = new Set<string>()
   for (const step of def.steps) {
     if (ids.has(step.id)) {
-      throw new Error(`Workflow "${def.name}" has a duplicate step id: "${step.id}"`)
+      throw validationError(`Workflow "${def.name}" has a duplicate step id: "${step.id}"`)
     }
     ids.add(step.id)
   }

@@ -1,3 +1,4 @@
+import { runtimeError } from "vibe/errors"
 import type { ToolContext } from "./types"
 
 export interface McpPrompt {
@@ -111,6 +112,6 @@ export function getPrompt(
         ],
       }
     default:
-      throw new Error(`Unknown prompt: ${name}`)
+      throw runtimeError(`Unknown prompt: ${name}`)
   }
 }

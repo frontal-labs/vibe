@@ -1,3 +1,4 @@
+import { runtimeError } from "vibe/errors"
 import type { AnyEntity } from "./entity"
 
 /**
@@ -24,7 +25,7 @@ export function createEntityRegistry(initial: readonly AnyEntity[] = []): Entity
   function register(entity: AnyEntity): void {
     const k = key(entity.name, entity.version)
     if (entities.has(k)) {
-      throw new Error(`Entity "${entity.name}" v${entity.version} is already registered`)
+      throw runtimeError(`Entity "${entity.name}" v${entity.version} is already registered`)
     }
     entities.set(k, entity)
   }

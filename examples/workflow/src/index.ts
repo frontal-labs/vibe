@@ -39,7 +39,7 @@ const flaky = defineWorkflow({
     step("prepare", () => "prepared"),
     step("commit", () => {
       attempts += 1
-      if (attempts === 1) throw new Error("transient failure")
+      if (attempts === 1) throw runtimeError("transient failure")
       return "committed"
     }),
   ],

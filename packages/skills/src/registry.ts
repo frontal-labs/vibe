@@ -1,5 +1,5 @@
+import { runtimeError } from "vibe/errors"
 import type { AnyTool, ToolSchema } from "vibe/tools"
-
 import type { AnySkill, SkillKind } from "./types"
 
 /**
@@ -23,7 +23,7 @@ export function createSkillRegistry(initial: readonly AnySkill[] = []): SkillReg
 
   function register(skill: AnySkill): void {
     if (skills.has(skill.name)) {
-      throw new Error(`Duplicate skill name: "${skill.name}"`)
+      throw runtimeError(`Duplicate skill name: "${skill.name}"`)
     }
     skills.set(skill.name, skill)
   }
