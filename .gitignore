@@ -11,3 +11,8 @@ target/
 
 # Vite build temp artifacts
 *.timestamp-*.mjs
+
+# Nix
+.envrc
+.direnv/
+result*

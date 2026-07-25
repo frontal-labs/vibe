@@ -18,7 +18,13 @@
     "changeset": "changeset",
     "version": "changeset version",
     "release": "turbo run build && changeset publish",
-    "ci:check": "turbo run lint typecheck build test"
+    "ci:check": "turbo run lint typecheck build test",
+    "cargo:build": "cargo build --release --workspace",
+    "cargo:test": "cargo test --workspace",
+    "cargo:check": "cargo check --workspace",
+    "cargo:clippy": "cargo clippy --workspace -- -D warnings",
+    "cargo:fmt": "cargo fmt --check",
+    "cargo:napi": "cargo build --release -p vibe_napi && node scripts/copy-napi.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.3",

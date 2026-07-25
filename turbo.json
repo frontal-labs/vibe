@@ -4,7 +4,7 @@
   "globalEnv": ["NODE_ENV", "LOG_LEVEL", "CI"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "//#cargo:build"],
       "outputs": ["dist/**", ".next/**"],
       "inputs": [
         "src/**",
@@ -23,7 +23,7 @@
       "interactive": true
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "//#cargo:test"],
       "inputs": ["src/**", "tests/**", "tsconfig.json"],
       "outputs": ["coverage/**"]
     },
@@ -47,6 +47,21 @@
       "outputs": []
     },
     "clean": {
+      "cache": false
+    },
+    "//#cargo:build": {
+      "inputs": ["crates/**/*.rs", "crates/**/Cargo.toml", "Cargo.toml", "Cargo.lock"],
+      "outputs": ["target/release/**"],
+      "cache": false
+    },
+    "//#cargo:test": {
+      "inputs": ["crates/**/*.rs", "crates/**/Cargo.toml", "Cargo.toml", "Cargo.lock"],
+      "outputs": [],
+      "cache": false
+    },
+    "//#cargo:check": {
+      "inputs": ["crates/**/*.rs", "crates/**/Cargo.toml", "Cargo.toml", "Cargo.lock"],
+      "outputs": [],
       "cache": false
     },
     "//#format": {},
