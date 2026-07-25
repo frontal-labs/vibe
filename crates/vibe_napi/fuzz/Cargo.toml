@@ -1,0 +1,26 @@
+[package]
+name = "vibe_napi_fuzz"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+vibe_napi = { path = ".." }
+serde_json = { workspace = true }
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "napi_serialize"
+path = "fuzz_targets/napi_serialize.rs"
+
+[[bin]]
+name = "validation"
+path = "fuzz_targets/validation.rs"

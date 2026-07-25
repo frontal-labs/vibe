@@ -1,0 +1,24 @@
+[package]
+name = "vibe_tools"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Tool execution, validation, and timeout for the Vibe runtime."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_errors = { path = "../vibe_errors" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+schemars = { workspace = true }
+jsonschema = { workspace = true }
+reqwest = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+vibe_cancellation = { path = "../vibe_cancellation" }

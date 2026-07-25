@@ -1,0 +1,27 @@
+[package]
+name = "vibe_model"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Model provider interfaces, streaming, and token counting for the Vibe runtime."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_errors = { path = "../vibe_errors" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+futures = { workspace = true }
+reqwest = { workspace = true }
+bytes = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+async-trait = { workspace = true }

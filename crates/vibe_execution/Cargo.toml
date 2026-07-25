@@ -1,0 +1,31 @@
+[package]
+name = "vibe_execution"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Execution engine, checkpointing, and stream events for the Vibe runtime."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_errors = { path = "../vibe_errors" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+vibe_retry = { path = "../vibe_retry" }
+vibe_scheduler = { path = "../vibe_scheduler" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+dashmap = { workspace = true }
+futures = { workspace = true }
+async-stream = { workspace = true }
+pin-project = "1.1"
+
+[dev-dependencies]
+proptest = { workspace = true }
+criterion = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+vibe_scheduler = { path = "../vibe_scheduler" }

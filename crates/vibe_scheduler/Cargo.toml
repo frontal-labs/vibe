@@ -1,0 +1,22 @@
+[package]
+name = "vibe_scheduler"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Task scheduler and priority queues for the Vibe runtime."
+
+[dependencies]
+serde = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+dashmap = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }

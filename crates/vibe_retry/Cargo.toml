@@ -1,0 +1,19 @@
+[package]
+name = "vibe_retry"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Retry policies, backoff, and timeouts for the Vibe runtime."
+
+[dependencies]
+serde = { workspace = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
+criterion = { workspace = true }
