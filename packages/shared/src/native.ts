@@ -11,7 +11,13 @@ export interface JsNativeCancellationTokenSource {
 }
 
 export interface JsNativeExecutionEngine {
-  registerTask: (taskId: string, name: string, description: string | null, maxRetries: number, timeoutMs: number | null) => void
+  registerTask: (
+    taskId: string,
+    name: string,
+    description: string | null,
+    maxRetries: number,
+    timeoutMs: number | null,
+  ) => void
   execute: (taskId: string, inputJson: string) => Promise<JsNativeExecutionResult>
   cancel: (executionId: string) => void
   getExecutionState: (executionId: string) => string
@@ -43,10 +49,17 @@ export interface NativeAddon {
   generateTaskId?: () => string
   generateCheckpointId?: () => string
 
-  JsCancellationTokenSource?: { new(): JsNativeCancellationTokenSource }
-  JsCancellationToken?: { new(): JsNativeCancellationToken }
-  JsExecutionEngine?: { new(): JsNativeExecutionEngine }
-  JsRetryPolicy?: { new(maxAttempts: number, baseDelayMs: number, maxDelayMs: number, backoffMultiplier: number): JsNativeRetryPolicy }
+  JsCancellationTokenSource?: { new (): JsNativeCancellationTokenSource }
+  JsCancellationToken?: { new (): JsNativeCancellationToken }
+  JsExecutionEngine?: { new (): JsNativeExecutionEngine }
+  JsRetryPolicy?: {
+    new (
+      maxAttempts: number,
+      baseDelayMs: number,
+      maxDelayMs: number,
+      backoffMultiplier: number,
+    ): JsNativeRetryPolicy
+  }
 
   defaultRetryPolicy?: () => JsNativeRetryPolicy
   calculateBackoff?: (attempt: number, policy: JsNativeRetryPolicy) => number

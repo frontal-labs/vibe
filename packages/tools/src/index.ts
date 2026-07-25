@@ -15,3 +15,12 @@ export type {
   ToolReturn,
   ToolSchema,
 } from "./types"
+
+import { nativeAddon } from "vibe/shared"
+
+export function validateToolInput(schema: string, input: string): void {
+  const addon = nativeAddon()
+  if (addon?.validateToolInput) {
+    addon.validateToolInput(schema, input)
+  }
+}

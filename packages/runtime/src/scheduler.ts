@@ -14,7 +14,7 @@ export function createScheduler(engine: ExecutionEngine): Scheduler {
       throw runtimeError(`Task "${taskId}" is not registered`)
     }
 
-    return engine.execute<TInput, TOutput>(taskId, input, options?.retry, options?.timeoutMs)
+    return await engine.execute<TInput, TOutput>(taskId, input, options?.retry, options?.timeoutMs)
   }
 
   async function cancel(executionId: ExecutionId): Promise<void> {
@@ -22,14 +22,14 @@ export function createScheduler(engine: ExecutionEngine): Scheduler {
     if (!state) {
       throw runtimeError(`Execution "${executionId}" not found`)
     }
-    if (state !== "pending" && state !== "running") {
-      return
+    if (state === "pending" || state === "running") {
+      engine.cancel(executionId)
     }
-    engine.cancel(executionId)
+    await Promise.resolve()
   }
 
   async function getStatus(executionId: ExecutionId): Promise<ExecutionResult | undefined> {
-    return engine.getResult(executionId)
+    return await engine.getResult(executionId)
   }
 
   return {

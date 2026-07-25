@@ -40,3 +40,21 @@ export type {
   ToolSchema,
 } from "./types"
 export { DEFAULT_MODEL } from "./types"
+
+import { nativeAddon } from "vibe/shared"
+
+export function countTokens(text: string, modelFamily: string): number {
+  const addon = nativeAddon()
+  if (addon?.countTokens) {
+    return addon.countTokens(text, modelFamily)
+  }
+  return Math.ceil(text.length / 4)
+}
+
+export function countMessages(messagesJson: string, modelFamily: string): number[] {
+  const addon = nativeAddon()
+  if (addon?.countMessages) {
+    return addon.countMessages(messagesJson, modelFamily)
+  }
+  return []
+}

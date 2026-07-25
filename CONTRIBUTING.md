@@ -21,6 +21,31 @@ from everyone. By participating in this project, you agree to abide by our
 
 ### Set Up the Development Environment
 
+#### Option A: Nix (recommended — single command, reproducible)
+
+1. Install [Nix](https://nixos.org/download.html) with flakes enabled:
+   ```bash
+   # Enable flakes in ~/.config/nix/nix.conf or /etc/nix/nix.conf
+   experimental-features = nix-command flakes
+   ```
+
+2. Enter the development environment:
+   ```bash
+   nix develop
+   # Or with direnv (auto-loads on cd):
+   echo "use flake" > .envrc && direnv allow
+   ```
+
+   This provides: Rust 1.95.0, Bun 1.3.3, Node 22, Biome, pre-commit, git, jq — all pinned.
+
+3. Install dependencies and build:
+   ```bash
+   bun install --frozen-lockfile
+   bun run build
+   ```
+
+#### Option B: Manual tool installation
+
 1. Install [Bun](https://bun.sh):
    ```bash
    curl -fsSL https://bun.sh/install | bash
@@ -40,28 +65,11 @@ from everyone. By participating in this project, you agree to abide by our
    bun run build
    ```
 
-### Repository layout: two workspaces
+#### Rust Toolchain (the bundler addon)
 
-Vibe is split across **two workspaces** in one repo:
+Only needed when working in `crates/*`. **With Nix: already included in `nix develop`.**
 
-- **`packages/*` — TypeScript framework.** A bun + Turborepo monorepo of `vibe/*`
-  packages. This is the whole framework — Vibe apps are plain TypeScript. The steps
-  above set it up.
-- **`crates/*` — Rust bundler addon.** A small Cargo workspace with two crates:
-  `vibe_bundler` (oxc-based static analysis of a Vibe app's agent/tool TypeScript
-  modules) and `vibe_napi` (its napi binding). They power `vibe/build`'s agent→tool
-  graph and code-splitting. The addon is an optional accelerator — `vibe/build` also
-  has a pure-TypeScript path — so most contributors never touch Rust.
-
-If you're only touching the framework, the bun setup is all you need. To work on the
-bundler addon, set up the Rust toolchain below. See
-[docs/contributing/00-contributing.md](docs/contributing/00-contributing.md)
-for the full contributor workflow across both workspaces.
-
-### Rust Toolchain (the bundler addon)
-
-Only needed when working in `crates/*`:
-
+Without Nix:
 1. Install [rustup](https://rustup.rs/). The repo pins its Rust version via
    `rust-toolchain.toml` (channel plus the `rustfmt` and `clippy` components), so
    rustup selects the right toolchain automatically inside the repo.

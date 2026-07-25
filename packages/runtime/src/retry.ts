@@ -1,8 +1,20 @@
 import { cancelledError, timeoutError } from "vibe/errors"
+import { nativeAddon } from "vibe/shared"
 
 import type { CancellationToken, RetryPolicy } from "./types"
 
 export function defaultRetryPolicy(): RetryPolicy {
+  const addon = nativeAddon()
+  const native = addon?.defaultRetryPolicy?.()
+  if (native) {
+    return {
+      maxAttempts: native.maxAttempts,
+      initialDelayMs: native.baseDelayMs,
+      maxDelayMs: native.maxDelayMs,
+      backoffMultiplier: native.backoffMultiplier,
+    }
+  }
+
   return {
     maxAttempts: 3,
     initialDelayMs: 200,
@@ -12,9 +24,26 @@ export function defaultRetryPolicy(): RetryPolicy {
 }
 
 export function calculateDelay(attempt: number, policy: RetryPolicy): number {
+  const addon = nativeAddon()
+  const native = addon?.defaultRetryPolicy?.()
+  if (native && addon?.calculateBackoff) {
+    const nativePolicy = policyToNative(policy)
+    const delay = addon.calculateBackoff(attempt, nativePolicy)
+    if (delay > 0) return delay
+  }
+
   const delay = policy.initialDelayMs * policy.backoffMultiplier ** (attempt - 1)
   const jitter = Math.random() * delay * 0.1
   return Math.min(delay + jitter, policy.maxDelayMs)
+}
+
+function policyToNative(p: RetryPolicy) {
+  return {
+    maxAttempts: p.maxAttempts,
+    baseDelayMs: p.initialDelayMs,
+    maxDelayMs: p.maxDelayMs,
+    backoffMultiplier: p.backoffMultiplier,
+  }
 }
 
 export function isRetryableError(error: unknown): boolean {
@@ -23,14 +52,12 @@ export function isRetryableError(error: unknown): boolean {
     typeof error === "object" &&
     error !== null &&
     "name" in error &&
-    // biome-ignore lint/complexity/useLiteralKeys: TS4111 requires bracket access for index signatures
-    (error as Record<string, unknown>)["name"] === "CancelledError"
+    (error as Record<string, unknown>).name === "CancelledError"
   ) {
     return false
   }
   if (typeof error === "object" && error !== null && "retryable" in error) {
-    // biome-ignore lint/complexity/useLiteralKeys: TS4111 requires bracket access for index signatures
-    return (error as Record<string, unknown>)["retryable"] !== false
+    return (error as Record<string, unknown>).retryable !== false
   }
   return true
 }
@@ -84,7 +111,7 @@ async function executeWithTimeout<T>(
     return fn()
   }
 
-  const source = createAbortController()
+  const source = new AbortController()
   const cleanup = cancellationToken.onCancelled(() => source.abort())
 
   try {
@@ -93,10 +120,6 @@ async function executeWithTimeout<T>(
   } finally {
     cleanup()
   }
-}
-
-function createAbortController(): AbortController {
-  return new AbortController()
 }
 
 function raceWithTimeout<T>(

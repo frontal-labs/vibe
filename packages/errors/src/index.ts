@@ -37,3 +37,13 @@ export {
 } from "./factories"
 export type { ErrorFactoryOptions, ErrorSerialized } from "./types"
 export { VibeError } from "./vibe-error"
+
+import { nativeAddon } from "vibe/shared"
+
+export function serializeError(message: string, code: string): string {
+  const addon = nativeAddon()
+  if (addon?.serializeError) {
+    return addon.serializeError(message, code)
+  }
+  return JSON.stringify({ message, code })
+}

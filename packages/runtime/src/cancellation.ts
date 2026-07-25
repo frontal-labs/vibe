@@ -1,8 +1,38 @@
 import { cancelledError } from "vibe/errors"
+import { nativeAddon } from "vibe/shared"
 
 import type { CancellationToken, CancellationTokenSource } from "./types"
 
 export function createCancellationTokenSource(): CancellationTokenSource {
+  const addon = nativeAddon()
+  const Ctor = addon?.JsCancellationTokenSource
+
+  if (Ctor) {
+    const native = new Ctor()
+    return {
+      get token(): CancellationToken {
+        const nt = native.token()
+        return {
+          get cancelled(): boolean {
+            return nt.isCancelled()
+          },
+          get reason(): string | undefined {
+            return undefined
+          },
+          onCancelled(_listener: () => void): () => void {
+            return () => {}
+          },
+          throwIfCancelled(): void {
+            if (nt.isCancelled()) throw cancelledError("Execution cancelled")
+          },
+        }
+      },
+      cancel(_reason?: string): void {
+        native.cancel()
+      },
+    }
+  }
+
   const controller = new AbortController()
   const listeners = new Set<() => void>()
 
