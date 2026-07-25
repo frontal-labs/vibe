@@ -1,51 +1,13 @@
-import { existsSync, readdirSync } from "node:fs"
-import { resolve } from "node:path"
 import { defineConfig } from "vite"
-
-const packagesDir = resolve(__dirname, "..", "packages")
-const vibeAliases = Object.fromEntries(
-  readdirSync(packagesDir)
-    .filter(
-      (name) =>
-        name !== "node_modules" && existsSync(resolve(packagesDir, name, "src", "index.ts")),
-    )
-    .flatMap((name) => {
-      const src = resolve(packagesDir, name, "src")
-      return [
-        [`vibe/${name}`, src],
-        [`vibe/${name}/*`, resolve(src, "*")],
-      ]
-    }),
-)
-
-// Externalize built-in + third-party deps (third-party are externalized by default).
-// Internal `vibe/*` workspace packages are bundled into the barrel so the
-// published `@frontal-labs/vibe` is self-contained.
-const external = (id) =>
-  id.startsWith("node:") ||
-  [
-    "util",
-    "path",
-    "fs",
-    "os",
-    "crypto",
-    "events",
-    "stream",
-    "url",
-    "http",
-    "https",
-    "child_process",
-  ].some((b) => id === b || id.startsWith(`${b}/`))
+import { createBaseViteConfig } from "../packages/vite-config/vite.config"
 
 // Library build: emits ESM + CJS into dist/ via Vite.
 // .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
-// Each entry keeps its basename (index, cli, agent, …).
+// Entry points for the barrel package.
 export default defineConfig({
-  resolve: {
-    alias: vibeAliases,
-  },
+  ...createBaseViteConfig(),
   build: {
-    target: "node20",
+    ...createBaseViteConfig().build,
     lib: {
       entry: {
         index: "src/index.ts",
@@ -73,17 +35,6 @@ export default defineConfig({
         observability: "src/observability.ts",
       },
       formats: ["es", "cjs"],
-    },
-    outDir: "dist",
-    emptyOutDir: true,
-    sourcemap: true,
-    rollupOptions: {
-      external,
-      output: {
-        entryFileNames: (chunk, format) => `${chunk.name}.${format === "es" ? "js" : "cjs"}`,
-        chunkFileNames: "chunk-[name].[format].js",
-        exports: "named",
-      },
     },
   },
 })

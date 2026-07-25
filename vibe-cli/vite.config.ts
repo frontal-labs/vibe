@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
+import { createBaseViteConfig } from "../packages/vite-config/vite.config"
 
 // The `vibe/*` workspace packages live in `packages/`, `tools/`, or at the repo root
 // (the umbrella `@frontal-labs/vibe` package now lives at `./vibe`, and
@@ -26,7 +27,7 @@ const vibeAliases = Object.fromEntries(
 )
 
 // Externalize workspace + third-party deps (third-party deps are externalized by default).
-const external = (id) =>
+const _external = (id) =>
   id.startsWith("node:") ||
   [
     [
@@ -51,28 +52,18 @@ const external = (id) =>
 // .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
 // Each entry keeps its basename (index, cli, agent, …).
 export default defineConfig({
+  ...createBaseViteConfig(),
   resolve: {
     alias: vibeAliases,
   },
   build: {
-    target: "node20",
+    ...createBaseViteConfig().build,
     lib: {
       entry: {
         index: "src/index.ts",
         cli: "src/cli.ts",
       },
       formats: ["es", "cjs"],
-    },
-    outDir: "dist",
-    emptyOutDir: true,
-    sourcemap: true,
-    rollupOptions: {
-      external,
-      output: {
-        entryFileNames: (chunk, format) => `${chunk.name}.${format === "es" ? "js" : "cjs"}`,
-        chunkFileNames: (chunk, format) => `chunk-${chunk.name}.${format === "es" ? "js" : "cjs"}`,
-        exports: "named",
-      },
     },
   },
 })
