@@ -15,12 +15,29 @@ Companion docs: [Testing strategy](../plan/03-testing-strategy.md),
 | Node.js | **>=20** | CI runs on **22**; test the boundary you touch. |
 | bun | **9** (`bun@9.15.4`) | Pinned via `packageManager`; use Corepack. |
 | Git | any recent | Conventional commits are enforced (below). |
+| Nix | any with flakes | **Optional but recommended** — provides all tools in one command. |
 
 Enable the pinned bun with Corepack:
 
 ```bash
 corepack enable
 ```
+
+### Nix (optional — reproducible dev environment)
+
+If you have Nix with flakes enabled:
+
+```bash
+# One command, all tools pinned:
+nix develop
+
+# Or with direnv (auto-load on cd):
+echo "use flake" > .envrc && direnv allow
+```
+
+This drops you into a shell with: **Rust 1.95.0**, **Bun 1.3.3**, **Node 22**, **Biome**, **pre-commit**, **git**, **jq** — no manual installs needed. The flake is the source of truth for tool versions.
+
+Without Nix, proceed with the manual setup below.
 
 ## Setup
 

@@ -1,22 +1,27 @@
-# vibe_sse
+# vibe-sse
 
-Native SSE frame splitting and OpenAI streaming fold — the Rust analogue of
-`packages/model/src/openai/stream.ts`. A pure Rust library (`#![forbid(unsafe_code)]`) exposed to
-JavaScript through the `vibe_napi` addon and consumed by `vibe/model`'s OpenAI provider.
+Native SSE frame splitting and OpenAI streaming fold — the Rust analogue of `packages/model/src/openai/stream.ts`.
 
-## Why
+Folds a complete OpenAI `chat/completions` SSE response body into ordered text deltas plus a final normalized response, keeping per-chunk JSON parsing and string concatenation off the JS heap.
 
-OpenAI streams `chat/completions` as `data: {json}` frames and delivers tool calls piecewise (by
-`index`), so name/argument fragments must be concatenated and parsed. Folding a whole response
-body in Rust keeps the per-chunk `JSON.parse` and string building off the JS heap on high-throughput
-streams.
+## Public API
 
-## API
+| Function | Description |
+|----------|-------------|
+| `fold(body: &str) -> FoldResult` | Parses an SSE body and returns a `FoldResult` with ordered text events and the final response |
+| `fold_json(body: &str) -> String` | Like `fold()` but serializes the result to JSON for the napi boundary |
 
-- `fold(body) -> FoldResult` — ordered text deltas plus the final normalized `ModelResponse`.
-- `fold_json(body) -> String` — the same, serialized to JSON for the napi boundary. Output matches
-  the TS `ModelStreamEvent` / `ModelResponse` shapes exactly (including the `finish_reason` →
-  `stopReason` mapping and lenient tool-argument parsing).
+### FoldResult
 
-The framework works without this crate: `vibe/model`'s `createOpenAIStreamAccumulator` fallback
-produces identical output when the native addon is absent.
+A struct with private fields — use `fold()` or `fold_json()` to obtain results. Internally contains:
+- `events`: ordered text `StreamEvent` values (one per content delta)
+- `response`: normalized `ModelResponse` with content blocks, stop reason, token usage, and model
+
+## Details
+
+- Strips `data:` prefixes and `[DONE]` terminators
+- Concatenates piecewise tool call fragments (by `index`) before parsing
+- Tolerates malformed frames — skips rather than aborting the stream
+- No `unsafe` code
+
+The TS `createOpenAIStreamAccumulator` fallback produces identical output; this crate is a performance accelerator.

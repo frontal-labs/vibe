@@ -1,26 +1,32 @@
-# vibe_tokenizer
+# vibe-tokenizer
 
-Native token counting for Vibe's context-window budgeting. A pure Rust library
-(`#![forbid(unsafe_code)]`) exposed to JavaScript through the `vibe_napi` addon and consumed
-by `vibe/memory`'s request builder.
+Accurate, native token counting for the agent loop's context-window budgeting.
 
-## Why
+Uses `tiktoken-rs` (BPE) to count tokens per-message, enabling O(n) transcript trimming instead of re-counting the whole buffer each turn.
 
-The agent loop trims the oldest turns to keep a request under the model's context window. The
-pure-TS fallback estimates ~4 chars/token — cheap but inaccurate, so it either drops context
-too early or overflows the provider (a 400). This crate returns a real BPE count and, crucially,
-**per-message** counts so the caller trims in O(n) instead of re-counting the whole transcript
-on every dropped turn.
+## Public API
 
-## API
+| Function | Description |
+|----------|-------------|
+| `count_text(text: &str, family: Family) -> u32` | Count tokens in a plain string for a given model family |
+| `count_messages(messages_json: &str, family: Family) -> Vec<u32>` | Per-message token counts for a JSON message array (aligned with input order) |
 
-- `count_text(text, family) -> u32`
-- `count_messages(messages_json, family) -> Vec<u32>` — per-message counts aligned with the
-  input array; the system prompt is counted separately with `count_text`.
+### Family
 
-`family` is one of `openai` (`o200k_base`), `anthropic` (approximated with `o200k_base` —
-Anthropic publishes no tokenizer, but this tracks far closer than a flat ratio), `cl100k`, or
-`heuristic` (the flat ~4 chars/token fallback, identical to the TS path).
+The `Family` enum selects which tokenizer to use:
 
-The framework works without this crate: when the native addon is absent, `vibe/memory` uses its
-TypeScript `estimateTokens` fallback.
+| Variant | Tokenizer | Models |
+|---------|-----------|--------|
+| `OpenAi` | `o200k_base` | GPT-4o, o-series |
+| `Anthropic` | `o200k_base` (best approximation) | Claude |
+| `Cl100k` | `cl100k_base` | Legacy OpenAI |
+| `Heuristic` | `~4 chars/token` | Unknown / fallback |
+
+Created via `Family::parse(name)` where `name` is `"openai"`, `"anthropic"`, `"cl100k"`, or any other value (→ heuristic).
+
+## Notes
+
+- BPE vocab loads lazily (once per family, via `OnceLock`)
+- Falls back to heuristic if the BPE vocab can't be loaded — never fails
+- The heuristic matches the TS fallback exactly (`Math.ceil(text.length / 4)`)
+- No `unsafe` code
