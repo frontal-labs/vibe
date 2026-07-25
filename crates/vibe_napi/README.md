@@ -1,55 +1,75 @@
 # vibe_napi
 
-Node.js bindings for the Vibe bundler's static analysis.
+Node.js native addon (napi-rs) exposing the Vibe runtime to JavaScript.
 
-## Overview
+## Exports
 
-`vibe_napi` exposes [`vibe_bundler`](../vibe_bundler)'s TypeScript import analysis to
-JavaScript/TypeScript via N-API (`napi-rs`). It compiles to a `.node` addon so `vibe/build`
-can build an agent→tool graph in-process — without spawning a separate Rust process — and
-code-split tools into lazily-loaded chunks for small cold starts.
+### ID Generation
 
-The addon is an **optional accelerator**: `vibe/build` works without it and falls back to a
-pure-TypeScript analysis. There is no `.vibe` language compiler here — Vibe apps are plain
-TypeScript.
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `getVersion()` | `string` | Addon version |
+| `generateExecutionId()` | `string` | New UUID v4 execution identifier |
+| `generateTaskId()` | `string` | New UUID v4 task identifier |
+| `generateCheckpointId()` | `string` | New UUID v4 checkpoint identifier |
 
-## Crate types
+### Cancellation
 
-- `cdylib` — the `.node` addon loaded by Node.js (built with `--features node`).
-- `rlib` — the pure Rust API for testing and reuse.
+| Class | Methods |
+|-------|---------|
+| `JsCancellationTokenSource` | `new()`, `token() -> JsCancellationToken`, `cancel()` |
+| `JsCancellationToken` | `isCancelled() -> bool`, `childToken() -> JsCancellationToken` |
 
-## N-API surface (feature `node`)
+### Retry
 
-- `tool_edges(agent_source: string, tool_marker: string) -> string` — JSON array of the
-  tools an agent module imports (module specifier + local binding), where the import
-  specifier contains `tool_marker` (e.g. `"/tools/"`).
-- `version() -> string` — the addon version.
+| Function | Returns | Description |
+|----------|---------|-------------|
+| `defaultRetryPolicy()` | `JsRetryPolicy` | Default retry policy (3 attempts, exponential backoff) |
+| `calculateBackoff(attempt, policy)` | `number` | Backoff delay in ms for a given attempt |
 
-## Dependencies
+| Class | Getters |
+|-------|---------|
+| `JsRetryPolicy` | `maxAttempts`, `baseDelayMs`, `maxDelayMs`, `backoffMultiplier` |
 
-- [`vibe_bundler`](../vibe_bundler) — the static-analysis library this crate wraps.
-- [`napi`](https://crates.io/crates/napi) — N-API bindings (optional, `node` feature).
-- [`napi-derive`](https://crates.io/crates/napi-derive) — N-API export macros (optional).
+### Scheduling
 
-## Build dependencies
+| Class | Methods |
+|-------|---------|
+| `JsScheduler` | `new()`, `registerTask(id, name, description, maxRetries, timeoutMs)`, `hasTask(id) -> bool`, `unregisterTask(id)` |
 
-- [`napi-build`](https://crates.io/crates/napi-build) — build script for N-API registration.
+### Execution
 
-## Features
+| Class | Methods |
+|-------|---------|
+| `JsExecutionEngine` | `new()`, `registerTask(id, name, description, maxRetries, timeoutMs)`, `execute(taskId, inputJson) -> JsExecutionResult`, `cancel(executionId)`, `getExecutionState(executionId) -> string` |
 
-- `node` — enables `napi`/`napi-derive` and generates the `.node` addon. The default build
-  omits it so `cargo test --workspace` and CI stay green without linking Node's N-API symbols.
+| Class | Getters |
+|-------|---------|
+| `JsExecutionResult` | `executionId`, `state`, `output`, `error` |
+
+### Utilities
+
+| Function | Description |
+|----------|-------------|
+| `validateToolInput(schemaJson, inputJson)` | Validates JSON input against a JSON Schema |
+| `serializeError(message, code)` | Serializes an error to JSON |
+| `countTokens(text, modelFamily)` | Heuristic token count |
+| `countMessages(messagesJson, modelFamily)` | Per-message token counts |
+
+## Usage
+
+```ts
+import { createRequire } from "node:module"
+const addon = createRequire(import.meta.url)("./vibe_napi.node")
+
+const eid = addon.generateExecutionId()
+const source = new addon.JsCancellationTokenSource()
+const engine = new addon.JsExecutionEngine()
+```
 
 ## Building
 
 ```bash
-cargo build -p vibe_napi --features node --release
-```
-
-## Usage
-
-```javascript
-const addon = require('./vibe_napi.node')
-const edges = JSON.parse(addon.tool_edges(agentSource, '/tools/'))
-// -> [{ source: "../tools/get-order", local: "getOrderTool" }, ...]
+cargo build --release -p vibe_napi
+# then copy the .dylib / .so / .dll to .node
 ```

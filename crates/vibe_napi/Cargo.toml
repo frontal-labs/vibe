@@ -4,24 +4,37 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-description = "Node bindings (napi-rs) exposing the Vibe compiler to JavaScript."
+description = "Node bindings (napi-rs) exposing the Vibe runtime to JavaScript."
 
 [lib]
-# `cdylib` for the `.node` addon; `rlib` so the pure API is usable/testable.
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-vibe_bundler = { path = "../vibe_bundler" }
-vibe_tokenizer = { path = "../vibe_tokenizer" }
-vibe_sse = { path = "../vibe_sse" }
-napi = { version = "2", default-features = false, features = ["napi4"], optional = true }
-napi-derive = { version = "2", optional = true }
+vibe_shared = { path = "../vibe_shared" }
+vibe_errors = { path = "../vibe_errors" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+vibe_retry = { path = "../vibe_retry" }
+vibe_scheduler = { path = "../vibe_scheduler" }
+vibe_execution = { path = "../vibe_execution" }
+vibe_tools = { path = "../vibe_tools" }
+vibe_model = { path = "../vibe_model" }
+napi = { workspace = true }
+napi-derive = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
 
 [build-dependencies]
 napi-build = "2"
 
+[dev-dependencies]
+vibe_shared = { path = "../vibe_shared" }
+vibe_cancellation = { path = "../vibe_cancellation" }
+vibe_retry = { path = "../vibe_retry" }
+vibe_model = { path = "../vibe_model" }
+vibe_errors = { path = "../vibe_errors" }
+vibe_tools = { path = "../vibe_tools" }
+
 [features]
-# The `#[napi]` FFI surface is opt-in so the default `cargo build`/`test` (and the
-# workspace CI) don't need to link Node's N-API symbols. Build the addon with:
-#   cargo build -p vibe_napi --features node --release
-node = ["dep:napi", "dep:napi-derive"]
+default = []

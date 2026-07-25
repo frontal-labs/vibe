@@ -1,4 +1,4 @@
-# Pinned toolchain for the Vibe compiler crates (rustup honors this).
 [toolchain]
-channel = "1.95.0"
-components = ["rustfmt", "clippy", "rust-analyzer"]
+channel = "1.95"
+components = ["rustfmt", "clippy"]
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu"]

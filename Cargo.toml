@@ -1,11 +1,21 @@
-# Vibe native accelerators — Rust Cargo workspace.
-# Optional build-time and runtime performance addons for the TypeScript framework:
-# vibe_bundler (agent→tool graph), vibe_tokenizer (context budgeting), vibe_sse (streaming fold),
-# surfaced to JS via the vibe_napi addon. Coexists with the bun/Turborepo workspace (packages/).
-
 [workspace]
 resolver = "2"
-members = ["crates/*", "benchmarks"]
+members = [
+    "crates/vibe_shared",
+    "crates/vibe_errors",
+    "crates/vibe_cancellation",
+    "crates/vibe_retry",
+    "crates/vibe_scheduler",
+    "crates/vibe_execution",
+    "crates/vibe_tools",
+    "crates/vibe_model",
+    "crates/vibe_napi",
+    "crates/vibe_bundler",
+    "crates/vibe_tokenizer",
+    "crates/vibe_sse",
+    "crates/vibe_bindings",
+    "benchmarks",
+]
 
 [workspace.package]
 version = "0.0.0"
@@ -15,8 +25,32 @@ license = "Apache-2.0"
 repository = "https://github.com/vibe-lang/vibe"
 authors = ["Vibe contributors"]
 
-# Shared dependency versions. Crates opt in with `foo = { workspace = true }`.
 [workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+parking_lot = "0.12"
+napi = { version = "2.14", default-features = false, features = ["napi8", "tokio_rt", "async"] }
+napi-derive = "2.14"
+simd-json = "0.13"
+proptest = "1"
+criterion = "0.5"
+dashmap = "6"
+schemars = "0.8"
+jsonschema = "0.18"
+uuid = { version = "1", features = ["v4", "serde"] }
+async-stream = "0.3"
+futures = "0.3"
+bytes = "1"
+http = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream"] }
+async-trait = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1"
+pin-project = "1"
+pin-utils = "0.1"
 insta = "1"
 clap = { version = "4", features = ["derive"] }
 notify = "6"
