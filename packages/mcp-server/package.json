@@ -1,8 +1,9 @@
 {
   "name": "vibe/mcp-server",
   "version": "0.0.1",
-  "description": "Model Context Protocol server that lets AI agents operate, build, and generate the Vibe framework.",
+  "private": true,
   "type": "module",
+  "description": "Model Context Protocol server that lets AI agents operate, build, and generate the Vibe framework.",
   "bin": {
     "vibe-mcp": "dist/server.js"
   },
@@ -23,7 +24,7 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite build --watch",
     "start": "node dist/server.js",
-    "test": "vitest run --config vite.config.ts",
+    "test": "vitest run --config vitest.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "inspect": "npx @modelcontextprotocol/inspector dist/server.js",
@@ -48,6 +49,5 @@
   },
   "tsd": {
     "directory": "type-tests"
-  },
-  "private": true
+  }
 }

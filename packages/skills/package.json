@@ -1,6 +1,7 @@
 {
   "name": "vibe/skills",
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -18,14 +19,15 @@
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite build --watch",
-    "test": "vitest run --config vite.config.ts",
+    "test": "vitest run --config vitest.config.ts",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "vibe/tools": "workspace:*",
-    "@standard-schema/spec": "^1.1.0"
+    "@standard-schema/spec": "^1.1.0",
+    "vibe/errors": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
@@ -34,6 +36,5 @@
   },
   "tsd": {
     "directory": "type-tests"
-  },
-  "private": true
+  }
 }

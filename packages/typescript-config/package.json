@@ -1,8 +1,8 @@
 {
   "name": "vibe/typescript-config",
-  "type": "module",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "exports": {
     "./base": "./tsconfig.base.json",
     "./library": "./tsconfig.library.json",

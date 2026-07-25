@@ -446,6 +446,7 @@
       "version": "0.0.1",
       "dependencies": {
         "@standard-schema/spec": "^1.1.0",
+        "vibe/errors": "workspace:*",
         "vibe/tools": "workspace:*",
       },
       "devDependencies": {
@@ -505,6 +506,7 @@
       "version": "0.0.1",
       "dependencies": {
         "@standard-schema/spec": "^1.1.0",
+        "vibe/errors": "workspace:*",
         "vibe/tools": "workspace:*",
       },
       "devDependencies": {
@@ -535,6 +537,7 @@
       "version": "0.0.1",
       "dependencies": {
         "vibe/agent": "workspace:*",
+        "vibe/errors": "workspace:*",
         "vibe/shared": "workspace:*",
       },
       "devDependencies": {
@@ -548,10 +551,20 @@
       "name": "vibe/typescript-config",
       "version": "0.0.0",
     },
+    "packages/vite-config": {
+      "name": "vibe/vite-config",
+      "version": "0.0.1",
+      "devDependencies": {
+        "tsd": "^0.31.2",
+        "vite": "^6.0.0",
+        "vitest": "^3.0.0",
+      },
+    },
     "packages/workflows": {
       "name": "vibe/workflows",
       "version": "0.0.1",
       "dependencies": {
+        "vibe/errors": "workspace:*",
         "vibe/logger": "workspace:*",
         "vibe/runtime": "workspace:*",
         "vibe/shared": "workspace:*",
@@ -2432,6 +2445,8 @@
     "vibe/tracing": ["vibe/tracing@workspace:packages/tracing"],
 
     "vibe/typescript-config": ["vibe/typescript-config@workspace:packages/typescript-config"],
+
+    "vibe/vite-config": ["vibe/vite-config@workspace:packages/vite-config"],
 
     "vibe/workflows": ["vibe/workflows@workspace:packages/workflows"],
 
