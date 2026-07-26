@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { defineConfig } from "vite"
-import { createBaseViteConfig } from "../packages/vite-config/vite.config"
+import { createBaseViteConfig } from "../tools/vite-utils"
 
 // The `vibe/*` workspace packages live in `packages/`, `tools/`, or at the repo root
 // (the umbrella `@frontal-labs/vibe` package now lives at `./vibe`, and
@@ -27,22 +27,20 @@ const vibeAliases = Object.fromEntries(
 )
 
 // Externalize workspace + third-party deps (third-party deps are externalized by default).
-const _external = (id) =>
+const _external = (id: string) =>
   id.startsWith("node:") ||
   [
-    [
-      "util",
-      "path",
-      "fs",
-      "os",
-      "crypto",
-      "events",
-      "stream",
-      "url",
-      "http",
-      "https",
-      "child_process",
-    ],
+    "util",
+    "path",
+    "fs",
+    "os",
+    "crypto",
+    "events",
+    "stream",
+    "url",
+    "http",
+    "https",
+    "child_process",
   ].some((b) => id === b || id.startsWith(`${b}/`)) ||
   ["vibe/generators", "chokidar", "commander", "vibe/build", "vibe/errors"].some(
     (d) => id === d || id.startsWith(`${d}/`),

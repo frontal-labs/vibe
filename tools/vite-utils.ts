@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
+import type { UserConfig } from "vite"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -44,19 +45,17 @@ export function externalize(id: string): boolean {
   return (
     id.startsWith("node:") ||
     [
-      [
-        "util",
-        "path",
-        "fs",
-        "os",
-        "crypto",
-        "events",
-        "stream",
-        "url",
-        "http",
-        "https",
-        "child_process",
-      ],
+      "util",
+      "path",
+      "fs",
+      "os",
+      "crypto",
+      "events",
+      "stream",
+      "url",
+      "http",
+      "https",
+      "child_process",
     ].some((b) => id === b || id.startsWith(`${b}/`)) ||
     [
       "vibe/agent",
@@ -100,7 +99,7 @@ export function externalize(id: string): boolean {
  * @param entry - Entry point for the library (default: "src/index.ts")
  * @returns Vite user configuration
  */
-export function createBaseViteConfig(entry: string = "src/index.ts") {
+export function createBaseViteConfig(entry: string = "src/index.ts"): UserConfig {
   return {
     resolve: {
       alias: generateVibeAliases(),
@@ -117,7 +116,7 @@ export function createBaseViteConfig(entry: string = "src/index.ts") {
       rollupOptions: {
         external: externalize,
         output: {
-          entryFileNames: (chunk, format) => `${chunk.name}.${format === "es" ? "js" : "cjs"}`,
+          entryFileNames: "[name].js",
           chunkFileNames: "chunk-[name].[format].js",
           exports: "named",
         },
