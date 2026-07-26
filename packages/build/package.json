@@ -28,7 +28,7 @@
     "vibe/config": "workspace:*",
     "vibe/errors": "workspace:*",
     "vibe/shared": "workspace:*",
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.28.1"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
