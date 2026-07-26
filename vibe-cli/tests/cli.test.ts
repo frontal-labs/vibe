@@ -31,9 +31,9 @@ describe("createProgram", () => {
     const lines: string[] = []
     let builtDir: string | undefined
     const program = createProgram({
-      build: (dir) => {
-        builtDir = dir
-        return fakeManifest
+      build: (root, _options) => {
+        builtDir = root
+        return Promise.resolve(fakeManifest)
       },
       templatesDir: join(__dirname, "fixtures"),
       log: (l) => lines.push(l),
@@ -46,7 +46,7 @@ describe("createProgram", () => {
   it("build --analyze also prints per-agent sizes", async () => {
     const lines: string[] = []
     const program = createProgram({
-      build: () => fakeManifest,
+      build: (_root, _options) => Promise.resolve(fakeManifest),
       templatesDir: join(__dirname, "fixtures"),
       log: (l) => lines.push(l),
     })
