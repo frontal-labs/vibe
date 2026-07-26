@@ -27,7 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "tsd": "^0.31.2",
-    "vite": "^6.0.0"
+    "vite": "^8.1.5"
   },
   "tsd": {
     "directory": "type-tests"
