@@ -28,7 +28,7 @@
     "vibe/di": "workspace:*",
     "vibe/errors": "workspace:*",
     "vibe/shared": "workspace:*",
-    "@anthropic-ai/sdk": "^0.68.0"
+    "@anthropic-ai/sdk": "^0.115.0"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
