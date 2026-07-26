@@ -8,7 +8,7 @@ description = "Agent/tool graph analysis for optimized, code-split serverless bu
 
 [dependencies]
 oxc_allocator = "0.139"
-oxc_parser = "0.139"
+oxc_parser = "0.141"
 oxc_ast = "0.139"
 oxc_span = "0.139"
 serde = { version = "1", features = ["derive"] }
