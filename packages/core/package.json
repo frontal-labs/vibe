@@ -45,7 +45,7 @@
     "vibe/workflows": "workspace:*"
   },
   "devDependencies": {
-    "tsd": "^0.31.2",
+    "tsd": "^0.33.0",
     "zod": "^4.4.3",
     "vite": "^6.0.0"
   },

@@ -31,7 +31,7 @@
     "@anthropic-ai/sdk": "^0.68.0"
   },
   "devDependencies": {
-    "tsd": "^0.31.2",
+    "tsd": "^0.33.0",
     "vite": "^6.0.0"
   },
   "tsd": {
