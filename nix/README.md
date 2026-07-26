@@ -54,8 +54,10 @@ node --version    # v22.x.x
 | Command | Purpose |
 |---|---|
 | `nix develop` | Full dev environment (default) |
-| `nix develop .#ci` | Minimal CI environment |
-| `nix develop .#ci-rust` | Rust-only CI environment |
+| `nix develop .#debug` | Dev environment with debugging tools (gdb, lldb, strace, ltrace) |
+| `nix develop .#profile` | Dev environment with profiling tools (perf, valgrind) |
+| `nix develop .#ci` | Minimal CI environment (lint, typecheck, build, test) |
+| `nix develop .#ci-rust` | Rust-only CI environment (fmt, clippy, test, bench, napi) |
 
 ## Common Tasks
 

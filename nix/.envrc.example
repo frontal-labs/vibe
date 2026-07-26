@@ -1,0 +1,11 @@
+# Example .envrc for direnv integration
+# Copy this file to .envrc and run `direnv allow` to enable automatic environment loading
+
+# Use nix direnv integration if available
+use flake
+
+# Alternatively, if you don't have nix-direstdir installed, you can use:
+# use_nix
+
+# Export additional environment variables if needed
+# export MY_ENV_VAR="value"

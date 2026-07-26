@@ -49,16 +49,12 @@
           overlays = [ (import rust-overlay) ];
         };
 
-        # Rust toolchain - use nixpkgs rustc (nixpkgs 24.11 has ~1.82)
-        # TODO: pin to 1.95.0 via rust-overlay when available
-        rustToolchain = pkgs.rustc;
+        # Rust toolchain - use rust-overlay to get a specific version
+        # We try to get rustc_1_95_0 from the overlay, fallback to pkgs.rustc
+        rustToolchain = if pkgs ? rustc_1_95_0 then pkgs.rustc_1_95_0 else pkgs.rustc;
 
         # Crane library configured with our toolchain
         craneLib = crane.mkLib pkgs;
-
-        # Bun - use nixpkgs version (24.11 has 1.1.x, may need upgrade)
-        # TODO: pin to 1.3.3 via fetchurl with proper hashes
-        bun = pkgs.bun;
 
         # Node.js 22
         nodejs = pkgs.nodejs_22;
@@ -69,7 +65,6 @@
         # Development shell base packages
         devPackages = with pkgs; [
           rustToolchain
-          bun
           nodejs
           git
           biome
@@ -79,6 +74,9 @@
           coreutils
           findutils
         ];
+
+        # Bun - we use the nixpkgs version for simplicity; consider pinning to 1.3.3 via nixpkgs-unstable or fetchzip later
+        bun = pkgs.bun;
 
         # Minimal CI packages (no dev tools)
         ciPackages = with pkgs; [
@@ -110,7 +108,7 @@
 
       in {
         devShells = {
-          # Full development shell (default)
+          # Default development shell
           default = pkgs.mkShell {
             name = "vibe-dev";
             packages = devPackages;
@@ -145,6 +143,30 @@
             COREPACK_ENABLE_STRICT = "0";
           };
 
+          # Development shell with debugging tools
+          debug = pkgs.mkShell {
+            name = "vibe-debug";
+            packages = devPackages ++ with pkgs; [ gdb lldb strace ltrace ];
+            shellHook = ''
+              export VIBE_ROOT="$PWD"
+              export CARGO_HOME="$PWD/.cargo"
+              echo "✓ Vibe debug environment ready"
+              echo "  Available: gdb, lldb, strace, ltrace"
+            '';
+          };
+
+          # Development shell for profiling
+          profile = pkgs.mkShell {
+            name = "vibe-profile";
+            packages = devPackages ++ with pkgs; [ perf valgrind ];
+            shellHook = ''
+              export VIBE_ROOT="$PWD"
+              export CARGO_HOME="$PWD/.cargo"
+              echo "✓ Vibe profile environment ready"
+              echo "  Available: perf, valgrind"
+            '';
+          };
+
           # Minimal CI shell (lint, typecheck, build, test)
           ci = pkgs.mkShell {
             name = "vibe-ci";
@@ -156,7 +178,7 @@
               export TERM="dumb"
             '';
             VIBE_ROOT = "$PWD";
-            CARGO_HOME = "$PWD/.cargo";
+            CARGO_HOME = "$PWD/.cardo";
             CI = "true";
             TERM = "dumb";
           };
