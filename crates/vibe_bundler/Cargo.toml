@@ -7,7 +7,7 @@ license.workspace = true
 description = "Agent/tool graph analysis for optimized, code-split serverless builds."
 
 [dependencies]
-oxc_allocator = "0.139"
+oxc_allocator = "0.141"
 oxc_parser = "0.139"
 oxc_ast = "0.139"
 oxc_span = "0.139"
