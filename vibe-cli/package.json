@@ -31,7 +31,7 @@
   "dependencies": {
     "vibe/generators": "workspace:*",
     "chokidar": "^4.0.0",
-    "commander": "^12.1.0",
+    "commander": "^15.0.0",
     "vibe/build": "workspace:*",
     "vibe/errors": "workspace:*"
   },
