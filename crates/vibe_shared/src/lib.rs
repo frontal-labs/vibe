@@ -17,7 +17,6 @@ impl ExecutionId {
     pub fn as_uuid(&self) -> &Uuid {
         &self.0
     }
-
 }
 
 impl Default for ExecutionId {
@@ -53,7 +52,6 @@ impl TaskId {
     pub fn as_uuid(&self) -> &Uuid {
         &self.0
     }
-
 }
 
 impl Default for TaskId {
@@ -89,7 +87,6 @@ impl CheckpointId {
     pub fn as_uuid(&self) -> &Uuid {
         &self.0
     }
-
 }
 
 impl Default for CheckpointId {
@@ -188,12 +185,29 @@ pub struct TaskDefinition {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum StreamEvent {
-    Chunk { data: serde_json::Value, sequence: u64 },
-    Progress { percent: f64, message: String },
-    ToolCall { name: String, arguments: serde_json::Value },
-    ToolResult { name: String, result: serde_json::Value },
-    Error { message: String, code: String },
-    Done { result: ExecutionResult },
+    Chunk {
+        data: serde_json::Value,
+        sequence: u64,
+    },
+    Progress {
+        percent: f64,
+        message: String,
+    },
+    ToolCall {
+        name: String,
+        arguments: serde_json::Value,
+    },
+    ToolResult {
+        name: String,
+        result: serde_json::Value,
+    },
+    Error {
+        message: String,
+        code: String,
+    },
+    Done {
+        result: ExecutionResult,
+    },
     Cancelled,
 }
 
@@ -264,7 +278,10 @@ mod tests {
         };
         let json = serde_json::to_string(&event).unwrap();
         let deserialized: StreamEvent = serde_json::from_str(&json).unwrap();
-        assert!(matches!(deserialized, StreamEvent::Chunk { sequence: 1, .. }));
+        assert!(matches!(
+            deserialized,
+            StreamEvent::Chunk { sequence: 1, .. }
+        ));
     }
 
     #[test]

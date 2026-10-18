@@ -30,7 +30,9 @@ fn test_runtime_error_serde_roundtrip() {
     };
     let json = serde_json::to_string(&err).unwrap();
     let deserialized: VibeError = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, VibeError::RuntimeError { ref message, .. } if message == "test"));
+    assert!(
+        matches!(deserialized, VibeError::RuntimeError { ref message, .. } if message == "test")
+    );
 }
 
 #[test]
@@ -96,7 +98,9 @@ fn test_validation_error_serde_roundtrip() {
     };
     let json = serde_json::to_string(&err).unwrap();
     let deserialized: VibeError = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, VibeError::ValidationError { ref field, .. } if field.as_deref() == Some("age")));
+    assert!(
+        matches!(deserialized, VibeError::ValidationError { ref field, .. } if field.as_deref() == Some("age"))
+    );
 }
 
 #[test]
@@ -181,8 +185,10 @@ fn test_not_found_error_serde_roundtrip() {
     };
     let json = serde_json::to_string(&err).unwrap();
     let deserialized: VibeError = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, VibeError::NotFoundError { ref kind, ref id }
-        if kind == "checkpoint" && id == "cp-1"));
+    assert!(
+        matches!(deserialized, VibeError::NotFoundError { ref kind, ref id }
+        if kind == "checkpoint" && id == "cp-1")
+    );
 }
 
 #[test]
@@ -210,7 +216,10 @@ fn test_timeout_error_serde_roundtrip() {
     let err = VibeError::TimeoutError { duration_ms: 10000 };
     let json = serde_json::to_string(&err).unwrap();
     let deserialized: VibeError = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, VibeError::TimeoutError { duration_ms: 10000 }));
+    assert!(matches!(
+        deserialized,
+        VibeError::TimeoutError { duration_ms: 10000 }
+    ));
 }
 
 #[test]
@@ -270,18 +279,59 @@ fn test_serialized_error_no_stack_roundtrip() {
 #[test]
 fn test_serialize_error_all_variants_have_correct_codes() {
     let cases: Vec<(VibeError, &str)> = vec![
-        (VibeError::RuntimeError { message: "".to_string(), code: "X".to_string() }, "X"),
-        (VibeError::CancellationError { message: "".to_string() }, "CANCELLATION_ERROR"),
-        (VibeError::ValidationError { message: "".to_string(), field: None }, "VALIDATION_ERROR"),
-        (VibeError::SerializationError { message: "".to_string() }, "SERIALIZATION_ERROR"),
-        (VibeError::ConfigurationError { message: "".to_string() }, "CONFIGURATION_ERROR"),
-        (VibeError::NotFoundError { kind: "".to_string(), id: "".to_string() }, "NOT_FOUND_ERROR"),
+        (
+            VibeError::RuntimeError {
+                message: "".to_string(),
+                code: "X".to_string(),
+            },
+            "X",
+        ),
+        (
+            VibeError::CancellationError {
+                message: "".to_string(),
+            },
+            "CANCELLATION_ERROR",
+        ),
+        (
+            VibeError::ValidationError {
+                message: "".to_string(),
+                field: None,
+            },
+            "VALIDATION_ERROR",
+        ),
+        (
+            VibeError::SerializationError {
+                message: "".to_string(),
+            },
+            "SERIALIZATION_ERROR",
+        ),
+        (
+            VibeError::ConfigurationError {
+                message: "".to_string(),
+            },
+            "CONFIGURATION_ERROR",
+        ),
+        (
+            VibeError::NotFoundError {
+                kind: "".to_string(),
+                id: "".to_string(),
+            },
+            "NOT_FOUND_ERROR",
+        ),
         (VibeError::TimeoutError { duration_ms: 0 }, "TIMEOUT_ERROR"),
-        (VibeError::InternalError { message: "".to_string() }, "INTERNAL_ERROR"),
+        (
+            VibeError::InternalError {
+                message: "".to_string(),
+            },
+            "INTERNAL_ERROR",
+        ),
     ];
     for (error, expected_code) in cases {
         let serialized = serialize_error(&error);
-        assert_eq!(serialized.code, expected_code, "Mismatch for variant: {error}");
+        assert_eq!(
+            serialized.code, expected_code,
+            "Mismatch for variant: {error}"
+        );
     }
 }
 

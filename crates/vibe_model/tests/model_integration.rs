@@ -57,16 +57,14 @@ fn test_count_message_tokens_with_valid_json_array() {
 
 #[test]
 fn test_count_message_tokens_with_invalid_content_returns_defaults() {
-    let messages = vec![
-        Message {
-            role: MessageRole::Tool,
-            content: MessageContent::ToolCall {
-                name: "test".to_string(),
-                arguments: serde_json::json!({}),
-                id: "1".to_string(),
-            },
+    let messages = vec![Message {
+        role: MessageRole::Tool,
+        content: MessageContent::ToolCall {
+            name: "test".to_string(),
+            arguments: serde_json::json!({}),
+            id: "1".to_string(),
         },
-    ];
+    }];
     let counts = count_message_tokens(&messages, "openai");
     assert_eq!(counts.len(), 1);
     assert_eq!(counts[0], 0);
@@ -112,7 +110,9 @@ impl ModelProvider for MockProvider {
         _request: ModelRequest,
         _cancellation_token: Option<CancellationToken>,
     ) -> Result<ModelStream, ModelError> {
-        Err(ModelError::Internal("stream not supported in mock".to_string()))
+        Err(ModelError::Internal(
+            "stream not supported in mock".to_string(),
+        ))
     }
 }
 
@@ -180,9 +180,7 @@ fn test_model_response_serialization_roundtrip() {
     let response = ModelResponse {
         id: "resp-1".to_string(),
         model: "gpt-4".to_string(),
-        content: vec![
-            ContentBlock::Text("Hello!".to_string()),
-        ],
+        content: vec![ContentBlock::Text("Hello!".to_string())],
         stop_reason: StopReason::Stop,
         usage: TokenUsage {
             prompt_tokens: 10,
@@ -231,10 +229,16 @@ fn test_message_content_all_variants_serde_roundtrip() {
         let deserialized: MessageContent = serde_json::from_str(&json).unwrap();
         match (variant, &deserialized) {
             (MessageContent::Text(a), MessageContent::Text(b)) => assert_eq!(a, b),
-            (MessageContent::ToolCall { name: n1, .. }, MessageContent::ToolCall { name: n2, .. }) => {
+            (
+                MessageContent::ToolCall { name: n1, .. },
+                MessageContent::ToolCall { name: n2, .. },
+            ) => {
                 assert_eq!(n1, n2);
             }
-            (MessageContent::ToolResult { name: n1, .. }, MessageContent::ToolResult { name: n2, .. }) => {
+            (
+                MessageContent::ToolResult { name: n1, .. },
+                MessageContent::ToolResult { name: n2, .. },
+            ) => {
                 assert_eq!(n1, n2);
             }
             (MessageContent::Multi(a), MessageContent::Multi(b)) => {
@@ -277,14 +281,23 @@ fn test_model_stream_event_all_variants_serde_roundtrip() {
         let json = serde_json::to_string(event).unwrap();
         let deserialized: ModelStreamEvent = serde_json::from_str(&json).unwrap();
         match (event, &deserialized) {
-            (ModelStreamEvent::Chunk { sequence: s1, .. }, ModelStreamEvent::Chunk { sequence: s2, .. }) => {
+            (
+                ModelStreamEvent::Chunk { sequence: s1, .. },
+                ModelStreamEvent::Chunk { sequence: s2, .. },
+            ) => {
                 assert_eq!(s1, s2);
             }
-            (ModelStreamEvent::ToolCall { id: i1, .. }, ModelStreamEvent::ToolCall { id: i2, .. }) => {
+            (
+                ModelStreamEvent::ToolCall { id: i1, .. },
+                ModelStreamEvent::ToolCall { id: i2, .. },
+            ) => {
                 assert_eq!(i1, i2);
             }
             (ModelStreamEvent::Done { .. }, ModelStreamEvent::Done { .. }) => {}
-            (ModelStreamEvent::Error { code: c1, .. }, ModelStreamEvent::Error { code: c2, .. }) => {
+            (
+                ModelStreamEvent::Error { code: c1, .. },
+                ModelStreamEvent::Error { code: c2, .. },
+            ) => {
                 assert_eq!(c1, c2);
             }
             _ => panic!("Variant mismatch after roundtrip"),

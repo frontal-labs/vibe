@@ -8,9 +8,7 @@ use vibe_shared::RetryPolicy;
 #[derive(Debug, Clone, Error)]
 pub enum RetryError {
     #[error("Operation failed after {attempts} attempt(s)")]
-    Exhausted {
-        attempts: u32,
-    },
+    Exhausted { attempts: u32 },
     #[error("Operation cancelled")]
     Cancelled,
 }
@@ -103,8 +101,8 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Arc;
     use std::sync::atomic::{AtomicU32, Ordering};
+    use std::sync::Arc;
 
     #[test]
     fn test_calculate_backoff_increases() {
@@ -151,12 +149,7 @@ mod tests {
     #[tokio::test]
     async fn test_execute_with_retry_succeeds_immediately() {
         let policy = RetryPolicy::default();
-        let result = execute_with_retry_fn(
-            || Ok::<_, String>(42),
-            &policy,
-            None,
-        )
-        .await;
+        let result = execute_with_retry_fn(|| Ok::<_, String>(42), &policy, None).await;
         assert_eq!(result.unwrap(), 42);
     }
 
@@ -197,13 +190,13 @@ mod tests {
             backoff_multiplier: 2.0,
             retryable_errors: vec![],
         };
-        let result = execute_with_retry_fn(
-            || Err::<u32, _>("always fails".to_string()),
-            &policy,
-            None,
-        )
-        .await;
-        assert!(matches!(result, Err(RetryError::Exhausted { attempts: 2, .. })));
+        let result =
+            execute_with_retry_fn(|| Err::<u32, _>("always fails".to_string()), &policy, None)
+                .await;
+        assert!(matches!(
+            result,
+            Err(RetryError::Exhausted { attempts: 2, .. })
+        ));
     }
 
     #[tokio::test]
@@ -224,12 +217,8 @@ mod tests {
     #[tokio::test]
     async fn test_execute_with_retry_fn_succeeds() {
         let policy = RetryPolicy::default();
-        let result = execute_with_retry_fn(
-            || Ok::<_, String>("hello".to_string()),
-            &policy,
-            None,
-        )
-        .await;
+        let result =
+            execute_with_retry_fn(|| Ok::<_, String>("hello".to_string()), &policy, None).await;
         assert_eq!(result.unwrap(), "hello");
     }
 

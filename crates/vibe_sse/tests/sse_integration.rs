@@ -59,9 +59,7 @@ fn fold_with_malformed_frames_skips_them() {
 
 #[test]
 fn fold_with_done_termination_works_correctly() {
-    let sse = body(&[
-        r#"{"model":"gpt-4o","choices":[{"delta":{"content":"done"}}]}"#,
-    ]);
+    let sse = body(&[r#"{"model":"gpt-4o","choices":[{"delta":{"content":"done"}}]}"#]);
     let result = fold(&sse);
     let json = serde_json::to_value(&result).unwrap();
     assert_eq!(json["events"].as_array().unwrap().len(), 1);

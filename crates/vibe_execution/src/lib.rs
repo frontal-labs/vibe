@@ -10,8 +10,8 @@ use tracing::{debug, info};
 use vibe_cancellation::CancellationToken;
 use vibe_scheduler::{Priority, Scheduler, SchedulerError};
 use vibe_shared::{
-    CheckpointId, ExecutionId, ExecutionResult, ExecutionState,
-    StopReason, StreamEvent, TaskDefinition, TaskId, TokenUsage,
+    CheckpointId, ExecutionId, ExecutionResult, ExecutionState, StopReason, StreamEvent,
+    TaskDefinition, TaskId, TokenUsage,
 };
 
 #[derive(Debug, Error)]
@@ -203,7 +203,10 @@ impl ExecutionEngine {
         Ok(ExecutionStream::new(rx))
     }
 
-    pub async fn checkpoint(&self, execution_id: ExecutionId) -> Result<Checkpoint, ExecutionError> {
+    pub async fn checkpoint(
+        &self,
+        execution_id: ExecutionId,
+    ) -> Result<Checkpoint, ExecutionError> {
         let context = self
             .contexts
             .get(&execution_id)
@@ -220,8 +223,7 @@ impl ExecutionEngine {
                 .as_millis() as i64,
         };
 
-        self.checkpoints
-            .insert(checkpoint.id, checkpoint.clone());
+        self.checkpoints.insert(checkpoint.id, checkpoint.clone());
 
         debug!(
             checkpoint_id = %checkpoint.id,
@@ -284,7 +286,9 @@ impl ExecutionEngine {
     }
 
     pub fn get_checkpoint(&self, checkpoint_id: &CheckpointId) -> Option<Checkpoint> {
-        self.checkpoints.get(checkpoint_id).map(|c| c.value().clone())
+        self.checkpoints
+            .get(checkpoint_id)
+            .map(|c| c.value().clone())
     }
 
     pub fn active_executions(&self) -> Vec<ExecutionId> {
@@ -352,7 +356,9 @@ mod tests {
         let engine = ExecutionEngine::new();
         let task = create_test_task();
         engine.register_task(task.clone()).unwrap();
-        let result = engine.execute(task.task_id, serde_json::json!({"input": "test"})).await;
+        let result = engine
+            .execute(task.task_id, serde_json::json!({"input": "test"}))
+            .await;
         assert!(result.is_ok());
         let execution = result.unwrap();
         assert_eq!(execution.state, ExecutionState::Completed);
@@ -400,7 +406,9 @@ mod tests {
         let task = create_test_task();
         engine.register_task(task.clone()).unwrap();
 
-        let result = engine.execute(task.task_id, serde_json::json!({"input": "test"})).await;
+        let result = engine
+            .execute(task.task_id, serde_json::json!({"input": "test"}))
+            .await;
         assert!(result.is_ok());
         let execution = result.unwrap();
 
@@ -409,9 +417,7 @@ mod tests {
         let cp = checkpoint.unwrap();
         assert_eq!(cp.execution_id, execution.execution_id);
 
-        let resume_result = engine
-            .resume(execution.execution_id, cp.id)
-            .await;
+        let resume_result = engine.resume(execution.execution_id, cp.id).await;
         assert!(resume_result.is_ok());
         assert_eq!(resume_result.unwrap().state, ExecutionState::Running);
     }
@@ -422,7 +428,9 @@ mod tests {
         let task = create_test_task();
         engine.register_task(task.clone()).unwrap();
 
-        let result = engine.execute(task.task_id, serde_json::json!({"input": "test"})).await;
+        let result = engine
+            .execute(task.task_id, serde_json::json!({"input": "test"}))
+            .await;
         assert!(result.is_ok());
         let execution = result.unwrap();
 
@@ -437,7 +445,9 @@ mod tests {
         let task = create_test_task();
         engine.register_task(task.clone()).unwrap();
 
-        let result = engine.execute(task.task_id, serde_json::json!({"input": "test"})).await;
+        let result = engine
+            .execute(task.task_id, serde_json::json!({"input": "test"}))
+            .await;
         assert!(result.is_ok());
 
         let execution_id = result.unwrap().execution_id;

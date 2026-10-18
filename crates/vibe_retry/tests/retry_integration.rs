@@ -1,11 +1,11 @@
 // Integration tests for retry logic: execute_with_retry (async) and
 // execute_with_retry_fn (sync variants), calculate_backoff, and concurrency.
-use std::sync::Arc;
-use std::sync::atomic::{AtomicU32, Ordering};
 use std::error::Error;
+use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::Arc;
+use vibe_cancellation::CancellationTokenSource;
 use vibe_retry::*;
 use vibe_shared::RetryPolicy;
-use vibe_cancellation::CancellationTokenSource;
 
 fn small_policy() -> RetryPolicy {
     RetryPolicy {
@@ -127,12 +127,8 @@ async fn test_execute_with_retry_cancelled_mid_retry() {
 #[tokio::test]
 async fn test_execute_with_retry_fn_succeeds_immediately() {
     let policy = small_policy();
-    let result = execute_with_retry_fn(
-        || Ok::<_, String>("hello".to_string()),
-        &policy,
-        None,
-    )
-    .await;
+    let result =
+        execute_with_retry_fn(|| Ok::<_, String>("hello".to_string()), &policy, None).await;
     assert_eq!(result.unwrap(), "hello");
 }
 
@@ -173,12 +169,8 @@ async fn test_execute_with_retry_fn_exhausted() {
         backoff_multiplier: 2.0,
         retryable_errors: vec![],
     };
-    let result = execute_with_retry_fn(
-        || Err::<u32, _>("always fails".to_string()),
-        &policy,
-        None,
-    )
-    .await;
+    let result =
+        execute_with_retry_fn(|| Err::<u32, _>("always fails".to_string()), &policy, None).await;
     assert!(matches!(result, Err(RetryError::Exhausted { attempts: 3 })));
 }
 
@@ -262,12 +254,7 @@ async fn test_multiple_concurrent_retries_all_succeed() {
     for i in 0..num_tasks {
         let p = policy.clone();
         handles.push(tokio::spawn(async move {
-            execute_with_retry_fn(
-                move || Ok::<_, String>(i),
-                &p,
-                None,
-            )
-            .await
+            execute_with_retry_fn(move || Ok::<_, String>(i), &p, None).await
         }));
     }
     for (idx, handle) in handles.into_iter().enumerate() {

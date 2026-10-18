@@ -133,7 +133,11 @@ fn test_validate_tool_input_wrong_type_returns_err() {
 
 #[tokio::test]
 async fn test_with_timeout_completes_in_time() {
-    let result = with_timeout(async { Ok::<_, ToolError>(42u32) }, Duration::from_millis(1000)).await;
+    let result = with_timeout(
+        async { Ok::<_, ToolError>(42u32) },
+        Duration::from_millis(1000),
+    )
+    .await;
     assert_eq!(result.unwrap(), 42);
 }
 

@@ -20,9 +20,7 @@ fn create_task_def(task_id: TaskId) -> TaskDefinition {
 async fn test_execute_registered_task_completes() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let result = engine
         .execute(task_id, serde_json::json!({"input": "test"}))
@@ -36,9 +34,7 @@ async fn test_execute_unregistered_task_returns_error() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
 
-    let result = engine
-        .execute(task_id, serde_json::json!({}))
-        .await;
+    let result = engine.execute(task_id, serde_json::json!({})).await;
     assert!(result.is_err());
     match result {
         Err(ExecutionError::Internal(_)) => {}
@@ -50,9 +46,7 @@ async fn test_execute_unregistered_task_returns_error() {
 async fn test_cancel_running_execution() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let result = engine
         .execute(task_id, serde_json::json!({}))
@@ -79,9 +73,7 @@ async fn test_cancel_non_existent_execution_returns_error() {
 async fn test_checkpoint_after_execution() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let result = engine
         .execute(task_id, serde_json::json!({"input": "checkpoint"}))
@@ -98,9 +90,7 @@ async fn test_checkpoint_after_execution() {
 async fn test_resume_from_checkpoint() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let result = engine
         .execute(task_id, serde_json::json!({"input": "resume_test"}))
@@ -117,9 +107,7 @@ async fn test_resume_from_checkpoint() {
 async fn test_stream_returns_progress_and_done() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let mut stream = engine
         .stream(task_id, serde_json::json!({"input": "stream_test"}))
@@ -151,12 +139,8 @@ async fn test_multiple_concurrent_executions_complete() {
     let engine = ExecutionEngine::new();
     let task_id1 = TaskId::new();
     let task_id2 = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id1))
-        .unwrap();
-    engine
-        .register_task(create_task_def(task_id2))
-        .unwrap();
+    engine.register_task(create_task_def(task_id1)).unwrap();
+    engine.register_task(create_task_def(task_id2)).unwrap();
 
     let r1 = engine
         .execute(task_id1, serde_json::json!({"id": 1}))
@@ -178,9 +162,7 @@ async fn test_active_executions_returns_running_executions() {
 
     // After execution completes, it should not be in active_executions
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
     let result = engine
         .execute(task_id, serde_json::json!({}))
         .await
@@ -195,9 +177,7 @@ async fn test_active_executions_returns_running_executions() {
 async fn test_get_execution_returns_context() {
     let engine = ExecutionEngine::new();
     let task_id = TaskId::new();
-    engine
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    engine.register_task(create_task_def(task_id)).unwrap();
 
     let result = engine
         .execute(task_id, serde_json::json!({"key": "value"}))

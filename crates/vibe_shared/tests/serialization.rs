@@ -204,11 +204,26 @@ fn test_execution_state_all_variants_serde_roundtrip() {
 
 #[test]
 fn test_execution_state_json_strings() {
-    assert_eq!(serde_json::to_string(&ExecutionState::Pending).unwrap(), "\"Pending\"");
-    assert_eq!(serde_json::to_string(&ExecutionState::Running).unwrap(), "\"Running\"");
-    assert_eq!(serde_json::to_string(&ExecutionState::Completed).unwrap(), "\"Completed\"");
-    assert_eq!(serde_json::to_string(&ExecutionState::Failed).unwrap(), "\"Failed\"");
-    assert_eq!(serde_json::to_string(&ExecutionState::Cancelled).unwrap(), "\"Cancelled\"");
+    assert_eq!(
+        serde_json::to_string(&ExecutionState::Pending).unwrap(),
+        "\"Pending\""
+    );
+    assert_eq!(
+        serde_json::to_string(&ExecutionState::Running).unwrap(),
+        "\"Running\""
+    );
+    assert_eq!(
+        serde_json::to_string(&ExecutionState::Completed).unwrap(),
+        "\"Completed\""
+    );
+    assert_eq!(
+        serde_json::to_string(&ExecutionState::Failed).unwrap(),
+        "\"Failed\""
+    );
+    assert_eq!(
+        serde_json::to_string(&ExecutionState::Cancelled).unwrap(),
+        "\"Cancelled\""
+    );
 }
 
 #[test]
@@ -229,11 +244,26 @@ fn test_stop_reason_all_variants_serde_roundtrip() {
 
 #[test]
 fn test_stop_reason_json_strings() {
-    assert_eq!(serde_json::to_string(&StopReason::Stop).unwrap(), "\"Stop\"");
-    assert_eq!(serde_json::to_string(&StopReason::Length).unwrap(), "\"Length\"");
-    assert_eq!(serde_json::to_string(&StopReason::ToolCalls).unwrap(), "\"ToolCalls\"");
-    assert_eq!(serde_json::to_string(&StopReason::ContentFilter).unwrap(), "\"ContentFilter\"");
-    assert_eq!(serde_json::to_string(&StopReason::Error).unwrap(), "\"Error\"");
+    assert_eq!(
+        serde_json::to_string(&StopReason::Stop).unwrap(),
+        "\"Stop\""
+    );
+    assert_eq!(
+        serde_json::to_string(&StopReason::Length).unwrap(),
+        "\"Length\""
+    );
+    assert_eq!(
+        serde_json::to_string(&StopReason::ToolCalls).unwrap(),
+        "\"ToolCalls\""
+    );
+    assert_eq!(
+        serde_json::to_string(&StopReason::ContentFilter).unwrap(),
+        "\"ContentFilter\""
+    );
+    assert_eq!(
+        serde_json::to_string(&StopReason::Error).unwrap(),
+        "\"Error\""
+    );
 }
 
 #[test]
@@ -244,7 +274,10 @@ fn test_stream_event_chunk_roundtrip() {
     };
     let json = serde_json::to_string(&event).unwrap();
     let deserialized: StreamEvent = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, StreamEvent::Chunk { sequence: 1, .. }));
+    assert!(matches!(
+        deserialized,
+        StreamEvent::Chunk { sequence: 1, .. }
+    ));
 }
 
 #[test]
@@ -255,7 +288,10 @@ fn test_stream_event_progress_roundtrip() {
     };
     let json = serde_json::to_string(&event).unwrap();
     let deserialized: StreamEvent = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, StreamEvent::Progress { percent: 50.0, .. }));
+    assert!(matches!(
+        deserialized,
+        StreamEvent::Progress { percent: 50.0, .. }
+    ));
 }
 
 #[test]
@@ -266,7 +302,9 @@ fn test_stream_event_tool_call_roundtrip() {
     };
     let json = serde_json::to_string(&event).unwrap();
     let deserialized: StreamEvent = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, StreamEvent::ToolCall { ref name, .. } if name == "get_weather"));
+    assert!(
+        matches!(deserialized, StreamEvent::ToolCall { ref name, .. } if name == "get_weather")
+    );
 }
 
 #[test]
@@ -277,7 +315,9 @@ fn test_stream_event_tool_result_roundtrip() {
     };
     let json = serde_json::to_string(&event).unwrap();
     let deserialized: StreamEvent = serde_json::from_str(&json).unwrap();
-    assert!(matches!(deserialized, StreamEvent::ToolResult { ref name, .. } if name == "get_weather"));
+    assert!(
+        matches!(deserialized, StreamEvent::ToolResult { ref name, .. } if name == "get_weather")
+    );
 }
 
 #[test]

@@ -23,9 +23,7 @@ fn create_task_def(task_id: TaskId) -> TaskDefinition {
 async fn test_register_schedule_dequeue() {
     let scheduler = Scheduler::new(CancellationToken::new());
     let task_id = TaskId::new();
-    scheduler
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    scheduler.register_task(create_task_def(task_id)).unwrap();
 
     let scheduled = scheduler
         .schedule(task_id, Priority::Normal, None)
@@ -42,9 +40,7 @@ async fn test_register_schedule_dequeue() {
 async fn test_highest_priority_dequeued_first() {
     let scheduler = Scheduler::new(CancellationToken::new());
     let task_id = TaskId::new();
-    scheduler
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    scheduler.register_task(create_task_def(task_id)).unwrap();
 
     scheduler
         .schedule(task_id, Priority::Low, None)
@@ -127,9 +123,7 @@ fn test_has_task_returns_correct_state() {
     let task_id = TaskId::new();
     assert!(!scheduler.has_task(&task_id));
 
-    scheduler
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    scheduler.register_task(create_task_def(task_id)).unwrap();
     assert!(scheduler.has_task(&task_id));
 
     scheduler.unregister_task(task_id).unwrap();
@@ -142,9 +136,7 @@ async fn test_queue_len_tracks_enqueue_dequeue() {
     assert_eq!(scheduler.queue_len(), 0);
 
     let task_id = TaskId::new();
-    scheduler
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    scheduler.register_task(create_task_def(task_id)).unwrap();
 
     scheduler
         .schedule(task_id, Priority::Normal, None)
@@ -176,9 +168,7 @@ fn test_dequeue_empty_queue_returns_none() {
 async fn test_dequeue_or_wait_blocks_until_task_available() {
     let scheduler = Arc::new(Scheduler::new(CancellationToken::new()));
     let task_id = TaskId::new();
-    scheduler
-        .register_task(create_task_def(task_id))
-        .unwrap();
+    scheduler.register_task(create_task_def(task_id)).unwrap();
 
     let sched_clone = scheduler.clone();
     tokio::spawn(async move {

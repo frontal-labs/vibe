@@ -219,7 +219,10 @@ impl Scheduler {
         }
     }
 
-    pub async fn run(&self, cancellation_token: Option<&CancellationToken>) -> Option<ScheduledTask> {
+    pub async fn run(
+        &self,
+        cancellation_token: Option<&CancellationToken>,
+    ) -> Option<ScheduledTask> {
         self.dequeue_or_wait(cancellation_token).await
     }
 

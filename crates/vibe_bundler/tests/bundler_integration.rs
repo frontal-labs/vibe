@@ -41,14 +41,23 @@ fn imports_finds_named_and_default_imports() {
     // named import from "zod"
     let zod = result.iter().find(|i| i.source == "zod").unwrap();
     assert!(zod.default_local.is_none());
-    assert!(zod.named.iter().any(|(imported, local)| imported == "z" && local == "z"));
+    assert!(zod
+        .named
+        .iter()
+        .any(|(imported, local)| imported == "z" && local == "z"));
 
     // named imports from "vibe/agent"
     let agent = result.iter().find(|i| i.source == "vibe/agent").unwrap();
-    assert!(agent.named.iter().any(|(imported, _)| imported == "createAgent"));
+    assert!(agent
+        .named
+        .iter()
+        .any(|(imported, _)| imported == "createAgent"));
 
     // default import
-    let get_order = result.iter().find(|i| i.source == "../tools/get-order").unwrap();
+    let get_order = result
+        .iter()
+        .find(|i| i.source == "../tools/get-order")
+        .unwrap();
     assert_eq!(get_order.default_local.as_deref(), Some("getOrder"));
 }
 
@@ -115,12 +124,27 @@ fn imports_handles_mixed_multi_line_styles() {
     let node_fs = result.iter().find(|i| i.source == "node:fs").unwrap();
     assert_eq!(node_fs.default_local.as_deref(), Some("fs"));
 
-    let promises = result.iter().find(|i| i.source == "node:fs/promises").unwrap();
-    assert!(promises.named.iter().any(|(imported, _)| imported == "readFile"));
-    assert!(promises.named.iter().any(|(imported, _)| imported == "writeFile"));
+    let promises = result
+        .iter()
+        .find(|i| i.source == "node:fs/promises")
+        .unwrap();
+    assert!(promises
+        .named
+        .iter()
+        .any(|(imported, _)| imported == "readFile"));
+    assert!(promises
+        .named
+        .iter()
+        .any(|(imported, _)| imported == "writeFile"));
 
     let node_path = result.iter().find(|i| i.source == "node:path").unwrap();
     assert_eq!(node_path.default_local.as_deref(), Some("path"));
-    assert!(node_path.named.iter().any(|(imported, _)| imported == "resolve"));
-    assert!(node_path.named.iter().any(|(imported, _)| imported == "join"));
+    assert!(node_path
+        .named
+        .iter()
+        .any(|(imported, _)| imported == "resolve"));
+    assert!(node_path
+        .named
+        .iter()
+        .any(|(imported, _)| imported == "join"));
 }
