@@ -16,6 +16,7 @@ const THIRD_PARTY = [
   "handlebars",
   "chokidar",
   "commander",
+  "vite",
 ]
 
 const require = createRequire(resolve(process.cwd(), "package.json"))

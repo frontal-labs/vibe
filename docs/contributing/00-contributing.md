@@ -84,10 +84,6 @@ bun test:types # tsd type-tests (not part of ci:check)
 bun knip       # unused code / deps
 ```
 
-> Because CI's branch trigger is currently mismatched (`main` vs `master`),
-> `bun ci:check` is your *primary* guarantee until that's fixed — do not skip it.
-> See [Release & versioning](../plan/04-release-and-versioning.md#the-branch-trigger-bug).
-
 ## Fixing lint & format
 
 Biome does both linting and formatting. To auto-fix:
