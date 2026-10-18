@@ -146,7 +146,7 @@
           # Development shell with debugging tools
           debug = pkgs.mkShell {
             name = "vibe-debug";
-            packages = devPackages ++ with pkgs; [ gdb lldb strace ltrace ];
+            packages = devPackages ++ (with pkgs; [ gdb lldb strace ltrace ]);
             shellHook = ''
               export VIBE_ROOT="$PWD"
               export CARGO_HOME="$PWD/.cargo"
@@ -158,7 +158,7 @@
           # Development shell for profiling
           profile = pkgs.mkShell {
             name = "vibe-profile";
-            packages = devPackages ++ with pkgs; [ perf valgrind ];
+            packages = devPackages ++ (with pkgs; [ perf valgrind ]);
             shellHook = ''
               export VIBE_ROOT="$PWD"
               export CARGO_HOME="$PWD/.cargo"
