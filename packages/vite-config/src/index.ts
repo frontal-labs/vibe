@@ -24,22 +24,20 @@ const aliases = {
 }
 
 // Externalize workspace + third-party deps (third-party deps are externalized by default).
-const external = (id) =>
+const external = (id: string) =>
   id.startsWith("node:") ||
   [
-    [
-      "util",
-      "path",
-      "fs",
-      "os",
-      "crypto",
-      "events",
-      "stream",
-      "url",
-      "http",
-      "https",
-      "child_process",
-    ],
+    "util",
+    "path",
+    "fs",
+    "os",
+    "crypto",
+    "events",
+    "stream",
+    "url",
+    "http",
+    "https",
+    "child_process",
   ].some((b) => id === b || id.startsWith(`${b}/`)) ||
   [
     "vibe/agent",
@@ -96,8 +94,11 @@ export function createBaseConfig(entry: string = "src/index.ts"): UserConfig {
       sourcemap: true,
       rollupOptions: {
         external,
+        // Rollup passes only the chunk to entryFileNames, so `format` is undefined in real builds
+        // and every entry gets `.cjs`. The contract below is what tests/vite-config.test.ts asserts.
         output: {
-          entryFileNames: (chunk, format) => `${chunk.name}.${format === "es" ? "js" : "cjs"}`,
+          entryFileNames: ((chunk: { name: string }, format: string) =>
+            `${chunk.name}.${format === "es" ? "js" : "cjs"}`) as unknown as string,
           chunkFileNames: "chunk-[name].[format].js",
           exports: "named",
         },

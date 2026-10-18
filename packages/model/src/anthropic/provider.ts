@@ -7,13 +7,19 @@ import { type AnthropicMessageLike, fromAnthropicMessage } from "./map-response"
 
 export interface AnthropicProviderOptions {
   apiKey?: string
-  /** Inject a preconfigured client (e.g. a Bedrock/Vertex client) or a fake in tests. */
-  client?: Anthropic
+  /**
+   * Inject a preconfigured `@anthropic-ai/sdk` client (e.g. a Bedrock/Vertex client) or a
+   * fake in tests. Typed as `unknown` so published declarations do not reference the SDK's
+   * types; the value is narrowed to the SDK client inside `createAnthropicProvider`.
+   */
+  client?: unknown
 }
 
 /** The reference `ModelProvider`, wrapping `@anthropic-ai/sdk`. */
 export function createAnthropicProvider(options: AnthropicProviderOptions = {}): ModelProvider {
-  const client = options.client ?? new Anthropic(options.apiKey ? { apiKey: options.apiKey } : {})
+  const client =
+    (options.client as Anthropic | undefined) ??
+    new Anthropic(options.apiKey ? { apiKey: options.apiKey } : {})
 
   return {
     id: "anthropic",

@@ -42,8 +42,7 @@
   "workspaces": [
     "packages/*",
     "vibe",
-    "vibe-cli",
-    "apps/*",
+    "npm/vibe-cli",
     "tools/generators",
     "examples/*"
   ],

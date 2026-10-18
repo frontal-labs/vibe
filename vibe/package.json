@@ -2,7 +2,7 @@
   "name": "@frontal-labs/vibe",
   "version": "0.1.0",
   "type": "module",
-  "description": "The Vibe framework barrel \u2014 import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
+  "description": "The Vibe framework barrel — import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
   "keywords": [
     "ai",
     "agents",
@@ -34,7 +34,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://npm.pkg.github.com"
   },
   "exports": {
     ".": {
@@ -160,24 +160,30 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && node ../tools/bundle-dts.mjs src/index.ts src/agent.ts src/tools.ts src/model.ts src/memory.ts src/core.ts src/errors.ts src/logger.ts src/runtime.ts src/plugin.ts src/di.ts src/adapters.ts src/tracing.ts src/evals.ts src/deploy.ts src/devtools.ts src/config.ts src/skills.ts src/workflows.ts src/ontology.ts src/governance.ts src/security.ts src/observability.ts",
     "dev": "vite build --watch",
     "test": "vitest run --passWithNoTests",
     "test:types": "tsd",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "esbuild": "^0.24.0",
+    "zod": "^4.4.3"
+  },
   "devDependencies": {
-    "vibe/agent": "workspace:*",
+    "dts-bundle-generator": "9.5.1",
+    "tsd": "^0.31.2",
     "vibe/adapters": "workspace:*",
+    "vibe/agent": "workspace:*",
     "vibe/config": "workspace:*",
     "vibe/core": "workspace:*",
     "vibe/deploy": "workspace:*",
     "vibe/devtools": "workspace:*",
     "vibe/di": "workspace:*",
-    "vibe/evals": "workspace:*",
     "vibe/errors": "workspace:*",
+    "vibe/evals": "workspace:*",
     "vibe/governance": "workspace:*",
     "vibe/logger": "workspace:*",
     "vibe/memory": "workspace:*",
@@ -191,9 +197,8 @@
     "vibe/tools": "workspace:*",
     "vibe/tracing": "workspace:*",
     "vibe/workflows": "workspace:*",
-    "tsd": "^0.31.2",
-    "vitest": "^3.0.0",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
   },
   "tsd": {
     "directory": "type-tests"

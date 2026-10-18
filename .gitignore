@@ -16,3 +16,7 @@ target/
 .envrc
 .direnv/
 result*
+
+# Declarations emitted into src/ by a stray tsc run (build output belongs in dist/)
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map

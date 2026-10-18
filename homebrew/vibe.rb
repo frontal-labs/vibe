@@ -26,7 +26,7 @@ class Vibe < Formula
 
     # Link the CLI entrypoint into bin/vibe via symlink so its relative
     # imports (../dist/cli.cjs) continue to resolve inside libexec.
-    bin.install_symlink libexec/"vibe-cli/bin/vibe.js" => "vibe"
+    bin.install_symlink libexec/"npm/vibe-cli/bin/vibe.js" => "vibe"
   end
 
   test do

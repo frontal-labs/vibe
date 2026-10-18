@@ -75,7 +75,6 @@ bun run dev
 
 ```
 vibe/
-├── apps/            # Documentation site
 ├── benchmarks/      # Performance benchmarks
 ├── cookbooks/       # Example recipes and guides
 ├── crates/          # Rust native modules (bundler, NAPI bindings)
@@ -88,7 +87,7 @@ vibe/
 ├── tests/           # Integration tests
 ├── tools/           # Dev tooling and generators
 ├── vibe/            # Barrel package
-├── vibe-cli/        # CLI tool for scaffolding and managing projects 
+├── npm/vibe-cli/    # CLI tool for scaffolding and managing projects 
 └──
 ```
 

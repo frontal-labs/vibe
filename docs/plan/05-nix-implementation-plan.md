@@ -1002,7 +1002,7 @@ nix-darwin --extra-experimental-features "nix-command flakes"
 
 ## 14. Open Questions
 
-1. **Should Nix replace or supplement the Docker build?** Currently Docker is used for production agent deployments (`tools/docker/Dockerfile`). Nix could produce an OCI image via `pkgs.dockerTools`, but this would duplicate the `oven/bun` base image approach. **Recommendation**: Keep Docker as-is; do not replace with Nix for production images.
+1. **Should Nix replace or supplement the Docker build?** Currently Docker is used for production agent deployments (`docker/Dockerfile`). Nix could produce an OCI image via `pkgs.dockerTools`, but this would duplicate the `oven/bun` base image approach. **Recommendation**: Keep Docker as-is; do not replace with Nix for production images.
 
 2. **Should the release workflow (release-binaries.yml) use Nix cross-compilation?** Nix makes cross-compilation more hermetic, but requires maintaining the napi cross-build derivation. The current per-platform GitHub Actions runners are simpler and well-understood. **Recommendation**: Implement cross-build derivations in Phase 5 as optional; keep Actions runners as the primary release path.
 

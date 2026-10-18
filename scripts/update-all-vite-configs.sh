@@ -61,9 +61,9 @@ export default defineConfig({
 })
 EOF
 
-# Update vibe-cli/vite.config.ts
-echo "Updating vibe-cli/vite.config.ts"
-cat > "vibe-cli/vite.config.ts" << 'EOF'
+# Update npm/vibe-cli/vite.config.ts
+echo "Updating npm/vibe-cli/vite.config.ts"
+cat > "npm/vibe-cli/vite.config.ts" << 'EOF'
 import { defineConfig } from "vite"
 import { createBaseViteConfig } from "../packages/vite-config/vite.config"
 import { existsSync, readdirSync } from "node:fs"
