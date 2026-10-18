@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript-typescript', 'go', 'cpp'] # We have TS and Rust (C++ for Rust? Actually Rust is not supported by CodeQL? CodeQL supports Rust as of recent versions. Let's add rust.
+        language: ['javascript-typescript', 'rust', 'actions'] # We have TS and Rust (C++ for Rust? Actually Rust is not supported by CodeQL? CodeQL supports Rust as of recent versions. Let's add rust.
         # Actually, CodeQL supports Rust. Let's add rust.
         # But note: the CodeQL action for rust might require a specific setup.
         # We'll add rust and see.
