@@ -2,7 +2,7 @@ import { defineConfig } from "vite"
 import { createBaseViteConfig, externalizeThirdParty } from "../tools/vite-utils"
 
 // Library build: emits ESM + CJS into dist/ via Vite.
-// .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
+// .d.ts files are bundled by tools/bundle-dts.mjs (see the build script).
 // Entry points for the barrel package.
 export default defineConfig({
   ...createBaseViteConfig(),
