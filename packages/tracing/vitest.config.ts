@@ -1,17 +1,3 @@
-import { defineConfig } from "vitest/config"
+import { packageVitestConfig } from "../../tools/vitest-package"
 
-import { generateVibeAliases } from "../../tools/vite-utils"
-
-export default defineConfig({
-  resolve: {
-    alias: generateVibeAliases(),
-  },
-  test: {
-    include: ["src/**/*.test.ts", "tests/**/*.test.ts"],
-    exclude: ["node_modules", "dist", ".turbo"],
-    globals: true,
-    environment: "node",
-    testTimeout: 20_000,
-    hookTimeout: 10_000,
-  },
-})
+export default packageVitestConfig()
