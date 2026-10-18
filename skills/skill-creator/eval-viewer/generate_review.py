@@ -368,6 +368,15 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         if self.path == "/api/feedback":
+            # Block cross-site writes: require a JSON body (forces a CORS preflight that is
+            # never approved) and, when an Origin is sent, a localhost origin only.
+            origin = self.headers.get("Origin")
+            if origin and not origin.startswith(("http://localhost:", "http://127.0.0.1:")):
+                self.send_error(403)
+                return
+            if not self.headers.get("Content-Type", "").startswith("application/json"):
+                self.send_error(415)
+                return
             length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(length)
             try:
