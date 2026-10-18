@@ -24,7 +24,10 @@ fn bench_execute(c: &mut Criterion) {
             rt.block_on(async move {
                 for _ in 0..iters {
                     let result = engine
-                        .execute(black_box(task_id), black_box(serde_json::json!({"input": "bench"})))
+                        .execute(
+                            black_box(task_id),
+                            black_box(serde_json::json!({"input": "bench"})),
+                        )
                         .await;
                     let _ = black_box(result);
                 }

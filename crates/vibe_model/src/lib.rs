@@ -79,10 +79,22 @@ pub struct ToolCallResult {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ModelStreamEvent {
-    Chunk { content: String, sequence: u32 },
-    ToolCall { name: String, arguments: String, id: String },
-    Done { response: ModelResponse },
-    Error { message: String, code: String },
+    Chunk {
+        content: String,
+        sequence: u32,
+    },
+    ToolCall {
+        name: String,
+        arguments: String,
+        id: String,
+    },
+    Done {
+        response: ModelResponse,
+    },
+    Error {
+        message: String,
+        code: String,
+    },
 }
 
 #[derive(Debug, Error)]
@@ -113,7 +125,11 @@ impl From<reqwest::Error> for ModelError {
 #[async_trait]
 pub trait ModelProvider: Send + Sync {
     fn name(&self) -> &str;
-    async fn generate(&self, request: ModelRequest, cancellation_token: Option<CancellationToken>) -> Result<ModelResponse, ModelError>;
+    async fn generate(
+        &self,
+        request: ModelRequest,
+        cancellation_token: Option<CancellationToken>,
+    ) -> Result<ModelResponse, ModelError>;
     async fn stream(
         &self,
         request: ModelRequest,
@@ -193,7 +209,10 @@ impl ModelProviderRegistry {
     }
 
     pub fn get(&self, name: &str) -> Option<&dyn ModelProvider> {
-        self.providers.iter().find(|p| p.name() == name).map(|p| p.as_ref())
+        self.providers
+            .iter()
+            .find(|p| p.name() == name)
+            .map(|p| p.as_ref())
     }
 
     pub fn providers(&self) -> Vec<&str> {

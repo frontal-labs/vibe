@@ -124,7 +124,12 @@ pub struct JsRetryPolicy {
 #[napi]
 impl JsRetryPolicy {
     #[napi(constructor)]
-    pub fn new(max_attempts: u32, base_delay_ms: i64, max_delay_ms: i64, backoff_multiplier: f64) -> Self {
+    pub fn new(
+        max_attempts: u32,
+        base_delay_ms: i64,
+        max_delay_ms: i64,
+        backoff_multiplier: f64,
+    ) -> Self {
         Self {
             inner: shared::RetryPolicy {
                 max_attempts,
@@ -169,13 +174,23 @@ impl JsScheduler {
     #[napi(constructor)]
     pub fn new() -> Self {
         Self {
-            inner: Arc::new(scheduler::Scheduler::new(cancellation::CancellationToken::new())),
+            inner: Arc::new(scheduler::Scheduler::new(
+                cancellation::CancellationToken::new(),
+            )),
         }
     }
 
     #[napi]
-    pub fn register_task(&self, task_id: String, name: String, description: Option<String>, max_retries: u32, timeout_ms: Option<i64>) -> napi::Result<()> {
-        let tid = shared::TaskId::from_string(&task_id).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    pub fn register_task(
+        &self,
+        task_id: String,
+        name: String,
+        description: Option<String>,
+        max_retries: u32,
+        timeout_ms: Option<i64>,
+    ) -> napi::Result<()> {
+        let tid = shared::TaskId::from_string(&task_id)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         let task = shared::TaskDefinition {
             task_id: tid,
             name,
@@ -184,7 +199,9 @@ impl JsScheduler {
             max_retries,
             timeout_ms: timeout_ms.map(|v| v as u64),
         };
-        self.inner.register_task(task).map_err(|e| napi::Error::from_reason(e.to_string()))
+        self.inner
+            .register_task(task)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))
     }
 
     #[napi]
@@ -198,8 +215,11 @@ impl JsScheduler {
 
     #[napi]
     pub fn unregister_task(&self, task_id: String) -> napi::Result<()> {
-        let tid = shared::TaskId::from_string(&task_id).map_err(|e| napi::Error::from_reason(e.to_string()))?;
-        self.inner.unregister_task(tid).map_err(|e| napi::Error::from_reason(e.to_string()))
+        let tid = shared::TaskId::from_string(&task_id)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
+        self.inner
+            .unregister_task(tid)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))
     }
 }
 
@@ -228,8 +248,16 @@ impl JsExecutionEngine {
     }
 
     #[napi]
-    pub fn register_task(&self, task_id: String, name: String, description: Option<String>, max_retries: u32, timeout_ms: Option<i64>) -> napi::Result<()> {
-        let tid = shared::TaskId::from_string(&task_id).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    pub fn register_task(
+        &self,
+        task_id: String,
+        name: String,
+        description: Option<String>,
+        max_retries: u32,
+        timeout_ms: Option<i64>,
+    ) -> napi::Result<()> {
+        let tid = shared::TaskId::from_string(&task_id)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         let task = shared::TaskDefinition {
             task_id: tid,
             name,
@@ -238,15 +266,25 @@ impl JsExecutionEngine {
             max_retries,
             timeout_ms: timeout_ms.map(|v| v as u64),
         };
-        self.inner.register_task(task).map_err(|e| napi::Error::from_reason(e.to_string()))
+        self.inner
+            .register_task(task)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))
     }
 
     #[napi]
-    pub async fn execute(&self, task_id: String, input_json: String) -> napi::Result<JsExecutionResult> {
-        let tid = shared::TaskId::from_string(&task_id).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    pub async fn execute(
+        &self,
+        task_id: String,
+        input_json: String,
+    ) -> napi::Result<JsExecutionResult> {
+        let tid = shared::TaskId::from_string(&task_id)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         let input: serde_json::Value = serde_json::from_str(&input_json)
             .map_err(|e| napi::Error::from_reason(format!("Invalid JSON input: {}", e)))?;
-        let result = self.inner.execute(tid, input).await
+        let result = self
+            .inner
+            .execute(tid, input)
+            .await
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
         Ok(JsExecutionResult { inner: result })
     }
@@ -255,15 +293,18 @@ impl JsExecutionEngine {
     pub fn cancel(&self, execution_id: String) -> napi::Result<()> {
         let eid = shared::ExecutionId::from_string(&execution_id)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
-        self.inner.cancel(eid).map_err(|e| napi::Error::from_reason(e.to_string()))
+        self.inner
+            .cancel(eid)
+            .map_err(|e| napi::Error::from_reason(e.to_string()))
     }
 
     #[napi]
     pub fn get_execution_state(&self, execution_id: String) -> napi::Result<String> {
         let eid = shared::ExecutionId::from_string(&execution_id)
             .map_err(|e| napi::Error::from_reason(e.to_string()))?;
-        let ctx = self.inner.get_execution(&eid)
-            .ok_or_else(|| napi::Error::from_reason(format!("Execution {} not found", execution_id)))?;
+        let ctx = self.inner.get_execution(&eid).ok_or_else(|| {
+            napi::Error::from_reason(format!("Execution {} not found", execution_id))
+        })?;
         serde_json::to_string(&ctx).map_err(|e| napi::Error::from_reason(e.to_string()))
     }
 }
@@ -310,8 +351,7 @@ pub fn validate_tool_input(schema_json: String, input_json: String) -> napi::Res
         .map_err(|e| napi::Error::from_reason(format!("Invalid schema JSON: {}", e)))?;
     let input: serde_json::Value = serde_json::from_str(&input_json)
         .map_err(|e| napi::Error::from_reason(format!("Invalid input JSON: {}", e)))?;
-    tools::validate_tool_input(&schema, &input)
-        .map_err(|e| napi::Error::from_reason(e.to_string()))
+    tools::validate_tool_input(&schema, &input).map_err(|e| napi::Error::from_reason(e.to_string()))
 }
 
 // ====== Errors ======
@@ -395,14 +435,18 @@ mod tests {
 
     #[test]
     fn test_validate_tool_input_valid() {
-        let schema = r#"{"type":"object","required":["name"],"properties":{"name":{"type":"string"}}}"#.to_string();
+        let schema =
+            r#"{"type":"object","required":["name"],"properties":{"name":{"type":"string"}}}"#
+                .to_string();
         let input = r#"{"name":"test"}"#.to_string();
         assert!(validate_tool_input(schema, input).is_ok());
     }
 
     #[test]
     fn test_validate_tool_input_invalid() {
-        let schema = r#"{"type":"object","required":["name"],"properties":{"name":{"type":"string"}}}"#.to_string();
+        let schema =
+            r#"{"type":"object","required":["name"],"properties":{"name":{"type":"string"}}}"#
+                .to_string();
         let input = r#"{}"#.to_string();
         assert!(validate_tool_input(schema, input).is_err());
     }

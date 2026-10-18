@@ -1,7 +1,7 @@
 // Integration tests for cancellation tokens: creation, cancellation,
 // child tokens, callbacks, check_cancelled, and large-scale cancellation.
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use std::sync::Arc;
 use vibe_cancellation::*;
 
 #[test]

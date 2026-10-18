@@ -53,7 +53,12 @@ pub struct Tool {
 }
 
 impl Tool {
-    pub fn new<F>(name: &str, description: &str, input_schema: serde_json::Value, executor: F) -> Self
+    pub fn new<F>(
+        name: &str,
+        description: &str,
+        input_schema: serde_json::Value,
+        executor: F,
+    ) -> Self
     where
         F: Fn(ToolInput, Option<CancellationToken>) -> ToolResult + Send + Sync + 'static,
     {
@@ -82,7 +87,10 @@ impl Tool {
     }
 }
 
-pub fn validate_tool_input(schema: &serde_json::Value, input: &serde_json::Value) -> Result<(), VibeError> {
+pub fn validate_tool_input(
+    schema: &serde_json::Value,
+    input: &serde_json::Value,
+) -> Result<(), VibeError> {
     if let Some(required) = schema.get("required").and_then(|r| r.as_array()) {
         for field in required {
             let field_name = field.as_str().unwrap_or("");
@@ -127,11 +135,10 @@ pub async fn run_tool_call(
     cancellation_token: Option<CancellationToken>,
     timeout_ms: Option<u64>,
 ) -> ToolResult {
-    validate_tool_input(&tool.input_schema, &input.arguments)
-        .map_err(|e| ToolError {
-            message: e.to_string(),
-            code: "VALIDATION_ERROR".to_string(),
-        })?;
+    validate_tool_input(&tool.input_schema, &input.arguments).map_err(|e| ToolError {
+        message: e.to_string(),
+        code: "VALIDATION_ERROR".to_string(),
+    })?;
 
     debug!(tool = %tool.name, "Executing tool");
 
@@ -140,9 +147,10 @@ pub async fn run_tool_call(
         let input_clone = input.clone();
         let ct = cancellation_token.clone();
         let tool_name = tool.name.clone();
-        match timeout(Duration::from_millis(duration), tokio::task::spawn_blocking(move || {
-            cloned_tool.execute(input_clone, ct)
-        }))
+        match timeout(
+            Duration::from_millis(duration),
+            tokio::task::spawn_blocking(move || cloned_tool.execute(input_clone, ct)),
+        )
         .await
         {
             Ok(Ok(Ok(output))) => Ok(output),
@@ -172,10 +180,7 @@ pub async fn run_tool_call(
     result
 }
 
-pub async fn with_timeout<F, T>(
-    operation: F,
-    duration: Duration,
-) -> Result<T, ToolError>
+pub async fn with_timeout<F, T>(operation: F, duration: Duration) -> Result<T, ToolError>
 where
     F: std::future::Future<Output = Result<T, ToolError>>,
 {
@@ -204,7 +209,12 @@ mod tests {
                 }
             }),
             |input, _ct| {
-                let message = input.arguments.get("message").and_then(|v| v.as_str()).unwrap_or("").to_string();
+                let message = input
+                    .arguments
+                    .get("message")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .to_string();
                 Ok(ToolOutput {
                     name: "echo".to_string(),
                     result: serde_json::json!({ "echo": message }),
@@ -233,10 +243,7 @@ mod tests {
             None,
         );
         assert!(result.is_ok());
-        assert_eq!(
-            result.unwrap().result,
-            serde_json::json!({"echo": "hello"})
-        );
+        assert_eq!(result.unwrap().result, serde_json::json!({"echo": "hello"}));
     }
 
     #[test]
@@ -279,19 +286,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_run_tool_call_with_timeout() {
-        let tool = Tool::new(
-            "slow",
-            "Slow tool",
-            serde_json::json!({}),
-            |_input, _ct| {
-                std::thread::sleep(Duration::from_millis(50));
-                Ok(ToolOutput {
-                    name: "slow".to_string(),
-                    result: serde_json::json!({"done": true}),
-                    duration_ms: 50,
-                })
-            },
-        );
+        let tool = Tool::new("slow", "Slow tool", serde_json::json!({}), |_input, _ct| {
+            std::thread::sleep(Duration::from_millis(50));
+            Ok(ToolOutput {
+                name: "slow".to_string(),
+                result: serde_json::json!({"done": true}),
+                duration_ms: 50,
+            })
+        });
 
         let result = run_tool_call(
             &tool,

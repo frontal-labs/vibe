@@ -1,7 +1,7 @@
 use parking_lot::Mutex;
 use std::fmt;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use thiserror::Error;
 
 #[derive(Clone)]
