@@ -49,9 +49,9 @@
           overlays = [ (import rust-overlay) ];
         };
 
-        # Rust toolchain - use rust-overlay to get a specific version
-        # We try to get rustc_1_95_0 from the overlay, fallback to pkgs.rustc
-        rustToolchain = if pkgs ? rustc_1_95_0 then pkgs.rustc_1_95_0 else pkgs.rustc;
+        # Rust toolchain pinned by rust-toolchain.toml (channel, components, targets),
+        # resolved through rust-overlay so CI and local shells use the same rustc.
+        rustToolchain = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
 
         # Crane library configured with our toolchain
         craneLib = crane.mkLib pkgs;
