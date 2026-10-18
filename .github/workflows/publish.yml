@@ -1,0 +1,135 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BUN_VERSION: "1.3.3"
+  NODE_VERSION: "22"
+
+jobs:
+  check-version:
+    name: Check tag matches package versions
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Compare tag with vibe and vibe-cli versions
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          for pkg in vibe/package.json npm/vibe-cli/package.json; do
+            VERSION=$(node -p "require('./$pkg').version")
+            if [ "$VERSION" != "$TAG" ]; then
+              echo "::error file=$pkg::version $VERSION does not match tag v$TAG"
+              exit 1
+            fi
+          done
+
+  build-cli:
+    name: vibe-cli ${{ matrix.target }}
+    needs: [check-version]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: bun-linux-x64, asset: vibe-cli-x86_64-unknown-linux-gnu }
+          - { target: bun-linux-arm64, asset: vibe-cli-aarch64-unknown-linux-gnu }
+          - { target: bun-windows-x64, asset: vibe-cli-x86_64-pc-windows-msvc.exe }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - run: bun install --frozen-lockfile
+      - name: Build vibe-cli bundle
+        working-directory: npm/vibe-cli
+        run: bun run build
+      - name: Compile single-file executable
+        working-directory: npm/vibe-cli
+        run: bun build --compile --target=${{ matrix.target }} dist/cli.js --outfile "$RUNNER_TEMP/${{ matrix.asset }}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ runner.temp }}/${{ matrix.asset }}
+
+  build-napi:
+    name: napi ${{ matrix.target }}
+    needs: [check-version]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-latest, target: aarch64-apple-darwin, os_name: darwin, arch: arm64 }
+          - { os: macos-latest, target: x86_64-apple-darwin, os_name: darwin, arch: x64 }
+          - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu, os_name: linux, arch: x64 }
+          - { os: ubuntu-latest, target: aarch64-unknown-linux-gnu, os_name: linux, arch: arm64 }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc, os_name: win32, arch: x64 }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: "https://npm.pkg.github.com"
+      - name: Install Rust
+        run: rustup target add ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - name: Build addon
+        run: cargo build --release -p vibe_napi --target ${{ matrix.target }}
+      - name: Name addon for release
+        shell: bash
+        run: |
+          LIB="$(find "target/${{ matrix.target }}/release" -maxdepth 1 -name '*vibe_napi.*' \( -name '*.dylib' -o -name '*.so' -o -name '*.dll' \) | head -1)"
+          cp "$LIB" "$RUNNER_TEMP/vibe_napi-${{ matrix.target }}.node"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: vibe_napi-${{ matrix.target }}
+          path: ${{ runner.temp }}/vibe_napi-${{ matrix.target }}.node
+
+  publish-packages:
+    name: Publish vibe and vibe-cli
+    needs: [check-version]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@frontal-labs"
+      - run: bun install --frozen-lockfile
+      - name: Build packages
+        run: |
+          (cd vibe && bun run build)
+          (cd npm/vibe-cli && bun run build)
+      - name: Publish to GitHub Packages
+        run: |
+          (cd vibe && npm publish)
+          (cd npm/vibe-cli && npm publish)
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  attach-binaries:
+    name: Attach artifacts to release
+    needs: [build-cli, build-napi, publish-packages]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with: { path: dist }
+      - name: Publish to the GitHub release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        with:
+          files: dist/**/*

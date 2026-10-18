@@ -23,7 +23,8 @@
       "!**/*.tmLanguage.json",
       "!**/next-env.d.ts",
       "!**/CHANGELOG.md",
-      "!**/bun.lock"
+      "!**/bun.lock",
+      "!skills"
     ]
   },
   "assist": {
@@ -109,7 +110,7 @@
     {
       "includes": [
         "packages/logger/src/transports/**",
-        "vibe-cli/**",
+        "npm/vibe-cli/**",
         "packages/devtools/**",
         "packages/tracing/**",
         "examples/**",

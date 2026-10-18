@@ -1,0 +1,18 @@
+{
+  "name": "vibe",
+  "build": {
+    "dockerfile": "../docker/devcontainer/Dockerfile",
+    "context": "../docker/devcontainer"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "bun install",
+  "customizations": {
+    "vscode": {
+      "extensions": ["biomejs.biome", "rust-lang.rust-analyzer", "vitest.explorer"],
+      "settings": { "editor.defaultFormatter": "biomejs.biome" }
+    }
+  }
+}

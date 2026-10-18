@@ -1,3 +1,4 @@
+import { runtimeError } from "@frontal-labs/vibe/errors"
 import {
   createMemoryCheckpointStore,
   defineWorkflow,

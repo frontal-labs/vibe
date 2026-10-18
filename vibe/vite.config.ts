@@ -1,5 +1,5 @@
 import { defineConfig } from "vite"
-import { createBaseViteConfig } from "../packages/vite-config/vite.config"
+import { createBaseViteConfig, externalizeThirdParty } from "../tools/vite-utils"
 
 // Library build: emits ESM + CJS into dist/ via Vite.
 // .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
@@ -8,6 +8,11 @@ export default defineConfig({
   ...createBaseViteConfig(),
   build: {
     ...createBaseViteConfig().build,
+    // Bundle vibe/* workspace code; keep third-party deps as declared dependencies.
+    rollupOptions: {
+      ...createBaseViteConfig().build?.rollupOptions,
+      external: externalizeThirdParty,
+    },
     lib: {
       entry: {
         index: "src/index.ts",

@@ -15,7 +15,7 @@ export function generateVibeAliases(): Record<string, string> {
   const _generatorsDir = resolve(__dirname, "..", "..", "tools", "generators")
 
   function vibeAliases(dir: string): Record<string, string> {
-    const base = resolve(__dirname, "..", "..", dir)
+    const base = resolve(__dirname, "..", dir)
     if (!existsSync(base)) return {}
     return Object.fromEntries(
       readdirSync(base)
@@ -86,12 +86,25 @@ export function externalize(id: string): boolean {
       "zod",
       "@standard-schema/spec",
       "@anthropic-ai/sdk",
+      "@modelcontextprotocol/sdk",
       "esbuild",
       "handlebars",
       "chokidar",
       "commander",
+      "vite",
     ].some((d) => id === d || id.startsWith(`${d}/`))
   )
+}
+
+/**
+ * Externalize only node built-ins and third-party deps, so `vibe/*` workspace
+ * packages are bundled into the output. Used by the published barrel and CLI,
+ * whose `vibe/*` workspace packages are not published on their own.
+ * @param id - Module identifier to check
+ * @returns True if the module should stay an import in the published output
+ */
+export function externalizeThirdParty(id: string): boolean {
+  return !id.startsWith("vibe/") && externalize(id)
 }
 
 /**

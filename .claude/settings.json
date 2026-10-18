@@ -51,7 +51,7 @@
     "importantPaths": {
       "packages": "./packages/",
       "vibe": "./vibe/",
-      "vibeCli": "./vibe-cli/",
+      "vibeCli": "./npm/vibe-cli/",
       "examples": "./examples/",
       "docs": "./docs/",
       "scripts": "./scripts/"
