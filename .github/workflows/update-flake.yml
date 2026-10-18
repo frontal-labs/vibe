@@ -28,19 +28,16 @@ jobs:
       - name: Update flake.lock
         run: nix flake update
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: chore: update flake.lock
+          commit-message: "chore: update flake.lock"
           committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: chore: update flake.lock
+          author: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+          title: "chore: update flake.lock"
           body: |
             This PR updates the flake.lock file to the latest versions of inputs.
           branch: update-flake-label
           labels: |
             automated-pr
-          assignees:
-            - ${{ github.actor }}
-          reviewers: |
-            - octocat
+          assignees: ${{ github.actor }}

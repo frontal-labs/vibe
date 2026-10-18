@@ -40,12 +40,13 @@ jobs:
           bun --version
           node --version
       - name: Run quality checks
-        run: nix develop .#ci --command bash -c "
-          bun install --frozen-lockfile &&
-          bun lint &&
-          bun format:check &&
-          bun typecheck
-        "
+        run: |
+          nix develop .#ci --command bash -c "
+            bun install --frozen-lockfile &&
+            bun lint &&
+            bun format:check &&
+            bun typecheck
+          "
 
   build-and-test:
     name: Build & Test
@@ -80,11 +81,12 @@ jobs:
           bun --version
           node --version
       - name: Build and test
-        run: nix develop .#ci --command bash -c "
-          bun install --frozen-lockfile &&
-          bun run build &&
-          bun run test
-        "
+        run: |
+          nix develop .#ci --command bash -c "
+            bun install --frozen-lockfile &&
+            bun run build &&
+            bun run test
+          "
 
   rust:
     name: Rust (fmt, clippy, test, bench, napi)
@@ -101,10 +103,11 @@ jobs:
       - name: Configure Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v4
       - name: Run Rust checks
-        run: nix develop .#ci-rust --command bash -c "
-          cargo fmt --all --check &&
-          cargo clippy --workspace --all-targets -- -D warnings &&
-          cargo test --workspace &&
-          cargo bench --workspace --no-run &&
-          cargo build --release -p vibe_napi
-        "
+        run: |
+          nix develop .#ci-rust --command bash -c "
+            cargo fmt --all --check &&
+            cargo clippy --workspace --all-targets -- -D warnings &&
+            cargo test --workspace &&
+            cargo bench --workspace --no-run &&
+            cargo build --release -p vibe_napi
+          "
