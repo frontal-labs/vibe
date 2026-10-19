@@ -8,7 +8,6 @@ export default defineConfig({
   ...createBaseViteConfig(),
   build: {
     ...createBaseViteConfig().build,
-    // Bundle vibe/* workspace code; keep third-party deps as declared dependencies.
     rollupOptions: {
       ...createBaseViteConfig().build?.rollupOptions,
       external: externalizeThirdParty,
