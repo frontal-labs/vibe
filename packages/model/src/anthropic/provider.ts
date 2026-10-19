@@ -5,21 +5,28 @@ import { mapAnthropicError } from "./errors"
 import { toAnthropicParams } from "./map-request"
 import { type AnthropicMessageLike, fromAnthropicMessage } from "./map-response"
 
+/** The subset of `@anthropic-ai/sdk`'s client this provider calls. Structural, so the
+ * published declarations do not reference the SDK's types. */
+export interface AnthropicClientLike {
+  messages: {
+    create(params: never): Promise<unknown>
+    stream(params: never): AsyncIterable<{ type: string; delta?: unknown }> & {
+      finalMessage(): Promise<unknown>
+    }
+    countTokens(params: never): Promise<{ input_tokens: number }>
+  }
+}
+
 export interface AnthropicProviderOptions {
   apiKey?: string
-  /**
-   * Inject a preconfigured `@anthropic-ai/sdk` client (e.g. a Bedrock/Vertex client) or a
-   * fake in tests. Typed as `unknown` so published declarations do not reference the SDK's
-   * types; the value is narrowed to the SDK client inside `createAnthropicProvider`.
-   */
-  client?: unknown
+  /** Inject a preconfigured client (e.g. a Bedrock/Vertex client) or a fake in tests. */
+  client?: AnthropicClientLike
 }
 
 /** The reference `ModelProvider`, wrapping `@anthropic-ai/sdk`. */
 export function createAnthropicProvider(options: AnthropicProviderOptions = {}): ModelProvider {
-  const client =
-    (options.client as Anthropic | undefined) ??
-    new Anthropic(options.apiKey ? { apiKey: options.apiKey } : {})
+  const client: AnthropicClientLike =
+    options.client ?? new Anthropic(options.apiKey ? { apiKey: options.apiKey } : {})
 
   return {
     id: "anthropic",
