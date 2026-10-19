@@ -47,7 +47,7 @@ const _external = (id: string) =>
   )
 
 // Library build: emits ESM + CJS into dist/ via Vite.
-// .d.ts files are emitted separately by `tsc --emitDeclarationOnly` (see the build script).
+// .d.ts files are bundled by tools/bundle-dts.mjs (see the build script).
 // Each entry keeps its basename (index, cli, agent, …).
 export default defineConfig({
   ...createBaseViteConfig(),
@@ -56,7 +56,6 @@ export default defineConfig({
   },
   build: {
     ...createBaseViteConfig().build,
-    // Bundle vibe/* workspace code; keep third-party deps as declared dependencies.
     rollupOptions: {
       ...createBaseViteConfig().build?.rollupOptions,
       external: externalizeThirdParty,

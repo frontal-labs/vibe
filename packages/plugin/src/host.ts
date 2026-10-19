@@ -41,7 +41,6 @@ export function createPluginHost(): PluginHost {
 
   function unregister(name: string): Promise<void> {
     if (!plugins.has(name)) {
-      // Reject rather than throw, so callers awaiting the Promise get the error.
       return Promise.reject(pluginNotFoundError(`Plugin "${name}" is not registered`))
     }
     plugins.delete(name)

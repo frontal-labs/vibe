@@ -96,13 +96,7 @@ export function externalize(id: string): boolean {
   )
 }
 
-/**
- * Externalize only node built-ins and third-party deps, so `vibe/*` workspace
- * packages are bundled into the output. Used by the published barrel and CLI,
- * whose `vibe/*` workspace packages are not published on their own.
- * @param id - Module identifier to check
- * @returns True if the module should stay an import in the published output
- */
+/** Externalize node built-ins and third-party deps; bundle `vibe/*` workspace code. */
 export function externalizeThirdParty(id: string): boolean {
   return !id.startsWith("vibe/") && externalize(id)
 }
