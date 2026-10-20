@@ -53,6 +53,13 @@ tags: [support, urgent]
     const result = await runToolCall(skill, {})
     expect(result.content).toContain("Notify the on-call engineer.")
   })
+
+  it("handles delimiter-like input without pathological backtracking", () => {
+    const body = "---\n" + "\n ".repeat(10_000) + "not frontmatter"
+    const parsed = parseMarkdownSkill(body)
+
+    expect(parsed.body).toBe(body.trim())
+  })
 })
 
 describe("createSkillRegistry", () => {

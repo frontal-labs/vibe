@@ -14,6 +14,9 @@ concurrency:
 env:
   CI: true
 
+permissions:
+  contents: read
+
 jobs:
   quality:
     name: Quality (lint, format, typecheck)
@@ -32,7 +35,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
       - name: Print versions
@@ -65,7 +68,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
       - name: Cache Turbo artifacts

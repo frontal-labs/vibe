@@ -12,11 +12,14 @@ jobs:
   title:
     name: Validate Title
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/github-script@v7
         with:
           script: |
-            const pattern = /^(feat|fix|chore|docs|refactor|test|perf|ci|build|style|revert)(\(.+\))?!?:\s.+/
+            const pattern = /^(feat|fix|chore|docs|refactor|test|perf|ci|build|style|revert|deps)(\(.+\))?!?:\s.+/
             const title = context.payload.pull_request.title
             if (!pattern.test(title)) {
               core.setFailed(
@@ -29,14 +32,19 @@ jobs:
   labels:
     name: Validate Labels
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/github-script@v7
         with:
           script: |
             const required = ['semver-patch', 'semver-minor', 'semver-major']
             const labels = context.payload.pull_request.labels.map(l => l.name)
+            const isDependabot = context.payload.pull_request.user.login === 'app/dependabot'
             const hasSemver = required.some(r => labels.includes(r))
-            if (!hasSemver) {
+            const hasDependencyLabel = labels.includes('dependencies')
+            if (!hasSemver && !(isDependabot && hasDependencyLabel)) {
               core.setFailed(
                 'PR must have a semver label: semver-patch, semver-minor, or semver-major'
               )
@@ -46,6 +54,7 @@ jobs:
     name: Check Size
     runs-on: ubuntu-24.04
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
@@ -72,13 +81,15 @@ jobs:
     name: Auto Assign
     runs-on: ubuntu-24.04
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - uses: actions/github-script@v7
         with:
           script: |
             const author = context.payload.pull_request.user.login
-            if (context.payload.pull_request.assignees.length === 0) {
+            const isBot = author === 'app/dependabot' || author.endsWith('[bot]')
+            if (!isBot && context.payload.pull_request.assignees.length === 0) {
               await github.rest.issues.addAssignees({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
