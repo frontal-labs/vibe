@@ -25,7 +25,7 @@ jobs:
               core.setFailed(
                 `PR title "${title}" does not match conventional commit format.\n` +
                 'Expected: type(scope)!: description\n' +
-                'Types: feat, fix, chore, docs, refactor, test, perf, ci, build, style, revert'
+                'Types: feat, fix, chore, docs, refactor, test, perf, ci, build, style, revert, deps'
               )
             }
 
@@ -41,7 +41,7 @@ jobs:
           script: |
             const required = ['semver-patch', 'semver-minor', 'semver-major']
             const labels = context.payload.pull_request.labels.map(l => l.name)
-            const isDependabot = context.payload.pull_request.user.login === 'app/dependabot'
+            const isDependabot = context.payload.pull_request.user.login === 'dependabot[bot]'
             const hasSemver = required.some(r => labels.includes(r))
             const hasDependencyLabel = labels.includes('dependencies')
             if (!hasSemver && !(isDependabot && hasDependencyLabel)) {

@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: GitHub Discussions
+  - name: Ask a question
     url: https://github.com/frontal-labs/vibe/issues/new?template=question.yml
-    about: Ask questions and share ideas in the community forum.
+    about: Submit a question using the question issue form.
   - name: Report a security vulnerability
     url: https://github.com/frontal-labs/vibe/security/advisories
     about: Use GitHub's security advisory system to report security vulnerabilities.
