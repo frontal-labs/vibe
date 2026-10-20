@@ -198,7 +198,7 @@
     "vibe/tracing": "workspace:*",
     "vibe/workflows": "workspace:*",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.11"
   },
   "tsd": {
     "directory": "type-tests"
