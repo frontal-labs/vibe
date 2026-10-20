@@ -17,9 +17,9 @@
     "frontal",
     "vibe"
   ],
-  "homepage": "https://github.com/vibe-lang/vibe#readme",
+  "homepage": "https://github.com/frontal-labs/vibe#readme",
   "bugs": {
-    "url": "https://github.com/vibe-lang/vibe/issues"
+    "url": "https://github.com/frontal-labs/vibe/issues"
   },
   "repository": {
     "type": "git",
@@ -198,7 +198,7 @@
     "vibe/tracing": "workspace:*",
     "vibe/workflows": "workspace:*",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.11"
   },
   "tsd": {
     "directory": "type-tests"

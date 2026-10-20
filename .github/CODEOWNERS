@@ -51,7 +51,7 @@
 
 # Package management
 /package.json @gabrielfonseca
-/bun.lockb @gabrielfonseca
+/bun.lock @gabrielfonseca
 
 # Rust workspace
 /Cargo.toml @gabrielfonseca

@@ -14,7 +14,7 @@ Closes #
 
 Please check if your PR fulfills the following requirements:
 
-- [ ] The commit message follows our guidelines: https://github.com/your-org/your-repo/blob/main/CONTRIBUTING.md
+- [ ] The commit message follows our guidelines: https://github.com/frontal-labs/vibe/blob/main/CONTRIBUTING.md
 - [ ] Tests for the changes have been added (for bug fixes / features)
 - [ ] The code has been formatted (run `bun run format`)
 - [ ] The linting passes (run `bun run lint`)

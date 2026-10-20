@@ -42,9 +42,14 @@ function parseValue(raw: string): string | string[] {
  * `key: value` pairs and inline `[a, b]` lists (the subset skill frontmatter uses).
  */
 export function parseMarkdownSkill(source: string): MarkdownSkill {
-  const match = /^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/.exec(source)
-  const frontmatter = match?.[1] ?? ""
-  const body = (match?.[2] ?? source).trim()
+  const lines = source.split(/\r?\n/)
+  const hasOpeningDelimiter = lines[0]?.trim() === "---"
+  const closingDelimiter = hasOpeningDelimiter
+    ? lines.findIndex((line, index) => index > 0 && line.trim() === "---")
+    : -1
+  const hasFrontmatter = closingDelimiter > 0
+  const frontmatter = hasFrontmatter ? lines.slice(1, closingDelimiter).join("\n") : ""
+  const body = (hasFrontmatter ? lines.slice(closingDelimiter + 1).join("\n") : source).trim()
 
   const fields: Record<string, string | string[]> = {}
   for (const line of frontmatter.split("\n")) {

@@ -22,7 +22,7 @@ version = "0.0.0"
 edition = "2021"
 rust-version = "1.95"
 license = "Apache-2.0"
-repository = "https://github.com/vibe-lang/vibe"
+repository = "https://github.com/frontal-labs/vibe"
 authors = ["Vibe contributors"]
 
 [workspace.dependencies]

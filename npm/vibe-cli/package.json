@@ -38,7 +38,7 @@
     "dts-bundle-generator": "9.5.1",
     "tsd": "^0.31.2",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.11"
   },
   "tsd": {
     "directory": "type-tests"
