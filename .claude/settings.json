@@ -1,5 +1,5 @@
 {
-  "agent": {
+  "agentProfile": {
     "name": "Vibe Autonomous Engineer",
     "description": "Claude configured as an autonomous software engineer for the Vibe framework",
     "version": "1.0.0"
