@@ -55,7 +55,7 @@ tags: [support, urgent]
   })
 
   it("handles delimiter-like input without pathological backtracking", () => {
-    const body = "---\n" + "\n ".repeat(10_000) + "not frontmatter"
+    const body = `---\n${"\n ".repeat(10_000)}not frontmatter`
     const parsed = parseMarkdownSkill(body)
 
     expect(parsed.body).toBe(body.trim())
