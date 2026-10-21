@@ -4,8 +4,7 @@ import { describe, expect, it } from "vitest"
 
 import { generateDockerfile } from "../src/dockerfile"
 
-// docker/Dockerfile is a hand-maintained twin of generateDockerfile(); the two must
-// emit the same instructions so the reference image and the generated one agree.
+// docker/Dockerfile must emit the same instructions as generateDockerfile().
 const instructions = (text: string) =>
   text
     .split("\n")
