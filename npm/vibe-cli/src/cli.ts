@@ -42,8 +42,7 @@ function main(): void {
       const configFile = join(dir, "vibe.config.ts")
       // A change is "structural" when the set of entries could change (a file added/removed, or the
       // config edited) — that needs a re-plan; a plain edit to an existing entry just rebuilds.
-      const isConfig = (path: string): boolean =>
-        path === configFile || path.endsWith("vibe.config.ts")
+      const isConfig = (path: string): boolean => path.endsWith("vibe.config.ts")
 
       let builder: DevBuilder | null = null
       const build = async (structural: boolean): Promise<void> => {
@@ -61,9 +60,7 @@ function main(): void {
       }
 
       console.log(`watching ${dir} …`)
-      build(false).catch(() => {
-        // build() already logs its own diagnostics; nothing to surface here.
-      })
+      build(false)
       chokidar
         .watch(
           [

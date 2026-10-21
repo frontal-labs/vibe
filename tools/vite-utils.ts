@@ -30,8 +30,13 @@ export function generateVibeAliases(): Record<string, string> {
     )
   }
 
+  // tools/generators is itself a package (not a parent of packages), so alias it directly.
+  const generatorsSrc = resolve(__dirname, "..", "tools", "generators", "src")
+
   return {
     ...vibeAliases("packages"),
+    "vibe/generators": generatorsSrc,
+    "vibe/generators/*": resolve(generatorsSrc, "*"),
     ...vibeAliases("tools/generators"),
   }
 }
