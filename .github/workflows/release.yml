@@ -15,13 +15,10 @@ jobs:
   changesets:
     name: Changesets
     runs-on: ubuntu-24.04
+    # Versioning only: publishing to GitHub Packages happens in publish.yml on v* tags.
     permissions:
       contents: write
       pull-requests: write
-      id-token: write
-    outputs:
-      published: ${{ steps.changesets.outputs.published }}
-      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,13 +30,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: bun install --frozen-lockfile
-      - name: Create Release Pull Request or Publish
-        id: changesets
+      - name: Create or update the version PR
         uses: changesets/action@v1
         with:
-          publish: bun run release
           commit: "chore: version packages"
           title: "chore: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
