@@ -46,7 +46,7 @@ git clone <repo> && cd vibe
 bun install
 ```
 
-This installs the workspace and wires the Husky hooks (via the `prepare` script).
+This installs the workspace and the git hooks (see [CONTRIBUTING.md](../../CONTRIBUTING.md)).
 One install covers every `vibe/*` package — it is a bun workspace + Turborepo
 monorepo.
 
