@@ -1,4 +1,4 @@
-import { expectAssignable, expectError, expectType } from "tsd"
+import { expectAssignable, expectType } from "tsd"
 
 import type { Awaitable, Fn, Maybe, Nullish, Result } from "../src/types"
 
@@ -31,12 +31,15 @@ expectAssignable<void | Promise<void>>(voidFn())
 
 const typedFn: Fn<[string, number], boolean> = (_s: string, _n: number) => true
 expectType<boolean | Promise<boolean>>(typedFn("", 0))
-expectError(typedFn(""))
-expectError(typedFn("", 0, true))
+// @ts-expect-error: must not compile
+typedFn("")
+// @ts-expect-error: must not compile
+typedFn("", 0, true)
 
 // Nullish
 const nullVal = (): Nullish => null
 expectAssignable<null | undefined>(nullVal())
 const undefVal = (): Nullish => undefined
 expectAssignable<null | undefined>(undefVal())
-expectError<Nullish>(false)
+// @ts-expect-error: must not compile
+;((_value: Nullish) => undefined)(false)

@@ -24,7 +24,7 @@
     "build": "vite build && node ../../tools/bundle-dts.mjs src/index.ts src/cli.ts",
     "dev": "vite build --watch",
     "test": "vitest run --config vitest.config.ts",
-    "test:types": "tsd",
+    "test:types": "tsc -p type-tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

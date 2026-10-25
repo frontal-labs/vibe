@@ -1,4 +1,4 @@
-import { expectError, expectType } from "tsd"
+import { expectType } from "tsd"
 import type { CancellationToken, ExecutionContext, Runtime, TaskDefinition } from "../src/index"
 import { createCancellationTokenSource, createRuntime } from "../src/index"
 
@@ -9,7 +9,8 @@ expectType<Runtime>(runtime)
 const source = createCancellationTokenSource()
 expectType<CancellationToken>(source.token)
 expectType<boolean>(source.token.cancelled)
-expectError(source.token.cancel())
+// @ts-expect-error: must not compile
+source.token.cancel()
 
 // TaskDefinition
 const task: TaskDefinition<string, number> = {

@@ -2,7 +2,7 @@
   "name": "@frontal-labs/vibe",
   "version": "0.1.0",
   "type": "module",
-  "description": "The Vibe framework barrel — import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
+  "description": "The Vibe framework barrel \u2014 import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
   "keywords": [
     "ai",
     "agents",
@@ -163,7 +163,7 @@
     "build": "vite build && node ../tools/bundle-dts.mjs src/index.ts src/agent.ts src/tools.ts src/model.ts src/memory.ts src/core.ts src/errors.ts src/logger.ts src/runtime.ts src/plugin.ts src/di.ts src/adapters.ts src/tracing.ts src/evals.ts src/deploy.ts src/devtools.ts src/config.ts src/skills.ts src/workflows.ts src/ontology.ts src/governance.ts src/security.ts src/observability.ts",
     "dev": "vite build --watch",
     "test": "vitest run --passWithNoTests",
-    "test:types": "tsd",
+    "test:types": "tsc -p type-tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
