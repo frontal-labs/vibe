@@ -119,7 +119,7 @@ export interface OTLPHttpExporter {
  * `onError` and are dropped, because telemetry must never fail or slow the run it observes.
  */
 export function createOTLPHttpExporter(options: OTLPHttpOptions): OTLPHttpExporter {
-  const url = `${options.endpoint.replace(/\/+$/, "")}/v1/traces`
+  const url = `${trimTrailingSlashes(options.endpoint)}/v1/traces`
   const batchSize = options.batchSize ?? 64
   const send = options.fetch ?? fetch
   const buffer: OTLPSpan[] = []
@@ -158,4 +158,14 @@ export function createOTLPHttpExporter(options: OTLPHttpOptions): OTLPHttpExport
     },
     flush,
   }
+}
+
+/**
+ * Remove trailing slashes from a URL. A linear scan, not a regex: `/\/+$/` backtracks quadratically
+ * on input made of many slashes, which is a denial-of-service risk for a configured endpoint.
+ */
+function trimTrailingSlashes(url: string): string {
+  let end = url.length
+  while (end > 0 && url.charAt(end - 1) === "/") end--
+  return url.slice(0, end)
 }

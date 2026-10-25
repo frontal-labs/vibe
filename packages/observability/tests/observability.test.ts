@@ -151,3 +151,39 @@ describe("OTLP HTTP exporter", () => {
     expect(posted).toBe(1)
   })
 })
+
+describe("OTLP endpoint normalization", () => {
+  it("strips every trailing slash before appending the traces path, in linear time", async () => {
+    const urls: string[] = []
+    // biome-ignore lint/suspicious/useAwait: fetch is async by contract
+    const fetcher = (async (url: string) => {
+      urls.push(url)
+      return new Response("", { status: 200 })
+    }) as typeof fetch
+    const span = {
+      id: "s",
+      parentId: undefined,
+      name: "n",
+      startMs: 0,
+      endMs: 1,
+      attributes: {},
+      status: "ok" as const,
+    }
+    for (const endpoint of [
+      "http://c/",
+      "http://c////",
+      "http://c",
+      `http://c/${"/".repeat(50_000)}`,
+    ]) {
+      const exporter = createOTLPHttpExporter({ endpoint, fetch: fetcher })
+      exporter.export(span)
+      await exporter.flush()
+    }
+    expect(urls).toEqual([
+      "http://c/v1/traces",
+      "http://c/v1/traces",
+      "http://c/v1/traces",
+      "http://c/v1/traces",
+    ])
+  })
+})
