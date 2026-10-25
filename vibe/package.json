@@ -1,8 +1,8 @@
 {
-  "name": "@frontal-labs/vibe",
+  "name": "frontal-vibe",
   "version": "0.1.0",
   "type": "module",
-  "description": "The Vibe framework barrel \u2014 import from `@frontal-labs/vibe` and `@frontal-labs/vibe/*` instead of `vibe/*`.",
+  "description": "The Vibe framework barrel \u2014 import from `frontal-vibe` and `frontal-vibe/*` instead of `vibe/*`.",
   "keywords": [
     "ai",
     "agents",
@@ -34,7 +34,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   },
   "exports": {
     ".": {

@@ -89,13 +89,13 @@ optional cross-run persistence. Both feed the request builder and respect contex
 limits (with compaction/context-editing hooks). Built on `shared`'s context-store.
 See [Memory & context](./12-memory-and-context.md).
 
-### Config & bootstrap (`vibe/config`, `@frontal-labs/vibe-cli`)
+### Config & bootstrap (`vibe/config`, `frontal-vibe-cli`)
 The **surface** developers actually write is plain TypeScript. You declare agents,
 tools, models, memory, plugins, and config with the `vibe/*` APIs —
 `defineAgent`, `defineTool`, `defineConfig`, `createSystem` — and import the
 framework directly. **VibeConfig** — the resolved wiring (name, model, provider,
 tools, plugins, memory, logging, runtime limits) — comes from `defineConfig` in a
-`vibe.config.ts` file (or is passed straight to `createSystem`). The `@frontal-labs/vibe-cli`
+`vibe.config.ts` file (or is passed straight to `createSystem`). The `frontal-vibe-cli`
 TypeScript CLI (`new`/`dev`/`build`) drives it, and `vibe/build` code-splits an
 app's tools into lazily-loaded chunks. See
 [Configuration & bootstrap](./14-configuration-and-bootstrap.md).

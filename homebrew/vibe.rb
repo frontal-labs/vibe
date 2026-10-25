@@ -15,7 +15,7 @@ class Vibe < Formula
     # Build only the CLI and its workspace dependencies ("vibe/build",
     # "vibe/errors", "vibe/generators") via a Turbo filter, rather than the
     # entire monorepo (which includes heavy apps like the docs site).
-    system "bun", "run", "build", "--filter=@frontal-labs/vibe-cli"
+    system "bun", "run", "build", "--filter=frontal-vibe-cli"
 
     # Stage the whole monorepo under libexec so the CLI can resolve its
     # workspace dependencies ("vibe/build", "vibe/errors", "vibe/generators")

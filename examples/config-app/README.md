@@ -25,5 +25,5 @@ What it shows:
   into per-tool lazy chunks (small serverless cold starts). This is what the Rust
   `vibe_bundler` accelerates.
 
-`vibe build` (from `@frontal-labs/vibe-cli`) runs exactly this discovery + analysis to emit
+`vibe build` (from `frontal-vibe-cli`) runs exactly this discovery + analysis to emit
 optimized, tree-shaken, code-split bundles.

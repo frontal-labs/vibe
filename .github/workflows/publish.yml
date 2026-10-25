@@ -75,7 +75,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: "https://registry.npmjs.org"
       - name: Install Rust
         run: rustup target add ${{ matrix.target }}
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
@@ -92,7 +92,7 @@ jobs:
           path: ${{ runner.temp }}/vibe_napi-${{ matrix.target }}.node
 
   publish-packages:
-    name: Publish vibe and vibe-cli
+    name: Publish frontal-vibe and frontal-vibe-cli
     needs: [check-version]
     runs-on: ubuntu-24.04
     permissions:
@@ -106,19 +106,18 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: "https://npm.pkg.github.com"
-          scope: "@frontal-labs"
+          registry-url: "https://registry.npmjs.org"
       - run: bun install --frozen-lockfile
       - name: Build packages
         run: |
           (cd vibe && bun run build)
           (cd npm/vibe-cli && bun run build)
-      - name: Publish to GitHub Packages
+      - name: Publish to npm
         run: |
           (cd vibe && npm publish)
           (cd npm/vibe-cli && npm publish)
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   attach-binaries:
     name: Attach artifacts to release
