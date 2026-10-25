@@ -8,53 +8,34 @@ Claude automatically loads skills from the `.claude/skills` directory, which is 
 
 ## Agent Guidelines
 
-When operating as an autonomous software engineer, Claude should follow these principles:
+When working in this repository, follow these principles:
 
-1. **Inspect First**: Always examine the codebase structure and existing patterns before making changes
-2. **Plan Before Coding**: Create a clear, step-by-step implementation plan
-3. **Use Skills Proactively**: Automatically invoke relevant skills based on task requirements
-4. **Reuse Existing Patterns**: Prefer extending established solutions over creating new approaches
-5. **Iterative Development**: Make small, verifiable changes that can be independently validated
-6. **Continuous Testing**: Run tests after every meaningful change to prevent regressions
-7. **Documentation Updates**: Keep documentation synchronized with code modifications
-8. **Parallel Execution**: Leverage concurrent processing for independent tasks when beneficial
-9. **Completion Verification**: Consider work complete only when fully implemented, tested, and integrated
+1. **Inspect first**: read the affected package and its tests before changing it. Packages depend
+   only on the layers below them (see `docs/architecture/02-package-topology.md`); do not add an
+   upward or cyclic dependency.
+2. **Plan before coding** for anything that crosses packages: state the steps, then make them.
+3. **Reuse existing patterns**: extend the established seam (`guardTool`/policies for governance,
+   `runLoop` options for loop behavior, `createInMemory*` stores for persistence) instead of adding
+   a parallel mechanism.
+4. **Keep changes small and verifiable**: run the affected package's tests after each meaningful
+   change, then the full suite before finishing.
+5. **Keep docs in sync**: when behavior changes, update `docs/architecture/` in the same change.
+   Do not describe a package as planned once it ships.
+6. **Errors and logs**: library code throws typed errors from `vibe/errors` and logs through
+   `vibe/logger`. No bare `throw new Error` or `console.log` in library code.
 
 ## Standard Workflow
 
-### 1. Exploration Phase
-- Use `@workspace` to understand project structure
-- Search for similar implementations with `@grep` or `@web`
-- Review relevant documentation
+1. **Explore**: read the relevant package with `Read`, and search with `Grep`/`Glob`. For broad
+   questions, use the `Explore` agent.
+2. **Plan**: list the implementation steps and decide how each will be tested.
+3. **Implement**: one piece at a time. Use `Edit` for targeted changes.
+4. **Validate**: `bun run test`, `bun run typecheck`, `bun run lint`, `bun run format:check`.
+   Run the package-scoped test (`bun run test --filter=<package>`) while iterating.
+5. **Complete**: update docs, remove temporary files, and confirm every requirement is met.
 
-### 2. Planning Phase
-- Create a numbered list of implementation steps
-- Identify which skills are needed for the task
-- Determine how to test the implementation
-
-### 3. Implementation Phase
-- Implement one piece of functionality at a time
-- Use appropriate Cursor commands:
-  - `/chat` for discussions and planning
-  - `/edit` for targeted code changes
-  - `/terminal` for running commands
-- Apply skills as needed:
-  - `@code-review` for self-review
-  - `@test` to generate/update tests
-  - `@docs` to update documentation
-
-### 4. Validation Phase
-- Run relevant tests: `bun run test` or scoped tests
-- Check types: `bun run typecheck`
-- Validate code quality: `bun run lint`
-- Verify formatting: `bun run format:check`
-- Manual verification when needed
-
-### 5. Completion Phase
-- Update documentation (READMEs, JSDoc, comments)
-- Clean up debugging code and temporary files
-- Ensure git history has meaningful commit messages
-- Verify all acceptance criteria are met
+Packages resolve each other through their built `dist`. After changing a package that others
+import, run `bun run build` before typechecking or testing the dependents.
 
 ## Project Commands
 

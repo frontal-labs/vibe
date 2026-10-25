@@ -193,9 +193,11 @@
       "dependencies": {
         "@standard-schema/spec": "^1.1.0",
         "vibe/errors": "workspace:*",
+        "vibe/governance": "workspace:*",
         "vibe/logger": "workspace:*",
         "vibe/memory": "workspace:*",
         "vibe/model": "workspace:*",
+        "vibe/plugin": "workspace:*",
         "vibe/runtime": "workspace:*",
         "vibe/tools": "workspace:*",
         "zod": "^4.4.3",
@@ -261,6 +263,7 @@
         "vibe/shared": "workspace:*",
         "vibe/skills": "workspace:*",
         "vibe/tools": "workspace:*",
+        "vibe/tracing": "workspace:*",
         "vibe/workflows": "workspace:*",
       },
       "devDependencies": {
@@ -325,12 +328,19 @@
       "name": "vibe/evals",
       "version": "0.0.1",
       "dependencies": {
+        "vibe/errors": "workspace:*",
         "vibe/shared": "workspace:*",
       },
       "devDependencies": {
         "tsd": "^0.31.2",
+        "vibe/agent": "workspace:*",
+        "vibe/governance": "workspace:*",
+        "vibe/memory": "workspace:*",
+        "vibe/model": "workspace:*",
+        "vibe/tools": "workspace:*",
         "vite": "^6.0.0",
         "vitest": "^4.1.11",
+        "zod": "^4.4.3",
       },
     },
     "packages/governance": {
@@ -397,6 +407,7 @@
       "name": "vibe/memory",
       "version": "0.1.0",
       "dependencies": {
+        "vibe/errors": "workspace:*",
         "vibe/model": "workspace:*",
         "vibe/shared": "workspace:*",
       },
