@@ -1,13 +1,37 @@
 import { runtimeError } from "vibe/errors"
-import type { CompactionStrategy, Conversation } from "vibe/memory"
+import type { PolicyEngine, PolicyRequest } from "vibe/governance"
+import type { CompactionStrategy, Conversation, Memory, Message } from "vibe/memory"
 import { buildRequest } from "vibe/memory"
-import type { ContentBlock, Effort, ModelProvider, ModelResponse, TokenUsage } from "vibe/model"
+import type {
+  ContentBlock,
+  Effort,
+  ModelProvider,
+  ModelRequest,
+  ModelResponse,
+  TokenUsage,
+} from "vibe/model"
 import { contextWindowFor, priceUsd, tokenFamilyFor } from "vibe/model"
-import { createCancellationTokenSource, defaultRetryPolicy, executeWithRetry } from "vibe/runtime"
+import {
+  type CancellationToken,
+  calculateDelay,
+  createCancellationTokenSource,
+  defaultRetryPolicy,
+  isRetryableError,
+  type RetryPolicy,
+} from "vibe/runtime"
 import type { ToolRegistry } from "vibe/tools"
-import { runToolCall } from "vibe/tools"
+import { frameUntrustedOutput, runToolCall } from "vibe/tools"
 
+import { AGENT_HOOKS, type AgentHookEmitter } from "./hooks"
+import { summarizeHistory } from "./summarize"
 import type { AgentEvent, AgentInput, AgentResult, RunOptions, RunTimings } from "./types"
+
+/** Agent-level governance: every tool call is checked against `engine` before it runs. */
+export interface GovernanceConfig {
+  engine: PolicyEngine
+  /** Called when a policy requires approval; resolve `true` to allow the call. Default: deny. */
+  onApproval?: (request: PolicyRequest) => boolean | Promise<boolean>
+}
 
 export interface LoopConfig {
   provider: ModelProvider
@@ -24,6 +48,17 @@ export interface LoopConfig {
   budget?: number
   /** How to compact the transcript when over budget. Defaults to `drop-oldest`. */
   compaction?: CompactionStrategy
+  /** Policy enforcement for tool calls. Absent means no policy (every call is allowed). */
+  governance?: GovernanceConfig
+  /** Conversation store. Used only by runs that pass `options.conversationId`. */
+  memory?: Memory
+  /** Delivers `agent:*` hooks to plugins. Absent means no hooks are emitted. */
+  hooks?: AgentHookEmitter
+  /**
+   * Wrap tool output in `<tool_output trust="untrusted">` before the model sees it. Default true.
+   * Framing is a mitigation against prompt injection through tool results, not a guarantee.
+   */
+  frameToolOutput?: boolean
 }
 
 const EMPTY_USAGE: TokenUsage = { inputTokens: 0, outputTokens: 0 }
@@ -40,10 +75,12 @@ function resolveBudget(config: LoopConfig): number {
 }
 
 /**
- * The agent run loop, as an async generator. `run()` drains it; `stream()`
- * exposes it directly. Each model round-trip is retried on transient provider
- * errors; tool calls run in parallel and their results are appended as one user
- * message before the next iteration — the standard agentic loop.
+ * The agent run loop, as an async generator. `run()` drains it; `stream()` exposes it directly.
+ *
+ * Each iteration: optional summarizing compaction → stream the model response (text and thinking
+ * deltas are forwarded as they arrive) → authorize and run tool calls in parallel → append the
+ * results as one user message. When `options.checkpoint` is set, the transcript is saved after
+ * every completed iteration and a prior checkpoint for the same run id is resumed.
  */
 export async function* runLoop(
   config: LoopConfig,
@@ -55,14 +92,30 @@ export async function* runLoop(
   // Own a token source so retry/cancellation work even when the caller gives none.
   const token = options.cancellationToken ?? createCancellationTokenSource().token
   const maxIterations = options.maxIterations ?? 10
-  const policy = defaultRetryPolicy()
+  const retry = defaultRetryPolicy()
   const budget = resolveBudget(config)
   const tokenFamily = tokenFamilyFor(config.model)
+  const frame = config.frameToolOutput ?? true
+  const checkpoint = options.checkpoint
+  const persisted =
+    config.memory && options.conversationId
+      ? { store: config.memory, id: options.conversationId }
+      : undefined
 
-  conversation.append({ role: "user", content: text })
-
+  const resumed = checkpoint ? await checkpoint.store.load(checkpoint.runId) : undefined
   let iterations = 0
-  let usage = EMPTY_USAGE
+  let usage: TokenUsage = EMPTY_USAGE
+  if (resumed) {
+    conversation.replace(resumed.messages as Message[])
+    iterations = resumed.iteration
+    usage = resumed.usage
+    options.logger?.info("agent:resume", { runId: checkpoint?.runId, iteration: iterations })
+  } else {
+    // A persisted conversation contributes its earlier turns before the new input.
+    if (persisted) conversation.appendMany(await persisted.store.load(persisted.id))
+    conversation.append({ role: "user", content: text })
+  }
+
   const timings = newTimings()
   const startedAt = performance.now()
 
@@ -80,9 +133,24 @@ export async function* runLoop(
         )
       }
     }
+    await config.hooks?.(AGENT_HOOKS.iteration, {
+      iteration: iterations,
+      conversationId: options.conversationId,
+    })
     yield { type: "iteration", iteration: iterations }
 
-    const request = buildRequest({
+    if (config.compaction === "summarize") {
+      const summaryUsage = await summarizeHistory({
+        provider,
+        model: config.model,
+        conversation,
+        system: config.system,
+        budget,
+      })
+      if (summaryUsage) usage = addUsage(usage, summaryUsage)
+    }
+
+    const request: ModelRequest = buildRequest({
       model: config.model,
       conversation,
       system: config.system,
@@ -95,22 +163,15 @@ export async function* runLoop(
     })
 
     const modelStart = performance.now()
-    const response: ModelResponse = await executeWithRetry(() => provider.generate(request), {
-      policy,
-      cancellationToken: token,
-      timeoutMs: undefined,
-      onAttempt: (attempt, error) =>
-        options.logger?.warn("model:retry", { attempt, error: String(error) }),
+    const response: ModelResponse = yield* streamModel(provider, request, {
+      token,
+      retry,
+      logger: options.logger,
     })
     const modelMs = performance.now() - modelStart
 
     usage = addUsage(usage, response.usage)
     conversation.append({ role: "assistant", content: response.content })
-
-    for (const block of response.content) {
-      if (block.type === "text") yield { type: "text", delta: block.text }
-      else if (block.type === "thinking") yield { type: "thinking", delta: block.text }
-    }
 
     if (response.stopReason !== "tool_use") {
       // end_turn | max_tokens | refusal | pause → the run is over.
@@ -118,47 +179,176 @@ export async function* runLoop(
       timings.totalMs = performance.now() - startedAt
       yield { type: "timing", iteration: iterations, modelMs, toolsMs: 0 }
       const result = finish(response, usage, iterations, conversation, timings)
+      if (persisted) await persisted.store.save(persisted.id, conversation.snapshot())
+      if (checkpoint) await checkpoint.store.clear(checkpoint.runId)
+      await config.hooks?.(AGENT_HOOKS.done, {
+        text: result.text,
+        iterations,
+        stopReason: result.stopReason,
+        usage,
+      })
       yield { type: "done", result }
       return result
     }
 
-    // tool_use: announce every call, run them in parallel, then feed results back.
+    // tool_use: announce every call, authorize and run them in parallel, then feed results back.
     const calls = response.content.filter(isToolUse)
     for (const call of calls) {
+      await config.hooks?.(AGENT_HOOKS.toolCall, {
+        id: call.id,
+        name: call.name,
+        input: call.input,
+        actor: options.actor,
+      })
       yield { type: "toolCall", id: call.id, name: call.name, input: call.input }
     }
 
     const toolsStart = performance.now()
     const executed = await Promise.all(
       calls.map(async (call) => {
-        const tool = registry.get(call.name)
-        const block = tool
-          ? await runToolCall(
-              tool,
-              call.input,
-              { cancellationToken: token, logger: options.logger },
-              { timeoutMs: options.toolTimeoutMs },
-            ).then((r) => toolResultBlock(call.id, r.content, r.isError ?? false))
-          : toolResultBlock(call.id, `Unknown tool: "${call.name}"`, true)
-        return { call, block }
+        const raw = await executeCall(call, { registry, config, options, token })
+        const content =
+          frame && !raw.notice ? frameUntrustedOutput(call.name, raw.content) : raw.content
+        return { call, raw, block: toolResultBlock(call.id, content, raw.isError) }
       }),
     )
     const toolsMs = performance.now() - toolsStart
     recordIteration(timings, iterations, modelMs, toolsMs, calls.length)
     yield { type: "timing", iteration: iterations, modelMs, toolsMs }
 
-    for (const { call, block } of executed) {
+    for (const { call, raw, block } of executed) {
+      await config.hooks?.(AGENT_HOOKS.toolResult, {
+        id: call.id,
+        name: call.name,
+        content: raw.content,
+        isError: block.isError,
+      })
       yield {
         type: "toolResult",
         id: call.id,
         name: call.name,
-        content: block.content,
-        isError: block.isError,
+        content: raw.content,
+        isError: raw.isError,
       }
     }
 
     conversation.append({ role: "user", content: executed.map((e) => e.block) })
+
+    // The iteration is complete (assistant turn and all tool results are in the transcript), so
+    // it is a safe point to resume from.
+    if (checkpoint) {
+      await checkpoint.store.save(checkpoint.runId, {
+        messages: conversation.snapshot(),
+        iteration: iterations,
+        usage,
+      })
+    }
   }
+}
+
+interface StreamContext {
+  token: CancellationToken
+  retry: RetryPolicy
+  logger: RunOptions["logger"]
+}
+
+/**
+ * Stream one model call, forwarding text and thinking deltas as they arrive, and return the final
+ * response. A transient failure is retried only before the first delta reaches the caller, so a
+ * consumer never sees the same text twice.
+ */
+async function* streamModel(
+  provider: ModelProvider,
+  request: ModelRequest,
+  ctx: StreamContext,
+): AsyncGenerator<AgentEvent, ModelResponse> {
+  for (let attempt = 1; ; attempt++) {
+    ctx.token.throwIfCancelled()
+    let emitted = false
+    try {
+      let final: ModelResponse | undefined
+      for await (const event of provider.stream(request)) {
+        if (event.type === "done") {
+          final = event.response
+        } else if (event.type === "text" || event.type === "thinking") {
+          emitted = true
+          yield { type: event.type, delta: event.delta }
+        }
+      }
+      if (!final) throw runtimeError("Model stream ended without a final response")
+      return final
+    } catch (error) {
+      const retryable =
+        !emitted &&
+        attempt < ctx.retry.maxAttempts &&
+        !ctx.token.cancelled &&
+        isRetryableError(error)
+      if (!retryable) throw error
+      ctx.logger?.warn("model:retry", { attempt, error: String(error) })
+      await new Promise((resolve) => setTimeout(resolve, calculateDelay(attempt, ctx.retry)))
+    }
+  }
+}
+
+interface ExecuteContext {
+  registry: ToolRegistry
+  config: LoopConfig
+  options: RunOptions
+  token: CancellationToken
+}
+
+interface CallOutcome {
+  content: string
+  isError: boolean
+  /**
+   * True when the content is the runtime's own notice (unknown tool, governance refusal) rather
+   * than output from a tool. Only tool output is framed as untrusted data.
+   */
+  notice: boolean
+}
+
+/** Authorize one tool call against governance, then run it. Never throws except on cancellation. */
+async function executeCall(
+  call: { id: string; name: string; input: unknown },
+  ctx: ExecuteContext,
+): Promise<CallOutcome> {
+  const tool = ctx.registry.get(call.name)
+  if (!tool) return { content: `Unknown tool: "${call.name}"`, isError: true, notice: true }
+
+  const refusal = await authorize(call, ctx)
+  if (refusal) return { content: refusal, isError: true, notice: true }
+
+  const result = await runToolCall(
+    tool,
+    call.input,
+    { cancellationToken: ctx.token, logger: ctx.options.logger },
+    { timeoutMs: ctx.options.toolTimeoutMs },
+  )
+  return { content: result.content, isError: result.isError ?? false, notice: false }
+}
+
+/** Returns a refusal message when policy denies the call, or approval is required and not given. */
+async function authorize(
+  call: { name: string; input: unknown },
+  ctx: ExecuteContext,
+): Promise<string | undefined> {
+  const governance = ctx.config.governance
+  if (!governance) return undefined
+
+  const request: PolicyRequest = {
+    tool: call.name,
+    input: call.input,
+    actor: ctx.options.actor,
+  }
+  const ruling = await governance.engine.evaluate(request)
+  if (ruling.decision === "deny") {
+    return ruling.reason ?? `Tool "${call.name}" is not permitted.`
+  }
+  if (ruling.decision === "require-approval") {
+    const approved = governance.onApproval ? await governance.onApproval(request) : false
+    if (!approved) return `Tool "${call.name}" requires approval and was not approved.`
+  }
+  return undefined
 }
 
 function newTimings(): RunTimings & {

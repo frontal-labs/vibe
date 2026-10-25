@@ -1,6 +1,6 @@
 import { createFakeProvider } from "vibe/model"
 import { createCancellationTokenSource } from "vibe/runtime"
-import { defineTool } from "vibe/tools"
+import { defineTool, frameUntrustedOutput } from "vibe/tools"
 import { describe, expect, it } from "vitest"
 import { z } from "zod"
 
@@ -33,7 +33,12 @@ describe("createAgent.run", () => {
     expect(result.transcript.map((m) => m.role)).toEqual(["user", "assistant", "user", "assistant"])
     const toolResultMsg = result.transcript[2]
     expect(toolResultMsg.content).toEqual([
-      { type: "toolResult", toolUseId: "c1", content: "echoed: hi", isError: false },
+      {
+        type: "toolResult",
+        toolUseId: "c1",
+        content: frameUntrustedOutput("echo", "echoed: hi"),
+        isError: false,
+      },
     ])
 
     // events include the tool call + its result
@@ -61,8 +66,18 @@ describe("createAgent.run", () => {
     const resultsMsg = result.transcript[2]
     expect(resultsMsg.role).toBe("user")
     expect(resultsMsg.content).toEqual([
-      { type: "toolResult", toolUseId: "a", content: "echoed: 1", isError: false },
-      { type: "toolResult", toolUseId: "b", content: "echoed: 2", isError: false },
+      {
+        type: "toolResult",
+        toolUseId: "a",
+        content: frameUntrustedOutput("echo", "echoed: 1"),
+        isError: false,
+      },
+      {
+        type: "toolResult",
+        toolUseId: "b",
+        content: frameUntrustedOutput("echo", "echoed: 2"),
+        isError: false,
+      },
     ])
   })
 
