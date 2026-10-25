@@ -1,5 +1,11 @@
 # Problems We Solve
 
+> **Status (2026-10-25).** This analysis describes the repository as it was when it was written.
+> Since then the agentic layer, durable checkpoints and conversations, OTLP trace export, typed
+> plugin hooks, and the `tsc` type-test setup have shipped. Where a claim below is now out of date,
+> it is marked **Resolved** or **Partly resolved** in place. For current behavior, read the
+> [architecture docs](../architecture/00-overview.md).
+
 The [Manifesto](../vision/00-manifesto.md) makes a claim: building an agent today
 is 5% agent and 95% undifferentiated infrastructure that every team rebuilds,
 badly. This page is the itemized version of that claim. For each pain point: what
@@ -8,7 +14,7 @@ package or design that removes it.
 
 Where a solution exists in code today it is described in the present tense and
 grounded in [the framework analysis](./00-framework-analysis.md). Where it is part
-of the planned agentic layer it is marked 🚧.
+of the agentic layer it is marked as such.
 
 ## The 95% at a glance
 
@@ -19,7 +25,7 @@ of the planned agentic layer it is marked 🚧.
 | A hung tool call with no bound | `vibe/runtime` — per-execution `timeoutMs` | ✅ |
 | Stringly-typed `catch (e)` | `vibe/errors` — `VibeError` + `ErrorCode` + `retryable`/`fatal` | ✅ |
 | "Is the process ready?" ambiguity | `vibe/lifecycle` — explicit state machine | ✅ |
-| Tool inputs/outputs typed as `any` | `vibe/tools` — Zod schema → JSON Schema + inferred handler types 🚧 | 🚧 |
+| Tool inputs/outputs typed as `any` | `vibe/tools` — Zod schema → JSON Schema + inferred handler types | ✅ |
 | `console.log` as observability | `vibe/logger` — leveled, structured, correlation-id context | ✅ |
 | A `Map` pretending to be a container | `vibe/di` — branded `ServiceToken<T>`, scopes, cycle detection | ✅ |
 | No seam to extend without forking | `vibe/plugin` — host + hooks + dependency validation | ✅ |
@@ -117,11 +123,11 @@ once as a TypeScript type for the handler — and the two drift. The handler rec
 This is the single weakest spot in most TS agent stacks, including the big
 frameworks (see [Positioning & landscape](../vision/01-positioning-and-landscape.md)).
 
-**How Vibe solves it (🚧).** `vibe/tools` defines a tool once with a Zod input
+**How Vibe solves it ().** `vibe/tools` defines a tool once with a Zod input
 schema. That one definition yields *both* the model-facing JSON Schema *and* the
 handler's argument type, inferred — no second declaration, no drift. A `ToolRegistry`
 holds the tools available to an agent, and MCP servers surface as tools through an
-adapter. This is planned, not built; it is designed in [Tools & MCP](../architecture/11-tools-and-mcp.md).
+adapter. The MCP adapter is designed in [Tools & MCP](../architecture/11-tools-and-mcp.md).
 The foundation is already in place: `vibe/errors` ships `ToolError`
 (`VIBE_TOOL_EXECUTION_FAILED`, retryable) so a failing tool is an observable value,
 not a crash.

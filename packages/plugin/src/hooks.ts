@@ -16,6 +16,7 @@ export function createPluginHooks(): PluginHooks & {
   const beforeHandlers = new Map<LifecycleEvent, HookHandler[]>()
   const afterHandlers = new Map<LifecycleEvent, HookHandler[]>()
 
+  // The typed overload is checked at the call site; the runtime stores every handler the same way.
   function on(name: HookName, handler: HookHandler): void {
     let entries = handlers.get(name)
     if (!entries) {

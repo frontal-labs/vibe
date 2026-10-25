@@ -19,6 +19,10 @@ export function createConversation(options: ConversationOptions = {}): Conversat
     appendMany(next) {
       for (const message of next) messages.push(message)
     },
+    replace(next) {
+      messages.length = 0
+      for (const message of next) messages.push(message)
+    },
     snapshot: () => messages.map((m) => ({ ...m })),
     size: () => messages.length,
   }

@@ -60,7 +60,7 @@ hooks.on("startup", (...args) => { /* args: unknown[] — you must narrow */ })
 
 There is no per-hook payload map today, so a handler can't know statically what
 `args` it will receive. Narrow defensively (the [guards in `vibe/shared`](./02-package-topology.md)
-— `isObject`, `isString` — are the tool for this). This is the seam the 🚧 agentic
+— `isObject`, `isString` — are the tool for this). This is the seam the agentic
 layer will close (below).
 
 ## `PluginHooks` internals: `execute` / `executeBefore` / `executeAfter`
@@ -149,15 +149,35 @@ const metricsPlugin: Plugin = {
 await system.plugins.register(metricsPlugin) // or pass via vibe.system({ plugins: [metricsPlugin] })
 ```
 
-## 🚧 Planned: typed `agent:*` hooks
+## Agent hooks
 
-The agentic layer adds hooks around the [agent loop](./09-agent-loop.md) — e.g.
-`agent:iteration:start`, `agent:tool:call`, `agent:tool:result`, `agent:done` — so
-plugins can observe and extend runs (add tools, mutate requests, record telemetry)
-without touching `core`. Crucially, these will ship with a **typed payload map**:
-instead of today's `(...args: unknown[])`, each `agent:*` hook will carry a
-declared, checked payload type, closing the untyped-payload gap noted above. Until
-then, named-hook payloads remain `unknown[]` and must be narrowed by hand.
+The agent loop emits four hooks, and the system delivers them to plugins registered on its plugin host:
+
+| Hook | When | Payload |
+|---|---|---|
+| `agent:iteration` | before each model round-trip | `{ iteration, conversationId? }` |
+| `agent:tool-call` | when the model requests a tool, before governance runs | `{ id, name, input, actor? }` |
+| `agent:tool-result` | after the tool finishes or is refused | `{ id, name, content, isError }` |
+| `agent:done` | when the run completes | `{ text, iterations, stopReason, usage }` |
+
+Handlers are typed. The payload types are declared on `vibe/plugin`'s `HookPayloadMap`, so
+`hooks.on("agent:done", (payload) => …)` gives `payload.text` its real type. A package that emits its
+own typed hooks adds them the same way, by declaration merging.
+
+### Stability of hook payloads
+
+Hook names and payload fields are a public contract, because plugins are written against them:
+
+- **Adding** an optional field, or a new hook, is non-breaking.
+- **Renaming or removing** a hook name or field, or changing a field's type, is breaking. It requires a
+  major version and a deprecation period in which the old field keeps working.
+
+`packages/agent/tests/hardening.test.ts` pins the exact field set of every payload, so an accidental
+rename fails the test suite. The typed-handler contract is checked by the type tests in
+`packages/core/type-tests/hooks.test-d.ts`.
+
+A handler that throws fails the run that triggered it. That is deliberate: a governance or audit plugin
+can stop an operation it guards. Hooks run in registration order, and the loop waits for each one.
 
 See [Core concepts → Plugin & Hooks](./01-core-concepts.md#plugin--hooks-exists)
 and [Package topology](./02-package-topology.md) for where `plugin` sits.

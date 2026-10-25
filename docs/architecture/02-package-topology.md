@@ -9,7 +9,7 @@ layering rules that keep it honest.
 ## The graph
 
 ```
-   ┌───────── NATIVE ACCELERATOR (🚧 · Rust crates/ workspace) ─────┐
+   ┌───────── NATIVE ACCELERATOR (optional · Rust crates/ workspace) ─────┐
    │  vibe_bundler (oxc tool-edge extraction)  +  vibe_napi (binding)│
    │      an optional accelerator for vibe/build ─────────────┐    │
    └───────────────────────────────────────────────────────────┼────┘
@@ -21,7 +21,7 @@ layering rules that keep it honest.
                                 │          (vibe/build ◀────────┘ consumes it)
           ┌─────────────────────┼─────────────────────┐
           │                     │                      │
-   ┌──────▼──────┐       ┌──────▼──────┐       (🚧 agentic layer slots here:
+   ┌──────▼──────┐       ┌──────▼──────┐       (agentic layer slots here:
    │ vibe/plugin│       │ vibe/runtime│         vibe/model → tools → memory → agent)
    └──────┬──────┘       └──────┬──────┘
           │                     │
@@ -54,9 +54,9 @@ The exact declared edges (from each `package.json`):
 | `vibe/plugin` | `errors`, `lifecycle`, `shared` |
 | `vibe/runtime` | `errors`, `lifecycle`, `shared` |
 | `vibe/core` | `di`, `errors`, `lifecycle`, `logger`, `plugin`, `runtime`, `shared` |
-| 🚧 `vibe/config` | `errors`, `shared` (+ types from `model`/`tools`/`plugin` for `VibeConfig`) |
-| 🚧 `vibe/build` | `errors`, `shared` (+ optional `vibe_napi` native accelerator) |
-| 🚧 `@frontal-labs/vibe-cli` | `core`, `build`, `config`, `errors`, `shared` |
+| `vibe/config` | `errors`, `shared` (+ types from `model`/`tools`/`plugin` for `VibeConfig`) |
+| `vibe/build` | `errors`, `shared` (+ optional `vibe_napi` native accelerator) |
+| `@frontal-labs/vibe-cli` | `core`, `build`, `config`, `errors`, `shared` |
 
 The native accelerator is **dev-time**: it runs at build time and is not shipped in
 the running agent. Note the `vibe_napi` reference above is *not* a Rust-to-`vibe/*`
@@ -142,7 +142,7 @@ for the nouns.
   the system services as tokens (see [DI](./03-dependency-injection.md#how-core-registers-system-services)).
   It is the *only* package allowed to know about all the others.
 
-### 🚧 Agentic layer (planned)
+### Agentic layer
 
 The agentic packages slot **between orchestration and core**, depending downward on
 foundations + orchestration, never sideways-up into `core`:
@@ -154,7 +154,7 @@ vibe/memory  →  conversation + long-term memory (built on shared's ContextStor
 vibe/agent   →  the agent loop; runs on vibe/runtime
 ```
 
-Their intended edges: `model → {errors, runtime, di, logger, shared}`;
+Their edges: `model → {errors, runtime, di, logger, shared}`;
 `tools → {errors, runtime, di, shared}`; `memory → {shared, errors}`;
 `agent → {model, tools, memory, runtime, di, logger, errors, plugin}`. `core` then
 gains a dependency on `agent` (+ `model`) so `ask()` can resolve a default agent
@@ -162,7 +162,12 @@ and delegate to it. The direction never reverses — `runtime` will never import
 `agent`. See [The agent loop](./09-agent-loop.md) and
 [Model & provider layer](./10-model-provider-layer.md).
 
-### 🚧 Build tooling & the native accelerator (planned)
+### Build tooling & the native accelerator
+
+**Status.** `vibe/build` and `vibe/config` ship with tests. The native accelerator is optional and
+built on demand: `bun run cargo:napi` produces `target/release/vibe_napi.node`. Point the runtime at
+it with `VIBE_NATIVE_ADDON=<path>`. Without it, every path uses the TypeScript fallback, so behavior
+is the same either way; the native path is covered by tests that run when the addon is present.
 
 Above the runtime sits the build tooling that turns a Vibe app's plain-TypeScript
 agents and tools into a deployable bundle. It is ordinary `vibe/*` TypeScript,

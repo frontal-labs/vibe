@@ -105,8 +105,8 @@ sequence.
 | Foundations | `shared`, `errors`, `di`, `lifecycle`, `logger` | ✅ Implemented |
 | Orchestration | `plugin`, `runtime` | ✅ Implemented |
 | Composition root | `core` | ✅ Wired; `ask()` stubbed |
-| Agentic layer | `model`, `tools`, `agent`, `memory` | 🚧 Planned — see [Agentic implementation plan](./plan/02-agentic-implementation-plan.md) |
-| Framework front door | `config`, `vibe` (meta) | 🚧 Planned — see [Configuration & bootstrap](./architecture/14-configuration-and-bootstrap.md) |
+| Agentic layer | `model`, `tools`, `agent`, `memory`, `governance` | Implemented — see [Agent loop](./architecture/09-agent-loop.md) |
+| Framework front door | `config`, `vibe` (meta) | Implemented — see [Configuration & bootstrap](./architecture/14-configuration-and-bootstrap.md) |
 | Bundler accelerator (Rust) | `crates/vibe_bundler`, `crates/vibe_napi` | ✅ oxc-based tool-edge extraction for `vibe/build` (optional native accelerator) |
 
 The infrastructure is real and tested. The agentic layer is designed here and not
@@ -118,6 +118,5 @@ documentation is the blueprint for making it work.
 - Model IDs follow the current Anthropic catalog. The default model is
   `claude-opus-4-8`; adaptive thinking (`thinking: { type: "adaptive" }`) is the
   default reasoning mode. See [Model spec](./specs/model-spec.md).
-- Code marked 🚧 is proposed API, not yet in `packages/`. Code without a marker
-  reflects what exists today.
+- Code examples use the API as it is implemented in `packages/`.
 - Package names use the `vibe/*` scope as declared in each `package.json`.

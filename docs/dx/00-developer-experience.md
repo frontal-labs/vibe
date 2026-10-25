@@ -13,11 +13,11 @@ and the compiler is on your side the whole way.**
 | Principle | The promise | The mechanism |
 |---|---|---|
 | One-line happy path + escape hatch | `vibe.system({name}).ask("…")` works with zero ceremony; every layer under it is public | `vibe/core` `vibe.system()` → default agent; DI tokens expose the internals |
-| Type inference over configuration | Describe data once, get types everywhere | One Zod schema per tool → handler args *and* JSON Schema 🚧 |
+| Type inference over configuration | Describe data once, get types everywhere | One Zod schema per tool → handler args *and* JSON Schema |
 | Errors as typed values | Branch on a code, never parse a string | `VibeError` subclasses with `ErrorCode` |
 | Observability built in | Every model/tool call is a structured log line with a trace id | `vibe/logger` context store threaded through the loop |
 | Modular install | Use one package without dragging in the rest | Acyclic `vibe/*` graph; `shared` depends on nothing |
-| Progressive disclosure | Learn one concept at a time, in the order you need it | Layered API: `ask()` → `defineTool` 🚧 → `createAgent` 🚧 → custom provider |
+| Progressive disclosure | Learn one concept at a time, in the order you need it | Layered API: `ask()` → `defineTool` → `createAgent` → custom provider |
 
 ## One-line happy path, always-available escape hatch
 
@@ -28,7 +28,7 @@ import { vibe } from "vibe/core"
 
 const system = vibe.system({ name: "support-bot" })
 await system.start()
-const answer = await system.ask("What's the status of order #1024?") // 🚧
+const answer = await system.ask("What's the status of order #1024?")
 ```
 
 `ask()` currently throws `notImplementedError` — it is wired in the
@@ -41,10 +41,10 @@ The escape hatch is not a rewrite; it is the *same object* exposing more surface
 `System` already gives you `name`, `info`, `logger`, `plugins`, `runtime`, and the
 `init`/`start`/`stop` lifecycle. Everything the default agent uses is resolvable
 through the DI container by token, so "I need to control the model" is a
-`system.agent({ model })` 🚧 call, not a fork:
+`system.agent({ model })` call, not a fork:
 
 ```ts
-const research = system.agent({          // 🚧 escape hatch: same system, custom agent
+const research = system.agent({          // escape hatch: same system, custom agent
   model: "claude-fable-5",
   system: "You are a meticulous research analyst.",
   tools: [searchTool, fetchTool],
@@ -58,11 +58,11 @@ No cliff between "hello world" and "production." You climb, you don't jump.
 
 Configuration you have to keep in sync is a bug waiting to happen. Vibe's stance is
 to **describe a thing once and infer the rest**. The canonical example is a tool
-🚧: you write one Zod schema, and it simultaneously becomes the model-facing JSON
+: you write one Zod schema, and it simultaneously becomes the model-facing JSON
 Schema *and* the static type of your handler's arguments.
 
 ```ts
-import { defineTool } from "vibe/tools" // 🚧
+import { defineTool } from "vibe/tools"
 import { z } from "zod"
 
 const getWeather = defineTool({
@@ -149,9 +149,9 @@ The API is arranged so you learn one concept at a time, in the order you actuall
 need it:
 
 1. **`vibe.system({ name }).ask("…")`** — you know nothing but the entry point.
-2. **`defineTool({ … })`** 🚧 — add a capability; meet Zod-schema inference.
-3. **`system.agent({ model, system, tools })`** 🚧 — control the model and prompt.
-4. **`RunOptions` / `agent.stream()`** 🚧 — bound iterations, cancel, stream events.
+2. **`defineTool({ … })`** — add a capability; meet Zod-schema inference.
+3. **`system.agent({ model, system, tools })`** — control the model and prompt.
+4. **`RunOptions` / `agent.stream()`** — bound iterations, cancel, stream events.
 5. **DI tokens + custom `ModelProvider`** — swap the provider, register your own
    services against branded tokens.
 

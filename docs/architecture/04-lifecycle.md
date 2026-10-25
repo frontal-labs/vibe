@@ -159,7 +159,7 @@ Because transitions are idempotent, calling `system.start()` twice is harmless, 
 so is a double `stop()` — exactly the property you want when process signals and
 error handlers might both trigger shutdown.
 
-🚧 In the agentic layer, model providers, MCP connections, and tool resources
+In the agentic layer, model providers, MCP connections, and tool resources
 attach their own `onBefore`/`onAfter` handlers here (warm-up on `init`/`start`,
 teardown on `stop`), so provider connections open and close in order, once — see
 [Model & provider layer](./10-model-provider-layer.md#lifecycle--runtime-integration).

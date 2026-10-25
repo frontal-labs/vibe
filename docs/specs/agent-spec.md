@@ -1,6 +1,6 @@
 # Agent Spec
 
-> 🚧 Planned — package `vibe/agent`. The authoritative contract for the `Agent`
+> Package `vibe/agent`. The authoritative contract for the `Agent`
 > interface, its inputs/options/results, its event stream, and the loop
 > guarantees. This spec is kept **100% consistent with**
 > [The agent loop](../architecture/09-agent-loop.md); that page explains the *why*

@@ -1,5 +1,11 @@
 # Current-State Audit
 
+> **Status (2026-10-25).** This analysis describes the repository as it was when it was written.
+> Since then the agentic layer, durable checkpoints and conversations, OTLP trace export, typed
+> plugin hooks, and the `tsc` type-test setup have shipped. Where a claim below is now out of date,
+> it is marked **Resolved** or **Partly resolved** in place. For current behavior, read the
+> [architecture docs](../architecture/00-overview.md).
+
 An honest, severity-ranked inventory of the repository as it stands. This is the
 "what's actually true today" companion to the aspirational [vision](../vision/00-manifesto.md).
 Nothing here is hidden; a framework that wants to be the best starts by being

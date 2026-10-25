@@ -1,4 +1,4 @@
-import { expectError, expectType } from "tsd"
+import { expectType } from "tsd"
 
 import type { System } from "../src/system"
 import type { SystemInfo } from "../src/types"
@@ -13,5 +13,7 @@ expectType<number>(system.info.pluginCount)
 expectType<Promise<string>>(system.ask("hello"))
 
 // Invalid config should be caught
-expectError(vibe.system({}))
-expectError(vibe.system({ name: 123 }))
+// @ts-expect-error: `name` is required
+vibe.system({})
+// @ts-expect-error: `name` must be a string
+vibe.system({ name: 123 })

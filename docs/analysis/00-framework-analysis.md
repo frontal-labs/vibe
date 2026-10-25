@@ -1,13 +1,19 @@
 # Framework Analysis
 
+> **Status (2026-10-25).** This analysis describes the repository as it was when it was written.
+> Since then the agentic layer, durable checkpoints and conversations, OTLP trace export, typed
+> plugin hooks, and the `tsc` type-test setup have shipped. Where a claim below is now out of date,
+> it is marked **Resolved** or **Partly resolved** in place. For current behavior, read the
+> [architecture docs](../architecture/00-overview.md).
+
 A package-by-package assessment of what exists in `packages/` **today**. This is
 grounded in the actual source, not the roadmap. For the aspirational picture see
 the [Manifesto](../vision/00-manifesto.md); for the honest, severity-ranked issue
 list see the [Current-state audit](./03-current-state-audit.md).
 
-Eight packages are built and tested. The four agentic packages (`model`, `tools`,
-`memory`, `agent`) are 🚧 planned and appear only in the docs — they are **not**
-in `packages/` yet, so they are out of scope here.
+The foundations and the agentic packages (`model`, `tools`, `memory`, `agent`, `governance`) are
+built and tested. Where this analysis describes an earlier state, the architecture docs are the
+current reference.
 
 ## Dependency graph
 
@@ -273,7 +279,7 @@ external code can subscribe safely.
 
 **Gaps / notes.**
 
-- **Hooks are untyped by argument.** `HookHandler` is `(...args: unknown[])`. The
+- **Hooks are untyped by argument.** *(Resolved: the agent hooks are typed through `vibe/plugin`'s `HookPayloadMap`; see the [plugin system](../architecture/06-plugin-system.md#agent-hooks).)* `HookHandler` is `(...args: unknown[])`. The
   lifecycle hooks are keyed by `LifecycleEvent`, but the payloads are `unknown`.
   When the agentic layer adds `agent:beforeModelCall`-style hooks, they will need a
   typed hook-map. Flagged 🟡 in the [audit](./03-current-state-audit.md#-hooks-are-untyped-by-argument).
@@ -408,7 +414,7 @@ then logs. `start()` composes `init()` then `start()`, giving a one-call bring-u
   `ProviderRateLimitError`, `ValidationError` already exist with the right
   `retryable`/`fatal` flags, and `runtime` already consumes `retryable` — the
   agentic layer inherits a correct error model on day one.
-- **"Durable" is a design promise, not yet a runtime property.** The runtime's
+- **"Durable" is a design promise, not yet a runtime property.** *(Partly resolved: agent checkpoints and conversations now persist through file-backed stores, and `vibe/runtime` is still in-memory.)* The runtime's
   persistence, checkpoint-resume, and live streaming are shaped but in-memory. This
   is the single largest gap between the docs' language and the current code, and
   the honest place to set expectations. See [Bottlenecks & trade-offs](./02-bottlenecks-and-tradeoffs.md).

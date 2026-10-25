@@ -1,5 +1,6 @@
 import type { StandardSchemaV1 } from "@standard-schema/spec"
 import type { Logger } from "vibe/logger"
+import type { CheckpointStore } from "vibe/memory"
 import type { ModelResponse, StopReason, TokenUsage } from "vibe/model"
 import type { CancellationToken } from "vibe/runtime"
 import type { AnyTool, Tool } from "vibe/tools"
@@ -25,6 +26,18 @@ export interface RunOptions {
   onEvent?: (event: AgentEvent) => void
   /** Actor/tenant id for attributing governance, rate-limit, and audit decisions. */
   actor?: string
+  /**
+   * Durable resumption. The transcript is saved to `store` after each completed iteration under
+   * `runId`; if a checkpoint for `runId` already exists, the run resumes from it instead of
+   * starting over. The checkpoint is cleared when the run completes.
+   */
+  checkpoint?: { runId: string; store: CheckpointStore }
+  /**
+   * Persist this run's conversation under `conversationId` in the agent's `memory` store. The
+   * earlier turns are loaded before the new input and the full transcript is saved on completion,
+   * so later runs with the same id continue the same conversation.
+   */
+  conversationId?: string
 }
 
 /** Where a run's wall-clock time went, split by model round-trips vs tool execution. */

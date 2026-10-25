@@ -32,6 +32,15 @@ export interface ObservabilityConfig {
   readonly tracing?: boolean
   /** Auto-record metrics/audit on system agents (default true). */
   readonly enforce?: boolean
+  /**
+   * Export traces to an OTLP/HTTP collector. Setting this turns tracing on. Export failures are
+   * logged and never fail a run.
+   */
+  readonly otlp?: {
+    readonly endpoint: string
+    readonly headers?: Readonly<Record<string, string>>
+    readonly serviceName?: string
+  }
 }
 
 /** Ontology: the domain entity contracts + optional semantic store for grounding. */

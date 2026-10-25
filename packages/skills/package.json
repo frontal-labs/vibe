@@ -20,9 +20,9 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite build --watch",
     "test": "vitest run --config vitest.config.ts",
-    "test:types": "tsd",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test:types": "tsc -p type-tests/tsconfig.json"
   },
   "dependencies": {
     "vibe/tools": "workspace:*",

@@ -1,7 +1,8 @@
 # The Agent Loop
 
-> 🚧 Planned — package `vibe/agent`. This is the heart of the agentic layer and
-> the thing `system.ask()` will delegate to.
+> Package `vibe/agent`. This is the heart of the agentic layer, and the thing
+> `system.ask()` delegates to. The section [Current behavior](#current-behavior) records
+> what the implementation guarantees.
 
 An agent is a loop. The model decides, calls tools, observes results, and decides
 again, until it emits a final answer or hits a bound. Vibe's contribution is
@@ -160,3 +161,32 @@ conversation — and returns `agent.run({ text: prompt }).text`. Advanced caller
 build their own `Agent` with a custom model, tools, and memory. See the
 [Agentic implementation plan](../plan/02-agentic-implementation-plan.md) for the
 build order.
+
+
+## Current behavior
+
+The loop in `packages/agent/src/loop.ts` provides these guarantees. Each one has tests in
+`packages/agent/tests/`.
+
+- **Streaming.** Each model call uses `provider.stream()`. Text and thinking deltas reach the
+  caller as they arrive, and the final response is assembled from the provider's `done` event.
+- **Retry without duplication.** A transient failure is retried only if no delta has reached the
+  caller yet. After that point a retry would repeat text, so the error is raised instead.
+- **Governance.** When an agent has a `governance` engine, every tool call is evaluated before it
+  runs. `deny` returns an error result to the model; `require-approval` runs the call only if
+  `onApproval` resolves `true`, and is denied when no callback is given. `system.agent()` uses the
+  system's policy engine by default; `governance.enforce: false` opts out.
+- **Tool output framing.** Tool output reaches the model wrapped in
+  `<tool_output tool="…" trust="untrusted">…</tool_output>`, with embedded closing tags escaped.
+  Runtime notices (unknown tool, governance refusal) are not framed. Framing mitigates prompt
+  injection through tool results; it does not replace policy checks.
+- **Checkpoints.** With `checkpoint: { runId, store }`, the transcript is saved after each
+  completed iteration, and a later run with the same `runId` resumes from it. The checkpoint is
+  cleared on completion. Tool calls in the interrupted iteration may run again on resume, so tools
+  with side effects should be idempotent.
+- **Compaction.** `drop-oldest` and `middle-out` trim whole turns. Cuts never fall between a tool
+  call and its result (`isCutPoint`). `summarize` replaces older turns with a model-written summary
+  and keeps recent turns verbatim.
+- **Budgets.** `maxIterations`, `maxCostCents`, and `toolTimeoutMs` bound a run. Token estimates
+  count tool results and tool inputs by their text, so large tool output is compacted rather than
+  overflowing the provider.

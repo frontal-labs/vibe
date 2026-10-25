@@ -1,5 +1,11 @@
 # Bottlenecks & Trade-offs
 
+> **Status (2026-10-25).** This analysis describes the repository as it was when it was written.
+> Since then the agentic layer, durable checkpoints and conversations, OTLP trace export, typed
+> plugin hooks, and the `tsc` type-test setup have shipped. Where a claim below is now out of date,
+> it is marked **Resolved** or **Partly resolved** in place. For current behavior, read the
+> [architecture docs](../architecture/00-overview.md).
+
 A framework that wants to be the best starts by being honest about its limits. The
 [Manifesto](../vision/00-manifesto.md) sells the upside; this page is the fine
 print. It covers the hard physical limits Vibe cannot repeal (they belong to the
@@ -27,7 +33,7 @@ No amount of framework engineering makes a five-turn agent faster than five mode
 round-trips plus the tool work between them.
 
 What Vibe does: it removes *added* latency and makes the unavoidable latency
-observable and cancellable. Streaming (🚧 `vibe/model`) surfaces tokens as they
+observable and cancellable. Streaming (`vibe/model`) surfaces tokens as they
 arrive so time-to-first-token, not time-to-completion, is what the user feels;
 `vibe/runtime` cancellation lets you abandon a slow run cleanly; the
 [logger](../architecture/08-logging-observability.md) records per-call latency so
@@ -42,7 +48,7 @@ Every message, tool schema, and thinking block is tokens, and tokens are billed.
 Long-running agents accumulate conversation history until it either costs a fortune
 or overflows the context window. This is a hard economic and physical ceiling.
 
-What Vibe does: `vibe/memory` (🚧) owns the request builder and conversation
+What Vibe does: `vibe/memory` () owns the request builder and conversation
 history and is designed with compaction / context-editing hooks so history can be
 summarized or trimmed before it overflows; prompt caching (below) cuts the cost of
 the stable prefix. The defaults help too — `effort` (not raw `budget_tokens`) and
@@ -55,7 +61,7 @@ trade. See [Memory & context](../architecture/12-memory-and-context.md).
 
 An agent is a loop that runs "until it's done." Left truly open-ended, a model can
 loop forever — calling the same tool, oscillating between two, or never emitting
-`end_turn`. So the [agent loop](../architecture/09-agent-loop.md) (🚧 `vibe/agent`)
+`end_turn`. So the [agent loop](../architecture/09-agent-loop.md) (`vibe/agent`)
 will enforce a **maximum-iteration bound**.
 
 The trade-off is unavoidable and it cuts both ways: too low a ceiling truncates
@@ -129,7 +135,7 @@ Prompt caching makes long, stable prefixes cheap — but only if the prefix is
 front of the request (reordering tools, editing the system prompt, injecting a
 timestamp near the top) invalidates the cache and re-bills the whole prefix.
 
-This constrains the design more than it first appears: the request builder (🚧
+This constrains the design more than it first appears: the request builder (
 `vibe/memory`) must keep the stable prefix — system prompt, tool schemas — fixed
 and append new turns at the end; context compaction, which by definition rewrites
 history, is in direct tension with cache stability and must be applied
@@ -157,6 +163,8 @@ otherwise they're built on shifting sand. The complexity is the price of the
 modularity; keeping it coherent is ongoing work, not a one-time setup.
 
 ## 🧱 "Durable" is a design promise, not yet a runtime property
+
+> *Partly resolved.* The agent loop now has durable checkpoints and conversations (`createFileCheckpointStore`, `createFileMemory`). The points below still apply to `vibe/runtime`.
 
 The [framework analysis](./00-framework-analysis.md#viberuntime) is explicit about
 this and it is the single most important expectation to set: `vibe/runtime`'s
