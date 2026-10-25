@@ -1247,7 +1247,19 @@ checksum = "543cb3159108e6469bcf9e979ba04580e321587febe0e950fba9f2b4d743cf0d"
 dependencies = [
  "allocator-api2",
  "hashbrown 0.17.1",
- "oxc_data_structures",
+ "oxc_data_structures 0.139.0",
+ "rustc-hash",
+]
+
+[[package]]
+name = "oxc_allocator"
+version = "0.155.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45c8f46c8923b4afb4dd588d4684d5dd32332f1341225c066cc6af31094e7e3d"
+dependencies = [
+ "allocator-api2",
+ "hashbrown 0.17.1",
+ "oxc_data_structures 0.155.0",
  "rustc-hash",
 ]
 
@@ -1258,9 +1270,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "888b93d95de1a7fbc4ce37daa121b2c794ee353e9ef8ea785edbb6ee88537b82"
 dependencies = [
  "bitflags",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast_macros",
- "oxc_data_structures",
+ "oxc_data_structures 0.139.0",
  "oxc_diagnostics",
  "oxc_estree",
  "oxc_regular_expression",
@@ -1288,6 +1300,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b8bdb773c529a85c0996f4a25e7e2a06f89e3010b6165f4c55c4e5bb41f54227"
 
 [[package]]
+name = "oxc_data_structures"
+version = "0.155.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a46b759a8cb13a1111649370f1d769322b082edabd625466254f238818bdc9e9"
+
+[[package]]
 name = "oxc_diagnostics"
 version = "0.139.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1307,7 +1325,7 @@ dependencies = [
  "cow-utils",
  "num-bigint 0.5.1",
  "num-traits",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast",
  "oxc_regular_expression",
  "oxc_span",
@@ -1342,9 +1360,9 @@ dependencies = [
  "memchr",
  "num-bigint 0.5.1",
  "num-traits",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast",
- "oxc_data_structures",
+ "oxc_data_structures 0.139.0",
  "oxc_diagnostics",
  "oxc_ecmascript",
  "oxc_regular_expression",
@@ -1362,7 +1380,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afefc289c56e23d536c2c16ed181b7c0782b91fa6d012ac521397d86a323d9dc"
 dependencies = [
  "bitflags",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast_macros",
  "oxc_diagnostics",
  "oxc_span",
@@ -1380,7 +1398,7 @@ checksum = "dd0db730f3d4404d222303ef317dd4909d2172dc2b049a3c0055fb68a6d1bfbf"
 dependencies = [
  "compact_str",
  "oxc-miette",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast_macros",
  "oxc_estree",
  "oxc_str",
@@ -1394,7 +1412,7 @@ checksum = "0f949880296388b726a52410c4c5865443ba0bb825f0e690c305c7041c9a6cdb"
 dependencies = [
  "compact_str",
  "hashbrown 0.17.1",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_estree",
 ]
 
@@ -1408,7 +1426,7 @@ dependencies = [
  "cow-utils",
  "dragonbox_ecma",
  "nonmax",
- "oxc_allocator",
+ "oxc_allocator 0.139.0",
  "oxc_ast_macros",
  "oxc_estree",
  "oxc_index",
@@ -2357,7 +2375,7 @@ dependencies = [
 name = "vibe_bundler"
 version = "0.0.0"
 dependencies = [
- "oxc_allocator",
+ "oxc_allocator 0.155.0",
  "oxc_ast",
  "oxc_parser",
  "oxc_span",
