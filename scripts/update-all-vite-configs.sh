@@ -70,7 +70,7 @@ import { existsSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 
 // The `vibe/*` workspace packages live in `packages/`, `tools/`, or at the repo root
-// (the umbrella `@frontal-labs/vibe` package now lives at `./vibe`, and
+// (the umbrella `frontal-vibe` package now lives at `./vibe`, and
 // `vibe/generators` lives in `tools/generators`).
 const vibePackageDirs = [
   resolve(__dirname, "..", "packages"),
