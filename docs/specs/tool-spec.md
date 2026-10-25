@@ -1,6 +1,6 @@
 # Tool Spec
 
-> 🚧 Planned — package `vibe/tools`. The authoritative contract for the `Tool`
+> Package `vibe/tools`. The authoritative contract for the `Tool`
 > interface, its context and result types, the single-Zod-schema inference rule,
 > `isError` semantics, parallel-safety and resource limits, and naming rules.
 > Consistent with [Tools & MCP](../architecture/11-tools-and-mcp.md) and the tool
@@ -234,7 +234,7 @@ const registry = createToolRegistry()
 registry.register(searchDocs)              // duplicate names are rejected
 const schemas = registry.toSchemas()       // deterministic, sorted → cache-stable
 
-const agent = system.agent({               // 🚧
+const agent = system.agent({               //
   model: "claude-opus-4-8",
   system: "Answer using the docs. Cite passages you used.",
   tools: [searchDocs],

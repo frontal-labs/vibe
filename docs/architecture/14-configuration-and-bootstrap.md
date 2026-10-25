@@ -1,6 +1,6 @@
 # Configuration & bootstrap
 
-> 🚧 Planned surface. Configuration is a plain-TypeScript construct: a
+> Configuration is a plain-TypeScript construct: a
 > `defineConfig` call in a `vibe.config.ts` file (or the same object passed
 > straight to `createSystem`). `vibe/config` resolves it into a `VibeConfig`
 > that bootstraps the runtime. The entry points are `@frontal-labs/vibe-cli` — `vibe dev` /
@@ -226,7 +226,7 @@ const system = createSystem({
 })
 
 await system.start()   // ✅ lifecycle, logger, plugins work today
-// system.ask(...) is 🚧 until the agentic layer is wired
+// system.ask(...) runs the default agent
 await system.stop()
 ```
 

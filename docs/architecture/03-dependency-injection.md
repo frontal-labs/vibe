@@ -128,7 +128,7 @@ tests can swap implementations by registering against the identical token. Note 
 container **registers itself** under `containerToken`, so code that only holds a
 `Container` can still hand out the root.
 
-This is the pattern the 🚧 agentic layer extends: the model provider is registered
+This is the pattern the agentic layer extends: the model provider is registered
 against an exported `modelProviderToken` (see
 [Model & provider layer](./10-model-provider-layer.md#registration--di)), the tool
 registry and memory likewise, and the agent loop resolves each by token. Swapping a

@@ -121,7 +121,7 @@ transports receive every entry that passes the level filter.
 
 ## How the agent loop threads observability through
 
-🚧 The [agent loop](./09-agent-loop.md#observability) uses this package as its
+The [agent loop](./09-agent-loop.md#observability) uses this package as its
 observability spine:
 
 1. **Trace id per run.** `Agent.run` opens a `runWithLogContext({ correlationId:

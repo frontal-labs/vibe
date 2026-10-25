@@ -7,17 +7,15 @@ files. There is no separate language and no compiler — you run your app with
 `node`/`bun` (or the `@frontal-labs/vibe-cli`) and build it for production with `vibe/build`.
 This page is meant to be read top to bottom and copy-pasted.
 
-> **Honesty first.** The runtime foundation (`System`, DI, lifecycle, plugins,
-> runtime, errors, logging) is **built and tested today**. The **agentic layer**
-> behind the agent loop and `system.ask()` is **planned** and marked 🚧.
-> `system.ask()` currently throws `notImplementedError` on purpose. The API
-> shapes below are the target surface; the runtime underneath is real.
+> Everything below is built and tested: the runtime foundation (`System`, DI, lifecycle,
+> plugins, runtime, errors, logging) and the agentic layer (agent loop, `system.ask()`, tools,
+> model providers, memory, governance). `system.ask()` runs the default agent.
 
 ## Prerequisites
 
 - **Node.js ≥ 20**
 - **bun** (the repo's package manager)
-- An **`ANTHROPIC_API_KEY`** for anything that actually calls a model (🚧 steps)
+- An **`ANTHROPIC_API_KEY`** for anything that calls a model
 
 ## 1. Create a project
 
@@ -135,9 +133,8 @@ await system.stop()
 bun run main.ts
 ```
 
-Run it today and you'll see the runtime's structured startup/shutdown logs and a
-`notImplementedError` from the agent loop — proof the lifecycle and logger are
-real while the loop (`system.ask()` / agent run) is still 🚧.
+Run it and you'll see the runtime's structured startup and shutdown logs, followed by the agent's
+answer.
 
 The `@frontal-labs/vibe-cli` (a TypeScript CLI) wraps the same flow for convenience once the
 agentic layer lands.
@@ -194,16 +191,17 @@ normal case, not an escape hatch: import `vibe/*`, call `createSystem`
 yourself, and start/stop it alongside the rest of your process. See
 [Configuration & bootstrap](../architecture/14-configuration-and-bootstrap.md#embedding-the-runtime-directly).
 
-## What's built vs planned
+## What's built
 
 | Piece | Status |
 |---|---|
 | Runtime foundation — `createSystem`, lifecycle, logger, plugins, runtime, DI, typed errors | ✅ Built (in `vibe/core` and friends) |
 | Plugins (manifest + `setup(hooks)`, dependency-ordered) | ✅ Built |
-| The **agentic layer** — agent loop, `system.ask()`, tool execution, model providers | 🚧 Planned |
+| The **agentic layer** — agent loop, `system.ask()`, tool execution, model providers, memory, governance | ✅ Built |
 
-The runtime foundation is built and tested today; the agentic layer is the
-planned work on top.
+Both layers are built and tested. The runtime foundation is what the agentic layer
+runs on; the [agentic implementation plan](../plan/02-agentic-implementation-plan.md) records
+how it was built.
 
 ## Where to go next
 
