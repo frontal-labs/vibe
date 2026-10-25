@@ -8,7 +8,13 @@
  */
 export function frameUntrustedOutput(toolName: string, content: string): string {
   const name = toolName.replace(/[^\w.-]/g, "")
-  // Escape any closing tag inside the payload so it cannot end the frame early.
-  const body = content.replace(/<\/tool_output/gi, "<\\/tool_output")
-  return `<tool_output tool="${name}" trust="untrusted">\n${body}\n</tool_output>`
+  return `<tool_output tool="${name}" trust="untrusted">\n${escapeToolOutput(content)}\n</tool_output>`
+}
+
+/**
+ * Neutralize any closing `tool_output` tag inside tool data so it cannot end the frame early.
+ * Every place that puts tool output into a prompt must use this, not just the main frame.
+ */
+export function escapeToolOutput(content: string): string {
+  return content.replace(/<\/tool_output/gi, "<\\/tool_output")
 }

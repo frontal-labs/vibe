@@ -24,4 +24,4 @@ export function validateToolInput(schema: string, input: string): void {
     addon.validateToolInput(schema, input)
   }
 }
-export { frameUntrustedOutput } from "./frame"
+export { escapeToolOutput, frameUntrustedOutput } from "./frame"

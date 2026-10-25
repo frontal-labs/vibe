@@ -79,3 +79,30 @@ describe("in-memory checkpoint store", () => {
     expect(await store.load("run")).toBeUndefined()
   })
 })
+
+describe("file store permissions", () => {
+  it("creates an owner-only directory and owner-only files", async () => {
+    const { mkdtemp, readdir, rm, stat } = await import("node:fs/promises")
+    const { tmpdir } = await import("node:os")
+    const { join } = await import("node:path")
+    const { createFileCheckpointStore, createFileMemory } = await import("../src/index")
+    const root = await mkdtemp(join(tmpdir(), "vibe-perm-"))
+    const dir = join(root, "store")
+    try {
+      await createFileMemory({ dir }).save("chat", [{ role: "user", content: "private" }])
+      await createFileCheckpointStore({ dir }).save("run", {
+        messages: [],
+        iteration: 0,
+        usage: { inputTokens: 0, outputTokens: 0 },
+      })
+      expect((await stat(dir)).mode & 0o777).toBe(0o700)
+      const files = await readdir(dir)
+      expect(files.length).toBe(2)
+      for (const file of files) {
+        expect((await stat(join(dir, file))).mode & 0o777).toBe(0o600)
+      }
+    } finally {
+      await rm(root, { recursive: true, force: true })
+    }
+  })
+})

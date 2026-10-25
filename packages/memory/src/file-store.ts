@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto"
-import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises"
+import { createHash, randomBytes } from "node:crypto"
+import { chmod, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 
 import { runtimeError } from "vibe/errors"
@@ -22,11 +22,22 @@ function fileName(dir: string, key: string): string {
   return join(dir, `${readable}-${hash}.json`)
 }
 
-/** Writes go to a temp file that is renamed over the target, so a crash never leaves a half-written file. */
+/**
+ * Conversations and checkpoints hold user data, and checkpoints hold tool inputs and outputs, so
+ * the directory and files are owner-only (0700 / 0600). The temp file is created with `wx`, which
+ * refuses to follow a path that already exists, so a file planted in advance cannot be written
+ * through. Writes go to that temp file and are renamed over the target, so a crash never leaves a
+ * half-written file.
+ */
+const DIR_MODE = 0o700
+const FILE_MODE = 0o600
+
 async function writeAtomic(path: string, data: string, dir: string): Promise<void> {
-  await mkdir(dir, { recursive: true })
-  const temp = `${path}.${process.pid}.${Math.random().toString(36).slice(2)}.tmp`
-  await writeFile(temp, data, "utf8")
+  await mkdir(dir, { recursive: true, mode: DIR_MODE })
+  // Tighten a directory that already existed with looser permissions.
+  await chmod(dir, DIR_MODE)
+  const temp = `${path}.${process.pid}.${randomBytes(8).toString("hex")}.tmp`
+  await writeFile(temp, data, { encoding: "utf8", mode: FILE_MODE, flag: "wx" })
   await rename(temp, path)
 }
 
