@@ -5,10 +5,12 @@ import { createLifecycle } from "vibe/lifecycle"
 import { createLogger, type Logger, LogLevel } from "vibe/logger"
 import { createInMemoryMemory, type Memory } from "vibe/memory"
 import { type ModelProvider, modelProviderToken } from "vibe/model"
+import { createOTLPHttpExporter } from "vibe/observability"
 import { createPluginHost, type PluginHost } from "vibe/plugin"
 import { createRuntime, type Runtime } from "vibe/runtime"
 import { VERSION } from "vibe/shared"
 import { createToolRegistry, type ToolRegistry } from "vibe/tools"
+import { createTracer, traceAgentRun } from "vibe/tracing"
 
 import {
   createEnterpriseServices,
@@ -17,7 +19,7 @@ import {
   type OntologyServices,
   type SecurityServices,
 } from "./enterprise"
-import type { SystemConfig, SystemInfo } from "./types"
+import type { AskOptions, SystemConfig, SystemInfo } from "./types"
 
 export interface System {
   readonly name: string
@@ -41,7 +43,7 @@ export interface System {
   start(): Promise<void>
   stop(timeoutMs?: number): Promise<void>
   /** One-shot: run the default agent to completion and return its text. */
-  ask(prompt: string): Promise<string>
+  ask(prompt: string, options?: AskOptions): Promise<string>
   /** Build a custom agent bound to this system's provider (unless overridden). */
   agent(config?: Partial<AgentConfig>): Agent
 }
@@ -64,7 +66,7 @@ export function createSystem(config: SystemConfig): System {
   const plugins = createPluginHost()
   const runtime = createRuntime()
   const toolRegistry = createToolRegistry(config.tools ?? [])
-  const memory = createInMemoryMemory()
+  const memory = config.memory ?? createInMemoryMemory()
   // Instantiate enterprise services and merge configured skills into the tool registry.
   const enterprise = createEnterpriseServices(config, toolRegistry, logger)
 
@@ -89,6 +91,32 @@ export function createSystem(config: SystemConfig): System {
   }
 
   const startTime = Date.now()
+  const enforceGovernance = config.governance?.enforce !== false
+
+  // Finished spans go to the structured logger, so they reach the same sinks as every other log
+  // line, and to an OTLP collector when one is configured.
+  const otlp = config.observability?.otlp
+    ? createOTLPHttpExporter({
+        endpoint: config.observability.otlp.endpoint,
+        headers: config.observability.otlp.headers,
+        serviceName: config.observability.otlp.serviceName ?? config.name,
+        onError: (error) => logger.warn("trace.export_failed", { error: String(error) }),
+      })
+    : undefined
+  const tracingEnabled = Boolean(config.observability?.tracing || otlp)
+  const traceTracer = createTracer({
+    exporter: {
+      export(span) {
+        logger.info("trace.span", {
+          name: span.name,
+          durationMs: span.durationMs,
+          status: span.status,
+          attributes: span.attributes,
+        })
+        otlp?.export(span)
+      },
+    },
+  })
 
   lifecycle.onBefore("init", () => {
     logger.debug("System initializing", { system: config.name })
@@ -190,6 +218,7 @@ export function createSystem(config: SystemConfig): System {
 
     async stop(timeoutMs?: number) {
       await lifecycle.stop(timeoutMs)
+      await otlp?.flush()
     },
 
     agent(overrides: Partial<AgentConfig> = {}): Agent {
@@ -199,12 +228,37 @@ export function createSystem(config: SystemConfig): System {
         system: overrides.system ?? config.system,
         effort: overrides.effort ?? config.effort,
         maxTokens: overrides.maxTokens,
+        budget: overrides.budget,
+        compaction: overrides.compaction,
+        frameToolOutput: overrides.frameToolOutput,
         tools: overrides.tools ?? toolRegistry,
+        // Governance is enforced by default: the system's policy engine checks every tool call.
+        // With no policies configured the engine allows everything, so this costs nothing until
+        // the app declares rules. `governance.enforce: false` opts system agents out.
+        governance:
+          overrides.governance ??
+          (enforceGovernance ? { engine: enterprise.governance } : undefined),
+        memory,
+        // Agent hooks reach every plugin registered on this system's plugin host.
+        hooks: overrides.hooks ?? ((name, payload) => plugins.emit(name, payload)),
       })
     },
 
-    async ask(prompt: string): Promise<string> {
-      const result: AgentResult = await system.agent().run({ text: prompt })
+    async ask(prompt: string, options: AskOptions = {}): Promise<string> {
+      if (options.runId && !config.checkpointStore) {
+        throw configError("ask({ runId }) needs a checkpointStore in the system config.")
+      }
+      const agent = system.agent()
+      const runOptions = {
+        conversationId: options.conversationId,
+        checkpoint:
+          options.runId && config.checkpointStore
+            ? { runId: options.runId, store: config.checkpointStore }
+            : undefined,
+      }
+      const result: AgentResult = tracingEnabled
+        ? await traceAgentRun(agent, { text: prompt }, traceTracer, runOptions)
+        : await agent.run({ text: prompt }, runOptions)
       return result.text
     },
   }
