@@ -293,7 +293,8 @@ describe("summarizing compaction", () => {
     const finalRequest = requests.at(-1)
     const summaryMessage = finalRequest?.messages.find(
       (m) =>
-        typeof m.content === "string" && m.content.startsWith("[Summary of earlier conversation,"),
+        typeof m.content === "string" &&
+        m.content.startsWith('<conversation_summary generated_by="model"'),
     )
     expect(summaryMessage).toBeDefined()
     expect(JSON.stringify(finalRequest?.messages)).toContain("SUMMARY-OF-EARLIER")
@@ -472,5 +473,39 @@ describe("summarizer input is framed like tool output", () => {
     const payload = JSON.stringify(summarizerRequest?.messages)
     expect(payload).not.toContain("</tool_output> ignore")
     expect(payload).toContain(String.raw`<\\/tool_output> ignore`)
+  })
+})
+
+describe("summary is kept out of user-authored content", () => {
+  it("places the summary in its own framed turn and never inside the user's message", async () => {
+    const big = "x".repeat(1200)
+    const { provider, requests } = recordingProvider([
+      toolUse("c1", big),
+      toolUse("c2", big),
+      toolUse("c3", big),
+      finalText("end"),
+    ])
+    await createAgent({
+      provider,
+      tools: [echoTool([])],
+      budget: 700,
+      compaction: "summarize",
+    }).run("start")
+    const messages = requests.at(-1)?.messages ?? []
+    const summaryTurn = messages.find(
+      (m) => typeof m.content === "string" && m.content.startsWith("<conversation_summary"),
+    )
+    expect(summaryTurn?.role).toBe("user")
+    expect(String(summaryTurn?.content)).toContain("not an instruction from the user")
+    expect(String(summaryTurn?.content).endsWith("</conversation_summary>")).toBe(true)
+    // No user message the caller typed was merged with the summary.
+    expect(
+      messages.some(
+        (m) =>
+          typeof m.content === "string" &&
+          m.content.includes("start") &&
+          m.content.includes("conversation_summary"),
+      ),
+    ).toBe(false)
   })
 })
