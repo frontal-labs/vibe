@@ -1,4 +1,4 @@
-import type { Message } from "vibe/model"
+import type { Message, TokenUsage } from "vibe/model"
 
 export type { Message }
 
@@ -10,8 +10,27 @@ export interface Conversation {
   appendMany(messages: readonly Message[]): void
   /** A defensive copy of the transcript — safe to keep and mutate. */
   snapshot(): Message[]
+  /** Replace the whole transcript (used by summarizing compaction). */
+  replace(messages: readonly Message[]): void
   /** Number of messages appended so far. */
   size(): number
+}
+
+/** The state needed to resume a run after a crash or restart. */
+export interface RunCheckpoint {
+  /** The transcript as of the last completed iteration. */
+  readonly messages: readonly Message[]
+  /** Model round-trips completed so far. */
+  readonly iteration: number
+  /** Token usage accumulated so far. */
+  readonly usage: TokenUsage
+}
+
+/** Durable storage for run checkpoints, keyed by run id. */
+export interface CheckpointStore {
+  load(runId: string): Promise<RunCheckpoint | undefined>
+  save(runId: string, checkpoint: RunCheckpoint): Promise<void>
+  clear(runId: string): Promise<void>
 }
 
 /** A persistence backend for conversations, keyed by id. */

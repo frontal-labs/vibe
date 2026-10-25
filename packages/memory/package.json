@@ -20,11 +20,12 @@
     "build": "vite build && tsc --emitDeclarationOnly",
     "dev": "vite build --watch",
     "test": "vitest run --config vitest.config.ts",
-    "test:types": "tsd",
+    "test:types": "tsc -p type-tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "vibe/errors": "workspace:*",
     "vibe/model": "workspace:*",
     "vibe/shared": "workspace:*"
   },
