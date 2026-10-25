@@ -55,3 +55,42 @@ describe("PluginHooks", () => {
     await expect(hooks.execute("nonexistent")).resolves.toBeUndefined()
   })
 })
+
+describe("host.emit", () => {
+  it("runs every handler for a name, in order, with the payload", async () => {
+    const { createPluginHost } = await import("../src/host")
+    const host = createPluginHost()
+    const log: string[] = []
+    await host.register({
+      name: "p",
+      version: "1.0.0",
+      manifest: { name: "p", version: "1.0.0", description: "test" },
+      setup(hooks) {
+        hooks.on("custom:event", (payload) => {
+          log.push(`a:${String(payload)}`)
+        })
+        hooks.on("custom:event", (payload) => {
+          log.push(`b:${String(payload)}`)
+        })
+      },
+    })
+    await host.emit("custom:event", 7)
+    expect(log).toEqual(["a:7", "b:7"])
+  })
+
+  it("rejects when a handler throws, so the emitting operation can fail", async () => {
+    const { createPluginHost } = await import("../src/host")
+    const host = createPluginHost()
+    await host.register({
+      name: "guard",
+      version: "1.0.0",
+      manifest: { name: "guard", version: "1.0.0", description: "test" },
+      setup(hooks) {
+        hooks.on("custom:event", () => {
+          throw new Error("denied")
+        })
+      },
+    })
+    await expect(host.emit("custom:event", {})).rejects.toThrow("denied")
+  })
+})
