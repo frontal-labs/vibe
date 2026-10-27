@@ -1,9 +1,14 @@
 import { pluginConflictError, pluginNotFoundError } from "@@vibe/errors"
 
 import { createPluginHooks } from "./hooks"
-import type { Plugin, PluginHooks } from "./types"
+import type { HookName, Plugin, PluginHooks } from "./types"
 
 export interface PluginHost {
+  /**
+   * Run every handler registered for `name`, in registration order, with `payload`. A handler that
+   * throws rejects the emit, so a failing governance or audit plugin fails the operation it guards.
+   */
+  emit(name: HookName, payload: unknown): Promise<void>
   register(plugin: Plugin): Promise<void>
   unregister(name: string): Promise<void>
   getPlugin(name: string): Plugin | undefined
@@ -72,6 +77,7 @@ export function createPluginHost(): PluginHost {
   }
 
   return {
+    emit: (name, payload) => hooks.execute(name, payload),
     register,
     unregister,
     getPlugin,

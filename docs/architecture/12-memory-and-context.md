@@ -1,6 +1,6 @@
 # Memory & Context
 
-> 🚧 Planned — package `vibe/memory`. The message history and request assembly the
+> Package `vibe/memory`. The message history and request assembly the
 > [agent loop](./09-agent-loop.md) runs over, built on `shared`'s
 > [`ContextStore`](../../packages/shared/src/context-store.ts).
 

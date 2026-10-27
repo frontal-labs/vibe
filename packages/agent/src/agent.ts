@@ -6,6 +6,8 @@ import type { AnyTool, ToolRegistry } from "@@vibe/tools"
 import { createToolRegistry } from "@@vibe/tools"
 
 import { drain } from "./events"
+import type { AgentHookEmitter } from "./hooks"
+import type { GovernanceConfig } from "./loop"
 import { runLoop } from "./loop"
 import type { Agent, AgentEvent, AgentInput, RunOptions } from "./types"
 
@@ -21,6 +23,14 @@ export interface AgentConfig<Tools extends readonly AnyTool[] = readonly AnyTool
   compaction?: CompactionStrategy
   /** Tools available to the agent — a list (its literal set is captured) or a prebuilt registry. */
   tools?: Tools | ToolRegistry
+  /** Enforce a policy engine on every tool call. Absent means no policy. */
+  governance?: GovernanceConfig
+  /** Store for conversations that runs address by `conversationId`. */
+  memory?: Memory
+  /** Delivers `agent:*` hooks to plugins. */
+  hooks?: AgentHookEmitter
+  /** Wrap tool output as untrusted data for the model. Default true. */
+  frameToolOutput?: boolean
 }
 
 /**
@@ -46,6 +56,10 @@ export function createAgent<const Tools extends readonly AnyTool[] = readonly An
         budget: config.budget,
         compaction: config.compaction,
         registry,
+        governance: config.governance,
+        memory: config.memory,
+        hooks: config.hooks,
+        frameToolOutput: config.frameToolOutput,
         conversation: createConversation({ system: config.system }),
       },
       input,

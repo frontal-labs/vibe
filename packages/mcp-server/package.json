@@ -25,7 +25,7 @@
     "dev": "vite build --watch",
     "start": "node dist/server.js",
     "test": "vitest run --config vitest.config.ts",
-    "test:types": "tsd",
+    "test:types": "tsc -p type-tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
     "inspect": "npx @modelcontextprotocol/inspector dist/server.js",
     "clean": "rm -rf dist"

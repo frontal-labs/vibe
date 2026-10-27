@@ -1,8 +1,9 @@
 # Architecture Overview
 
 Vibe is a layered monorepo. Each layer depends only on layers below it. The
-foundations are built and tested; the agentic layer is designed here and planned
-in [the agentic implementation plan](../plan/02-agentic-implementation-plan.md).
+foundations and the agentic layer are both implemented and tested. Each box below is a
+package in `packages/`; [the agentic implementation plan](../plan/02-agentic-implementation-plan.md)
+records how the layer was built.
 
 ## The layers
 
@@ -10,7 +11,7 @@ in [the agentic implementation plan](../plan/02-agentic-implementation-plan.md).
 ┌───────────────────────────────────────────────────────────────┐
 │  core          vibe.system({...}) — composition root & ask()   │
 ├───────────────────────────────────────────────────────────────┤
-│  AGENTIC LAYER (planned)                                        │
+│  AGENTIC LAYER                                                  │
 │  agent   →  the tool-use loop, agent runtime, state            │
 │  tools   →  typed tool definitions, registry, MCP bridge       │
 │  memory  →  conversation + long-term memory, context windows   │
@@ -29,13 +30,12 @@ in [the agentic implementation plan](../plan/02-agentic-implementation-plan.md).
 └───────────────────────────────────────────────────────────────┘
 ```
 
-Boxes with **planned** are the packages the agentic build adds: `vibe/model`,
-`vibe/tools`, `vibe/agent`, `vibe/memory`. Everything else exists today.
+The agentic packages are `vibe/model`, `vibe/tools`, `vibe/agent`, and `vibe/memory`;
+`vibe/governance` enforces policy on every tool call the loop makes.
 
 ## The request path: `system.ask(prompt)`
 
-Today `ask()` throws. Here is the path it will take once the agentic layer lands
-(each step maps to an existing or planned seam):
+`ask()` runs this path end to end. Each step maps to a package:
 
 ```
 system.ask("What's the status of order #1024?")
@@ -47,7 +47,7 @@ system.ask("What's the status of order #1024?")
 [agent] run the loop:
    1. build a request (system prompt + messages + tool schemas)   ← memory
    2. call the model                                              ← model provider
-   3. if stop_reason == "tool_use": execute tool calls           ← tools
+   3. if stop_reason == "tool_use": authorize, then run tool calls  ← tools, governance
         · each tool call runs through the runtime                 ← runtime (retry, cancel, limits)
    4. append tool results, go to 2
    5. if stop_reason == "end_turn": return the text

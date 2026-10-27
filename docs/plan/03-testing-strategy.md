@@ -57,37 +57,38 @@ Guidelines:
 - **Errors are asserted by type and code**, not by message string — use the
   `vibe/errors` factories and check `error.code` / `retryable` / `fatal`.
 
-## Type-tests (tsd / `expectAssignable`)
+## Type-tests (`tsc` + `identical`)
 
-The `type-tests/` directory holds `*.test-d.ts` files run by `tsd` (configured per
-package via `"tsd": { "directory": "type-tests" }`). These are compile-time
-assertions — they never execute. The vocabulary:
+Each package keeps its type tests in `type-tests/*.test-d.ts`. They are compile-time
+assertions and never execute. `bun run test:types` runs them: each package's `type-tests/tsconfig.json`
+is checked by `tsc --noEmit`, so a type regression fails the build.
+
+(`tsd` is not used. Its package-name validation rejects the `vibe/*` names, so its tests never ran.)
+
+The vocabulary, from `packages/typescript-config/type-assert.d.ts`:
 
 ```ts
-import { expectType, expectAssignable, expectError } from "tsd"
+// exact type identity: compiles only when the value's type is exactly `string`
+identical<string>()(maybeName)
 
-// exact type identity
-expectType<ServiceToken<string>>(createToken<string>("str"))
+// looser: the value is assignable to the type (preferred for unions and branded outputs)
+const size: number = measure()
 
-// looser: value inhabits the type (preferred for unions / branded outputs)
-expectAssignable<string | undefined>(maybeValue())
-
-// negative assertions: this should NOT compile
-expectError<SystemId>("plain-string")
+// negative: this must NOT compile. The directive fails the build if the error ever goes away.
+// @ts-expect-error: a plain string is not a SystemId
+const id: SystemId = "plain-string"
 ```
 
-The migration to `expectAssignable` for union- and brand-shaped assertions (see the
-recent `test(shared)` commit) is the house style: use `expectType` when identity
-matters, `expectAssignable` when membership is the real contract, and `expectError`
-to lock in the negative cases that make branded types and inference valuable.
+Use `identical` when the exact type is the contract, and assignment for everything else.
 
 **What type-tests must cover in the agentic layer:**
 
 - `defineTool` — the `execute` handler's args are inferred from the Zod schema
-  (`z.infer`), and a wrong-shaped handler is an `expectError`.
+  (`z.infer`), and a wrong-shaped handler is a `@ts-expect-error` line.
 - `ModelRequest`/`ModelResponse` normalization — the mapped shapes are assignable to
   the public types.
 - Branded ids (trace ids, tokens) — distinct brands are not cross-assignable.
+
 
 ## The deterministic fake ModelProvider
 
@@ -214,7 +215,7 @@ cached:
 
 - **`ci:check`** = `turbo run lint typecheck build test` — Biome lint, `tsc
   --noEmit`, `vite` build, and Vitest unit tests, in dependency order.
-- **`bun test:types`** — the tsd type-tests (a separate CI step, since tsd is not
+- **`bun test:types`** — the type-tests (a separate CI step, since they are not
   part of `ci:check`).
 - **`bun format:check`** — Biome formatting is verified, not fixed, in CI.
 - **`bun knip`** — dead-code / unused-dependency detection.

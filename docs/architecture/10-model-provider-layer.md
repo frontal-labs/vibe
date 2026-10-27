@@ -1,6 +1,6 @@
 # Model & Provider Layer
 
-> 🚧 Planned — package `vibe/model`. The interface the [agent loop](./09-agent-loop.md)
+> Package `vibe/model`. The interface the [agent loop](./09-agent-loop.md)
 > depends on, plus a reference Anthropic provider.
 
 The loop must not import a vendor SDK directly. It depends on a `ModelProvider`

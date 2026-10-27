@@ -1,6 +1,6 @@
 # Multi-Agent
 
-> 🚧 Planned — the coordinator/delegate pattern layered on `vibe/agent`. Every
+> Implemented — the coordinator/delegate pattern layered on `vibe/agent`. Every
 > sub-agent is a plain [Agent](./09-agent-loop.md) running the same loop; delegation
 > is just a tool.
 

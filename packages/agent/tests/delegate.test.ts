@@ -26,7 +26,12 @@ describe("createDelegateTool", () => {
 
     // The tool result carried the sub-agent's answer back into the transcript.
     expect(result.transcript[2].content).toEqual([
-      { type: "toolResult", toolUseId: "d1", content: "42", isError: false },
+      {
+        type: "toolResult",
+        toolUseId: "d1",
+        content: frameUntrustedOutput("compute", "42"),
+        isError: false,
+      },
     ])
   })
 

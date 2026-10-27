@@ -88,3 +88,21 @@ describe("traceAgentRun", () => {
     expect(root?.attributes.iterations).toBe(2)
   })
 })
+
+describe("trace ids", () => {
+  it("children inherit the root's trace id, and separate runs get separate traces", () => {
+    const exporter = createMemoryExporter()
+    const tracer = createTracer({ exporter })
+    const root = tracer.startSpan("run")
+    const child = tracer.startSpan("iteration", root.id)
+    child.end()
+    root.end()
+    const other = tracer.startSpan("second run")
+    other.end()
+
+    const [childSpan, rootSpan, otherSpan] = exporter.spans
+    expect(rootSpan?.traceId).toBe(root.id)
+    expect(childSpan?.traceId).toBe(root.id)
+    expect(otherSpan?.traceId).not.toBe(root.id)
+  })
+})

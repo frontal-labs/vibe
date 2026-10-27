@@ -127,11 +127,22 @@ export function createBaseViteConfig(entry: string = "src/index.ts"): UserConfig
       sourcemap: true,
       rollupOptions: {
         external: externalize,
-        output: {
-          entryFileNames: "[name].js",
-          chunkFileNames: "chunk-[name].[format].js",
-          exports: "named",
-        },
+        // One output per format. A shared `[name].js` name made the CJS build overwrite the ESM
+        // build, and the package's `require` entries (`.cjs`) were never written.
+        output: [
+          {
+            format: "es",
+            entryFileNames: "[name].js",
+            chunkFileNames: "chunk-[name].js",
+            exports: "named",
+          },
+          {
+            format: "cjs",
+            entryFileNames: "[name].cjs",
+            chunkFileNames: "chunk-[name].cjs",
+            exports: "named",
+          },
+        ],
       },
     },
   }

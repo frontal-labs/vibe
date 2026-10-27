@@ -47,19 +47,26 @@ export function createAnthropicProvider(options: AnthropicProviderOptions = {}):
     },
 
     async *stream(request: ModelRequest): AsyncIterable<ModelStreamEvent> {
-      const stream = client.messages.stream(toAnthropicParams(request) as never)
-      for await (const event of stream) {
-        if (event.type === "content_block_delta") {
-          const delta = event.delta as { type: string; text?: string; thinking?: string }
-          if (delta.type === "text_delta") yield { type: "text", delta: delta.text ?? "" }
-          else if (delta.type === "thinking_delta")
-            yield { type: "thinking", delta: delta.thinking ?? "" }
+      // Map errors here too, so streaming failures carry the same typed codes (and
+      // retryability) as `generate`. Otherwise a 400 would look retryable to the loop.
+      try {
+        const stream = client.messages.stream(toAnthropicParams(request) as never)
+        for await (const event of stream) {
+          if (event.type === "content_block_delta") {
+            const delta = event.delta as { type: string; text?: string; thinking?: string }
+            if (delta.type === "text_delta") yield { type: "text", delta: delta.text ?? "" }
+            else if (delta.type === "thinking_delta")
+              yield { type: "thinking", delta: delta.thinking ?? "" }
+          }
         }
-      }
-      const message = await stream.finalMessage()
-      yield {
-        type: "done",
-        response: fromAnthropicMessage(message as unknown as AnthropicMessageLike),
+        const message = await stream.finalMessage()
+        yield {
+          type: "done",
+          response: fromAnthropicMessage(message as unknown as AnthropicMessageLike),
+        }
+      } catch (error) {
+        const status = (error as { status?: number }).status
+        throw mapAnthropicError(status, (error as Error).message, error as Error)
       }
     },
 

@@ -98,7 +98,7 @@ type-safe handle for a value you resolve later, which is precisely what lets the
 
 ## 3. One Zod schema → typed handler *and* JSON Schema
 
-The highest-leverage inference in Vibe is in tools 🚧. A tool is defined once with a
+The highest-leverage inference in Vibe is in tools . A tool is defined once with a
 Zod schema, and that single schema drives two consumers:
 
 - `z.infer<typeof schema>` gives the `execute` handler its **argument types**.
@@ -189,10 +189,10 @@ so retry policy, telemetry, and user messaging all read the same value.
 ## Dedicated `type-tests/` per package
 
 Runtime tests prove behaviour; **type tests prove the *types* behave.** Every Vibe
-package ships type-tests alongside its Vitest unit tests, using `tsd`-style
-assertions (`expectAssignable`, `expectType`, `expectError`). These fail the build
-if an inference regresses — a return type widens to `any`, a brand stops being
-nominal, a handler's args stop matching its schema.
+package ships type tests in `type-tests/`, checked by `tsc` (`bun run test:types`). They
+assert the types a caller relies on, and they fail the build if an inference regresses: a
+return type widens to `any`, a brand stops being nominal, or a handler's args stop matching
+its schema.
 
 ```ts
 // packages/tools/type-tests/define-tool.test-d.ts  🚧
@@ -205,28 +205,28 @@ const t = defineTool({
   description: "Echo a message.",
   schema: z.object({ message: z.string() }),
   async execute(args) {
-    expectAssignable<{ message: string }>(args) // args inferred from schema ✓
-    return args.message
+    const message: string = args.message // args inferred from the schema
+    return message
   },
 })
 
-// A handler that reads a field not in the schema must NOT type-check:
-expectError(
-  defineTool({
-    name: "bad",
-    description: "…",
-    schema: z.object({ message: z.string() }),
-    async execute(args) {
-      return args.missing // ← expectError asserts this is a compile error
-    },
-  }),
-)
+// A handler that reads a field not in the schema must NOT type-check. The directive
+// makes the build fail if the error ever goes away.
+defineTool({
+  name: "bad",
+  description: "…",
+  schema: z.object({ message: z.string() }),
+  async execute(args) {
+    // @ts-expect-error: `missing` is not in the schema
+    return args.missing
+  },
+})
 ```
 
-Existing packages already carry these — e.g. `vibe/shared` migrated its assertions
-to `expectAssignable`. Type tests are part of `bun ci:check`, so a change that
-silently weakens a type is a **red build**, not a latent bug. See the
-[testing strategy](../plan/03-testing-strategy.md).
+The check is by assignment, not exact identity. Where an exact type matters, compare with
+`type Equal<A, B> = (<G>() => G extends A ? 1 : 2) extends (<G>() => G extends B ? 1 : 2) ? true : false`.
+Type tests are part of `bun ci:check`, so a change that silently weakens a type is a **red
+build**, not a latent bug. See the [testing strategy](../plan/03-testing-strategy.md).
 
 ## The net effect
 

@@ -137,7 +137,7 @@ These are used throughout the foundations: `createContainer` throws
 `createPluginHost` throws `pluginConflictError`/`pluginNotFoundError`
 ([Plugins](./06-plugin-system.md)), the runtime throws `timeoutError`/
 `cancelledError`/`runtimeError` ([Runtime](./05-runtime-execution.md)), and
-`system.ask()` throws `notImplementedError` on purpose today.
+`system.ask()` runs the default agent; a run that exceeds its limits throws `runtimeError`.
 
 ## How retry and telemetry branch on codes
 
@@ -156,24 +156,20 @@ message:
   (`is_error` tool result) rather than throwing, because a `ToolError` is
   non-fatal and the model can re-plan.
 
-## 🚧 Planned: model & agent error additions
+## Model & agent error mapping
 
-The agentic layer extends the taxonomy with codes the [agent loop](./09-agent-loop.md#error-taxonomy-in-the-loop)
-and [model layer](./10-model-provider-layer.md) reference. Each is a `VibeError`
-subclass with its own code and correct flags:
+The model and agent layers reuse the existing error classes rather than adding new ones. The table
+records what each failure becomes today, and whether the retry policy will retry it:
 
-| Planned error | Meaning | `retryable` |
+| Failure | Becomes | Retried by the loop |
 |---|---|---|
-| `RateLimitError` 🚧 | Provider HTTP 429 | ✅ (backoff) |
-| `OverloadedError` 🚧 | Provider HTTP 529 | ✅ (backoff) |
-| `InvalidRequestError` 🚧 | Provider HTTP 400 (bad request) | ❌ |
-| `ModelRefusalError` 🚧 | `stop_reason: "refusal"`; carries the refusal category | via fallback (policy) |
-| `AgentIterationLimitError` 🚧 | Loop hit `maxIterations` | ❌ |
+| Provider HTTP 429 (rate limit) | `ProviderRateLimitError` | yes (backoff) |
+| Provider HTTP 529 (overloaded) | `ProviderRateLimitError` | yes (backoff) |
+| Provider HTTP 401 / 403 | `ProviderAuthError` | no |
+| Provider HTTP 400 / 422 (bad request) | `ValidationError` | no |
+| Provider HTTP 5xx | `RuntimeError` | yes |
+| `stop_reason: "refusal"` | not an error; returned as `AgentResult.stopReason` | n/a |
+| Loop exceeds `maxIterations` or `maxCostCents` | `RuntimeError` | no |
+| Tool handler throws or times out | tool result with `isError: true`, shown to the model | n/a |
 
-These map cleanly onto the existing pattern — `RateLimitError`/`OverloadedError`
-are essentially specialized, HTTP-status-carrying siblings of today's
-`ProviderRateLimitError`/`ProviderError`, so the runtime already knows to retry
-them and skip the non-retryable ones.
-
-See [Core concepts → VibeError](./01-core-concepts.md#vibeerror-exists) for the
-one-paragraph version.
+A refusal is a normal outcome the caller decides how to handle, so it is a result, not an exception.

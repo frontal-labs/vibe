@@ -1,4 +1,4 @@
-import { expectError, expectType } from "tsd"
+import { expectType } from "tsd"
 import type { ServiceToken } from "../src/token"
 import { createToken } from "../src/token"
 import type { Container } from "../src/types"
@@ -12,4 +12,5 @@ const container = null as unknown as Container
 expectType<string>(container.resolve(stringToken))
 
 // Token type mismatch should be caught at compile time
-expectError<ServiceToken<number>>(stringToken)
+// @ts-expect-error: must not compile
+;((_value: ServiceToken<number>) => undefined)(stringToken)

@@ -18,11 +18,11 @@ export type TokenFamily = "openai" | "anthropic" | "cl100k" | "heuristic"
  * - `drop-oldest` (default): drop whole turns from the front, keeping the most recent suffix.
  * - `middle-out`: keep the first turn (it usually frames the task) plus the most recent suffix,
  *   dropping the middle — preserves both the setup and the live context.
- *
- * A summarizing strategy (replace dropped turns with a model-written summary) is a deliberate
- * async pre-pass over the conversation, not a mode here — `buildRequest` stays synchronous.
+ * - `summarize`: replace the older turns with a model-written summary. This needs a model call, so
+ *   it runs as an async pre-pass in the agent loop (`summarizeHistory`); `buildRequest` itself stays
+ *   synchronous and falls back to `drop-oldest` if it is ever reached with this strategy.
  */
-export type CompactionStrategy = "drop-oldest" | "middle-out"
+export type CompactionStrategy = "drop-oldest" | "middle-out" | "summarize"
 
 export interface BuildRequestOptions {
   model: ModelId
@@ -56,8 +56,36 @@ export const estimateTokens: TokenCounter = (messages, system) => {
   return Math.ceil(chars / CHARS_PER_TOKEN)
 }
 
-function blockChars(block: { type: string; text?: string }): number {
-  return block.text ? block.text.length : NON_TEXT_BLOCK // non-text blocks cost a flat estimate
+/**
+ * Characters a block costs. Every block that carries model-visible text is counted by that text —
+ * including tool results and tool-call inputs, which can be the largest blocks in a transcript.
+ * Counting them as a flat estimate let long tool output blow past the budget unnoticed.
+ */
+function blockChars(block: ContentBlock): number {
+  switch (block.type) {
+    case "text":
+    case "thinking":
+      return block.text.length
+    case "toolResult":
+      return block.content.length
+    case "toolUse":
+      return block.name.length + JSON.stringify(block.input ?? null).length
+    default:
+      return NON_TEXT_BLOCK
+  }
+}
+
+/**
+ * Whether a transcript may be cut so that the kept suffix starts at `message`. A tool result must
+ * stay with the assistant turn that requested it; cutting in front of a result leaves an orphaned
+ * `tool_result`, which the provider rejects. Every other message is a valid cut point.
+ */
+export function isCutPoint(message: Message): boolean {
+  return !(
+    message.role === "user" &&
+    typeof message.content !== "string" &&
+    message.content.some((block) => block.type === "toolResult")
+  )
 }
 
 /** Per-message token counts plus the system-prompt count — the input to O(n) trimming. */
@@ -95,6 +123,24 @@ function countPerMessage(
 }
 
 /**
+ * Move a proposed cut to the nearest valid cut point: forward first (drop a little more, staying
+ * within budget), then backward (keep a little more) if no forward point exists.
+ */
+export function nearestCutPoint(messages: readonly Message[], index: number, floor = 0): number {
+  let forward = index
+  while (forward < messages.length && !isCutPointAt(messages, forward)) forward++
+  if (forward < messages.length) return forward
+  let backward = index
+  while (backward > floor && !isCutPointAt(messages, backward)) backward--
+  return backward
+}
+
+function isCutPointAt(messages: readonly Message[], index: number): boolean {
+  const message = messages[index]
+  return message === undefined || isCutPoint(message)
+}
+
+/**
  * Trim `messages` to fit `budget` input tokens using `strategy`, in O(n). Always keeps at least the
  * most recent message; the system prompt and tool schemas are the caller's responsibility and are
  * never dropped here.
@@ -125,6 +171,7 @@ function compact(
     used = next
     firstKept = i
   }
+  firstKept = nearestCutPoint(messages, firstKept, floor)
 
   const suffix = messages.slice(firstKept)
   return keepFirst && firstKept > 0 && first ? [first, ...suffix] : suffix
@@ -141,7 +188,8 @@ export function buildRequest(options: BuildRequestOptions): ModelRequest {
 
   if (options.budget !== undefined && messages.length > 1) {
     const counts = countPerMessage(messages, system, family, options.countTokens)
-    messages = compact(messages, counts, options.budget, options.compaction ?? "drop-oldest")
+    const strategy = options.compaction === "middle-out" ? "middle-out" : "drop-oldest"
+    messages = compact(messages, counts, options.budget, strategy)
   }
 
   const request: ModelRequest = { model: options.model, messages }

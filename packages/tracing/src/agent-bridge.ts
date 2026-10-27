@@ -3,7 +3,7 @@ import type { Tracer } from "./types"
 
 /** The minimal agent surface the bridge needs. */
 export interface StreamableAgent {
-  stream(input: AgentInput, options?: unknown): AsyncGenerator<AgentEvent, AgentResult>
+  stream(input: AgentInput, options?: object): AsyncGenerator<AgentEvent, AgentResult>
 }
 
 /**
@@ -16,13 +16,14 @@ export async function traceAgentRun(
   agent: StreamableAgent,
   input: AgentInput,
   tracer: Tracer,
+  runOptions?: object,
 ): Promise<AgentResult> {
   const root = tracer.startSpan("agent.run")
   const iterationSpans = new Map<number, { id: string; end: () => void }>()
   const toolSpans = new Map<string, { end: () => void }>()
 
   try {
-    const gen = agent.stream(input)
+    const gen = agent.stream(input, runOptions)
     let next = await gen.next()
     while (!next.done) {
       const event = next.value

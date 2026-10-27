@@ -37,6 +37,23 @@ export interface SystemConfig {
   security?: SecurityConfig
   /** Observability: metrics, audit, tracing. */
   observability?: ObservabilityConfig
+  /**
+   * Where conversations live for runs that pass `conversationId`. Defaults to an in-process store;
+   * pass a durable one (e.g. `createFileMemory`) for conversations that survive restarts.
+   */
+  memory?: Memory
+  /**
+   * Where run checkpoints live for runs that pass `runId`. Without one, `runId` is an error.
+   */
+  checkpointStore?: CheckpointStore
+}
+
+/** Per-call options for `system.ask()`. */
+export interface AskOptions {
+  /** Continue the persisted conversation with this id (see `SystemConfig.memory`). */
+  conversationId?: string
+  /** Make the run resumable under this id (requires `SystemConfig.checkpointStore`). */
+  runId?: string
 }
 
 export interface SystemInfo {

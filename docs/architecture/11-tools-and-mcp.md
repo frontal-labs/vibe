@@ -1,6 +1,6 @@
 # Tools & MCP
 
-> 🚧 Planned — package `vibe/tools`. The tool contract the [agent loop](./09-agent-loop.md)
+> Package `vibe/tools`. The tool contract the [agent loop](./09-agent-loop.md)
 > executes, plus the MCP adapter and server-side (provider) tools.
 
 A tool is the model's way of doing something in the world. Vibe's tool layer has one

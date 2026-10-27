@@ -66,8 +66,8 @@ This keeps call sites self-documenting, makes optional fields genuinely optional
 (one required field, `name`), and lets the surface grow without breaking callers —
 the [agentic plan](../plan/02-agentic-implementation-plan.md) extends `SystemConfig`
 with model/provider options and an initial tool set, and existing calls keep
-compiling. The same convention holds for the planned `defineTool({ … })` 🚧,
-`createAgent({ model, system, tools, memory })` 🚧, and `RunOptions` 🚧.
+compiling. The same convention holds for the `defineTool({ … })`,
+`createAgent({ model, system, tools, memory })`, and `RunOptions`.
 
 ## Branded tokens for identity, not strings
 
@@ -106,7 +106,7 @@ container.registerInstance(pluginHostToken, plugins)
 
 The [model layer](../architecture/10-model-provider-layer.md#registration--di)
 follows the same pattern: `modelProviderToken = createToken<ModelProvider>("model.provider")`
-🚧. This is exactly the seam that keeps the public surface small — see
+. This is exactly the seam that keeps the public surface small — see
 [the last section](#a-small-public-surface-over-swappable-internals).
 
 ## Readonly interfaces
@@ -131,7 +131,7 @@ export interface System {
 You cannot reassign `system.logger`; you *can* call `system.start()`. In the
 implementation these readonly fields are `get` accessors over closure state, so
 `system.info` recomputes (`state`, `uptimeMs`, `pluginCount`) on every read while
-staying immutable to the caller. The planned `AgentResult` 🚧 is entirely
+staying immutable to the caller. The `AgentResult` is entirely
 `readonly` for the same reason: a result is a value, not a handle.
 
 ## Async lifecycle, idempotent transitions
@@ -168,16 +168,16 @@ on `stop`. See [Lifecycle](../architecture/04-lifecycle.md).
 | Kind | Convention | Example |
 |---|---|---|
 | Constructor | `createX` (or `vibe.x`) | `createSystem`, `createToken`, `vibe.system` |
-| Definer / builder | `defineX` | `defineTool` 🚧 |
+| Definer / builder | `defineX` | `defineTool` |
 | Interface | Noun, no `I` prefix | `System`, `Container`, `ModelProvider` |
-| Token | `xToken` | `loggerToken`, `modelProviderToken` 🚧 |
+| Token | `xToken` | `loggerToken`, `modelProviderToken` |
 | Lifecycle verbs | `init` / `start` / `stop` | `system.stop(timeoutMs?)` |
 | Error factory | lowerCamel of the type | `notImplementedError`, `timeoutError` |
 | Error type | `XError` | `TimeoutError`, `ProviderRateLimitError` |
-| Event tags | `namespace:verb` | `model:start`, `tool:result` 🚧 |
+| Event tags | `namespace:verb` | `model:start`, `tool:result` |
 
 Verbs are consistent across the stack: you `start` a system, a lifecycle, a plugin
-host; you `execute` a runtime task; you `run` an agent 🚧; you `resolve` a token.
+host; you `execute` a runtime task; you `run` an agent ; you `resolve` a token.
 
 ## A small public surface over swappable internals
 
@@ -187,7 +187,7 @@ tiny while every internal is swappable.**
 
 - The **public surface** an app touches is basically `vibe.system(config)` and the
   `System` interface. That's the whole "getting started" API.
-- The **internals** — logger, lifecycle, plugin host, runtime, and (planned) model
+- The **internals** — logger, lifecycle, plugin host, runtime, and model
   provider, tool registry, memory — are all registered against `ServiceToken<T>`s
   and resolved by the layers that need them.
 
@@ -196,9 +196,9 @@ a vendor SDK, swapping providers is a registration change, not a rewrite:
 
 ```ts
 // production
-container.registerInstance(modelProviderToken, createAnthropicProvider({ apiKey })) // 🚧
+container.registerInstance(modelProviderToken, createAnthropicProvider({ apiKey }))
 // tests — deterministic, no network
-container.registerInstance(modelProviderToken, createFakeProvider(script))          // 🚧
+container.registerInstance(modelProviderToken, createFakeProvider(script))          //
 ```
 
 The loop's code is identical in both cases. This is why Vibe can promise

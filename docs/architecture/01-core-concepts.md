@@ -19,7 +19,7 @@ interface System {
   init(): Promise<void>
   start(): Promise<void>
   stop(timeoutMs?: number): Promise<void>
-  ask(prompt: string): Promise<string>   // 🚧 currently throws notImplementedError
+  ask(prompt: string): Promise<string>   // runs the default agent
 }
 ```
 
@@ -62,9 +62,9 @@ threads a trace id and token usage through it. See [Logging & observability](./0
 
 ---
 
-## The agentic nouns (planned)
+## The agentic nouns
 
-### Model & ModelProvider (🚧 `vibe/model`)
+### Model & ModelProvider (`vibe/model`)
 A **ModelProvider** is the interface the loop depends on: `generate(request)` and
 `stream(request)`, taking messages + tool schemas + options, returning content
 blocks + `stopReason` + `usage`. The reference implementation wraps
@@ -72,18 +72,18 @@ blocks + `stopReason` + `usage`. The reference implementation wraps
 **Model** is a provider bound to a specific model id + options. See
 [Model & provider layer](./10-model-provider-layer.md).
 
-### Tool & ToolRegistry (🚧 `vibe/tools`)
+### Tool & ToolRegistry (`vibe/tools`)
 A **Tool** is a name + description + input schema (Zod) + a typed `execute`
 handler. Defining it once yields both the model-facing JSON Schema and the
 handler's argument types. The **ToolRegistry** holds the tools available to an
 agent. MCP servers surface as tools through an adapter. See [Tools & MCP](./11-tools-and-mcp.md).
 
-### Agent (🚧 `vibe/agent`)
+### Agent (`vibe/agent`)
 An **Agent** binds a model, a system prompt, a tool set, and memory, and exposes
 `run(input)` — the [agent loop](./09-agent-loop.md). `system.ask()` delegates to a
 default agent. Agents can delegate to sub-agents. See [Multi-agent](./13-multi-agent.md).
 
-### Memory & Conversation (🚧 `vibe/memory`)
+### Memory & Conversation (`vibe/memory`)
 **Conversation** is the ordered message history for one run. **Memory** is
 optional cross-run persistence. Both feed the request builder and respect context
 limits (with compaction/context-editing hooks). Built on `shared`'s context-store.

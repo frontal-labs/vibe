@@ -17,16 +17,18 @@
   "types": "./dist/index.d.ts",
   "files": [
     "bin",
-    "scripts",
-    "dist"
+    "dist",
+    "tools/templates"
   ],
   "scripts": {
     "build": "vite build && node ../../tools/bundle-dts.mjs src/index.ts src/cli.ts",
     "dev": "vite build --watch",
     "test": "vitest run --config vitest.config.ts",
-    "test:types": "tsd",
+    "test:types": "tsc -p type-tests/tsconfig.json",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepack": "rm -rf tools && mkdir -p tools && cp -R ../../tools/templates tools/templates",
+    "postpack": "rm -rf tools"
   },
   "dependencies": {
     "chokidar": "^4.0.0",
@@ -45,6 +47,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

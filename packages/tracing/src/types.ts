@@ -1,6 +1,8 @@
 /** A finished span: a timed, attributed unit of work, optionally nested. */
 export interface Span {
   readonly id: string
+  /** Shared by every span in one trace: the root span's id, inherited by its descendants. */
+  readonly traceId: string
   readonly parentId: string | undefined
   readonly name: string
   readonly startMs: number
