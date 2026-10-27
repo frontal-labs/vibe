@@ -9,8 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@@vibe/build": "workspace:*",
-    "@@vibe/vibe": "workspace:*",
+    "@vibe/build": "workspace:*",
+    "@vibe/vibe": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

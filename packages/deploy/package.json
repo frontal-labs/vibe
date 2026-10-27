@@ -1,5 +1,5 @@
 {
-  "name": "@@vibe/deploy",
+  "name": "@vibe/deploy",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -25,12 +25,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@@vibe/adapters": "workspace:*",
-    "@@vibe/shared": "workspace:*"
+    "@vibe/adapters": "workspace:*",
+    "@vibe/shared": "workspace:*"
   },
   "devDependencies": {
-    "@@vibe/agent": "workspace:*",
-    "@@vibe/model": "workspace:*",
+    "@vibe/agent": "workspace:*",
+    "@vibe/model": "workspace:*",
     "tsd": "^0.31.2",
     "vitest": "^4.1.11",
     "vite": "^6.0.0"
