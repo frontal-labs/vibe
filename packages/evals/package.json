@@ -29,11 +29,11 @@
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "vibe/agent": "workspace:*",
-    "vibe/governance": "workspace:*",
-    "vibe/memory": "workspace:*",
-    "vibe/model": "workspace:*",
-    "vibe/tools": "workspace:*",
+    "@vibe/agent": "workspace:*",
+    "@vibe/governance": "workspace:*",
+    "@vibe/memory": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/tools": "workspace:*",
     "vite": "^6.0.0",
     "vitest": "^4.1.11",
     "zod": "^4.4.3"
