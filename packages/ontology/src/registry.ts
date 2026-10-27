@@ -1,4 +1,4 @@
-import { runtimeError } from "vibe/errors"
+import { runtimeError } from "@@vibe/errors"
 import type { AnyEntity } from "./entity"
 
 /**

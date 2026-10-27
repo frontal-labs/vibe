@@ -17,7 +17,7 @@ bun add vibe/governance
 ## Usage
 
 ```ts
-import { createPolicyEngine, requireApprovalFor, guardTool } from "vibe/governance"
+import { createPolicyEngine, requireApprovalFor, guardTool } from "@vibe/governance"
 
 const engine = createPolicyEngine([requireApprovalFor(["deleteRecord"])])
 const safe = guardTool(tool, engine)

@@ -17,7 +17,7 @@ bun add vibe/workflows
 ## Usage
 
 ```ts
-import { defineWorkflow, step, runWorkflow, createMemoryCheckpointStore } from "vibe/workflows"
+import { defineWorkflow, step, runWorkflow, createMemoryCheckpointStore } from "@vibe/workflows"
 
 const wf = defineWorkflow({ name: "pipeline", steps: [step("fetch", fetchData)] })
 const store = createMemoryCheckpointStore()

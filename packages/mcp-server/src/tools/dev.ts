@@ -24,7 +24,7 @@ export const devTools: McpTool[] = [
     description:
       "Generate a new vibe/* package following the repo conventions (package.json, tsconfig, vite, src barrel, type-tests). Returns the created file paths.",
     schema: z.object({
-      name: z.string().describe("Bare package name, e.g. 'cache' (becomes vibe/cache)."),
+      name: z.string().describe("Bare package name, e.g. 'cache' (becomes @vibe/cache)."),
     }),
     // biome-ignore lint/suspicious/useAwait: interface requires Promise return
     async execute(args, ctx) {

@@ -1,7 +1,7 @@
 use super::*;
 
 const AGENT: &str = r#"
-import { createAgent } from "vibe/agent"
+import { createAgent } from "@vibe/agent"
 import getOrder from "../tools/get-order"
 import lookup from "../tools/lookup"
 import { z } from "zod"
@@ -14,7 +14,7 @@ fn extracts_all_imports() {
     let imps = imports(AGENT);
     assert_eq!(imps.len(), 4);
     let sources: Vec<_> = imps.iter().map(|i| i.source.as_str()).collect();
-    assert!(sources.contains(&"vibe/agent"));
+    assert!(sources.contains(&"@vibe/agent"));
     assert!(sources.contains(&"../tools/get-order"));
 }
 
@@ -26,7 +26,7 @@ fn tool_edges_finds_only_tool_imports() {
     assert_eq!(edges[0].local, "getOrder");
     assert_eq!(edges[1].local, "lookup");
     // vibe/agent and zod are not tools
-    assert!(!edges.iter().any(|e| e.source == "vibe/agent"));
+    assert!(!edges.iter().any(|e| e.source == "@vibe/agent"));
 }
 
 #[test]

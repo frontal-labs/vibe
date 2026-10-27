@@ -1,6 +1,6 @@
 import { expectType } from "tsd"
-import { createFakeProvider } from "vibe/model"
-import { defineTool } from "vibe/tools"
+import { createFakeProvider } from "@@vibe/model"
+import { defineTool } from "@@vibe/tools"
 import { z } from "zod"
 
 import { createAgent } from "../src/agent"

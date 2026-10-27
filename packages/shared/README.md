@@ -17,7 +17,7 @@ monorepo.
 ## Usage
 
 ```ts
-import { assertDefined, isString, VERSION } from "vibe/shared"
+import { assertDefined, isString, VERSION } from "@vibe/shared"
 
 const name = assertDefined(maybeName)
 if (isString(name)) console.log(VERSION)

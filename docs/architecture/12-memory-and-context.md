@@ -25,7 +25,7 @@ a **snapshot** yields an immutable copy for logging, replay, or handing to a
 sub-agent.
 
 ```ts
-import type { Message, ContentBlock } from "vibe/model"
+import type { Message, ContentBlock } from "@vibe/model"
 
 interface Conversation {
   appendUser(text: string): void

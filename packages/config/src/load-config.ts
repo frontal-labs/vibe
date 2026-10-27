@@ -3,7 +3,7 @@ import { tmpdir } from "node:os"
 import { basename, join, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 import { build as esbuild } from "esbuild"
-import { configError, withHint } from "vibe/errors"
+import { configError, withHint } from "@@vibe/errors"
 
 import type { VibeConfig } from "./types"
 

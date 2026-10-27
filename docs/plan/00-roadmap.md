@@ -102,7 +102,7 @@ the default agent. See [The agent loop](../architecture/09-agent-loop.md).
 **You can now…**
 
 ```ts
-import { vibe } from "vibe/core"
+import { vibe } from "@vibe/core"
 
 const system = vibe.system({ name: "support-bot" })
 await system.start()

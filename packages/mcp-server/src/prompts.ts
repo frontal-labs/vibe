@@ -1,4 +1,4 @@
-import { runtimeError } from "vibe/errors"
+import { runtimeError } from "@@vibe/errors"
 import type { ToolContext } from "./types"
 
 export interface McpPrompt {
@@ -13,7 +13,7 @@ export interface McpPrompt {
 
 export const prompts: readonly McpPrompt[] = [
   {
-    name: "vibe/design-agent",
+    name: "@@vibe/design-agent",
     description:
       "Design an agent plus its tools from a task description, following Vibe conventions.",
     arguments: [
@@ -26,14 +26,14 @@ export const prompts: readonly McpPrompt[] = [
     ],
   },
   {
-    name: "vibe/debug-run",
+    name: "@@vibe/debug-run",
     description: "Explain a failed Vibe agent run or VibeError and suggest a fix.",
     arguments: [
       { name: "diagnostic", description: "The JSON result/error to debug.", required: true },
     ],
   },
   {
-    name: "vibe/add-tool",
+    name: "@@vibe/add-tool",
     description: "Scaffold and wire a new tool (or package + tool) into Vibe.",
     arguments: [
       { name: "tool", description: "What the tool should do.", required: true },
@@ -45,7 +45,7 @@ export const prompts: readonly McpPrompt[] = [
     ],
   },
   {
-    name: "vibe/scaffold-package",
+    name: "@@vibe/scaffold-package",
     description: "Scaffold a new vibe/* package following repo conventions.",
     arguments: [{ name: "name", description: "Bare package name, e.g. 'cache'.", required: true }],
   },
@@ -59,7 +59,7 @@ export function getPrompt(
 ): { description: string; messages: { role: "user"; content: { type: "text"; text: string } }[] } {
   const a = args ?? {}
   switch (name) {
-    case "vibe/design-agent":
+    case "@@vibe/design-agent":
       return {
         description: "Design a Vibe agent",
         messages: [
@@ -72,7 +72,7 @@ export function getPrompt(
           },
         ],
       }
-    case "vibe/debug-run":
+    case "@@vibe/debug-run":
       return {
         description: "Debug a Vibe run",
         messages: [
@@ -85,7 +85,7 @@ export function getPrompt(
           },
         ],
       }
-    case "vibe/add-tool":
+    case "@@vibe/add-tool":
       return {
         description: "Add a Vibe tool",
         messages: [
@@ -98,7 +98,7 @@ export function getPrompt(
           },
         ],
       }
-    case "vibe/scaffold-package":
+    case "@@vibe/scaffold-package":
       return {
         description: "Scaffold a Vibe package",
         messages: [

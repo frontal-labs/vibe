@@ -1,5 +1,5 @@
 {
-  "name": "vibe/build",
+  "name": "@@vibe/build",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -25,9 +25,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/config": "workspace:*",
-    "vibe/errors": "workspace:*",
-    "vibe/shared": "workspace:*",
+    "@@vibe/config": "workspace:*",
+    "@@vibe/errors": "workspace:*",
+    "@@vibe/shared": "workspace:*",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {

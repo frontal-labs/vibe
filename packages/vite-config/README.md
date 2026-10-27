@@ -13,7 +13,7 @@ bun add -D @vibe/vite-config
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite"
-import { createBaseConfig } from "vibe/vite-config"
+import { createBaseConfig } from "@vibe/vite-config"
 
 export default defineConfig(createBaseConfig("src/index.ts"))
 ```

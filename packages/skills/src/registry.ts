@@ -1,5 +1,5 @@
-import { runtimeError } from "vibe/errors"
-import type { AnyTool, ToolSchema } from "vibe/tools"
+import { runtimeError } from "@@vibe/errors"
+import type { AnyTool, ToolSchema } from "@@vibe/tools"
 import type { AnySkill, SkillKind } from "./types"
 
 /**

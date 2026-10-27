@@ -1,5 +1,5 @@
 {
-  "name": "vibe/workflows",
+  "name": "@@vibe/workflows",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -25,10 +25,10 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/logger": "workspace:*",
-    "vibe/runtime": "workspace:*",
-    "vibe/shared": "workspace:*",
-    "vibe/errors": "workspace:*"
+    "@@vibe/logger": "workspace:*",
+    "@@vibe/runtime": "workspace:*",
+    "@@vibe/shared": "workspace:*",
+    "@@vibe/errors": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",

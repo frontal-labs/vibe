@@ -1,5 +1,5 @@
-import { serializeError } from "vibe/errors"
-import { nativeAddon, resetNativeAddonCache } from "vibe/shared"
+import { serializeError } from "@@vibe/errors"
+import { nativeAddon, resetNativeAddonCache } from "@@vibe/shared"
 import { beforeEach, describe, expect, it } from "vitest"
 
 const ORIGINAL_ADDON = process.env.VIBE_NATIVE_ADDON

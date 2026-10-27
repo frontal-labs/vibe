@@ -10,5 +10,5 @@ expectAssignable<(...args: never[]) => unknown>(createAgent)
 
 // Subpath re-exports resolve to the underlying package.
 expectAssignable<(...args: never[]) => unknown>(defineTool)
-// The `vibe/agent` subpath surfaces the Agent type.
+// The `@vibe/agent` subpath surfaces the Agent type.
 expectAssignable<Agent["run"]>((_input: { text: string }) => Promise.resolve({}) as never)

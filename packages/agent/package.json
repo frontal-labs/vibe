@@ -1,5 +1,5 @@
 {
-  "name": "vibe/agent",
+  "name": "@@vibe/agent",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -25,12 +25,12 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/errors": "workspace:*",
-    "vibe/logger": "workspace:*",
-    "vibe/memory": "workspace:*",
-    "vibe/model": "workspace:*",
-    "vibe/runtime": "workspace:*",
-    "vibe/tools": "workspace:*",
+    "@@vibe/errors": "workspace:*",
+    "@@vibe/logger": "workspace:*",
+    "@@vibe/memory": "workspace:*",
+    "@@vibe/model": "workspace:*",
+    "@@vibe/runtime": "workspace:*",
+    "@@vibe/tools": "workspace:*",
     "zod": "^4.4.3",
     "@standard-schema/spec": "^1.1.0"
   },

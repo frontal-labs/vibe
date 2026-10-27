@@ -1,4 +1,4 @@
-import { runtimeError } from "vibe/errors"
+import { runtimeError } from "@@vibe/errors"
 import type { ActiveSpan, Span, Tracer, TracerOptions } from "./types"
 
 let counter = 0

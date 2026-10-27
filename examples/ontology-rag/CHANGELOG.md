@@ -5,4 +5,4 @@
 ### Patch Changes
 
 - Updated dependencies [d006045]
-  - @frontal-labs/vibe@0.1.0
+  - @vibe/vibe@0.1.0

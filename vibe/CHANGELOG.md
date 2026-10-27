@@ -1,13 +1,13 @@
-# @frontal-labs/vibe
+# @vibe/vibe
 
 ## 0.1.0
 
 ### Minor Changes
 
-- d006045: Rename the umbrella barrel package `vibe` → `@frontal-labs/vibe`.
+- d006045: Rename the umbrella barrel package `vibe` → `@vibe/vibe`.
 
-  Consumers now install and import from `@frontal-labs/vibe` (subpaths unchanged, e.g.
-  `import { createAgent } from "@frontal-labs/vibe/agent"`). The internal `vibe/*` scope, the `vibe`
+  Consumers now install and import from `@vibe/vibe` (subpaths unchanged, e.g.
+  `import { createAgent } from "@vibe/agent"`). The internal `vibe/*` scope, the `vibe`
   CLI command, the `vibe.config.*` filename, the `VIBE_NATIVE_ADDON` env var, and the Rust crate
   names are all unchanged — this is purely the published barrel package name.
 

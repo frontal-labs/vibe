@@ -42,8 +42,8 @@ bun run dev
 
 | Package | Description |
 |---------|-------------|
-| `@frontal-labs/vibe` | Barrel package |
-| `@frontal-labs/vibe-cli` | CLI tool for scaffolding and managing projects |
+| `@vibe/vibe` | Barrel package |
+| `@vibe/vibe-cli` | CLI tool for scaffolding and managing projects |
 | `vibe/core` | Central orchestrator that wires all modules together |
 | `vibe/agent` | Agent definition, lifecycle, and execution |
 | `vibe/model` | LLM provider abstraction layer |

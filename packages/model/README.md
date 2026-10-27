@@ -18,7 +18,7 @@ bun add vibe/model
 ## Usage
 
 ```ts
-import { createOpenAIProvider, MODEL_CATALOG, priceUsd } from "vibe/model"
+import { createOpenAIProvider, MODEL_CATALOG, priceUsd } from "@vibe/model"
 
 const provider = createOpenAIProvider({ apiKey })
 const res = await provider.complete({ model: "gpt-4o", messages })

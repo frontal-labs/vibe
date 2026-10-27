@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 /**
- * Generate aliases for all vibe/* packages
+ * Generate aliases for all @vibe/* packages
  * @returns Record of alias mappings
  */
 export function generateVibeAliases(): Record<string, string> {
@@ -23,8 +23,8 @@ export function generateVibeAliases(): Record<string, string> {
         .flatMap((name) => {
           const src = resolve(base, name, "src")
           return [
-            [`vibe/${name}`, src],
-            [`vibe/${name}/*`, resolve(src, "*")],
+            [`@vibe/${name}`, src],
+            [`@vibe/${name}/*`, resolve(src, "*")],
           ]
         }),
     )
@@ -35,8 +35,8 @@ export function generateVibeAliases(): Record<string, string> {
 
   return {
     ...vibeAliases("packages"),
-    "vibe/generators": generatorsSrc,
-    "vibe/generators/*": resolve(generatorsSrc, "*"),
+    "@@vibe/generators": generatorsSrc,
+    "@@vibe/generators/*": resolve(generatorsSrc, "*"),
     ...vibeAliases("tools/generators"),
   }
 }
@@ -63,31 +63,31 @@ export function externalize(id: string): boolean {
       "child_process",
     ].some((b) => id === b || id.startsWith(`${b}/`)) ||
     [
-      "vibe/agent",
-      "vibe/build",
-      "vibe/config",
-      "vibe/core",
-      "vibe/deploy",
-      "vibe/devtools",
-      "vibe/di",
-      "vibe/errors",
-      "vibe/evals",
-      "vibe/governance",
-      "vibe/lifecycle",
-      "vibe/logger",
-      "vibe/mcp-server",
-      "vibe/memory",
-      "vibe/model",
-      "vibe/observability",
-      "vibe/ontology",
-      "vibe/plugin",
-      "vibe/runtime",
-      "vibe/security",
-      "vibe/shared",
-      "vibe/skills",
-      "vibe/tools",
-      "vibe/tracing",
-      "vibe/workflows",
+      "@@vibe/agent",
+      "@@vibe/build",
+      "@@vibe/config",
+      "@@vibe/core",
+      "@@vibe/deploy",
+      "@@vibe/devtools",
+      "@@vibe/di",
+      "@@vibe/errors",
+      "@@vibe/evals",
+      "@@vibe/governance",
+      "@@vibe/lifecycle",
+      "@@vibe/logger",
+      "@@vibe/mcp-server",
+      "@@vibe/memory",
+      "@@vibe/model",
+      "@@vibe/observability",
+      "@@vibe/ontology",
+      "@@vibe/plugin",
+      "@@vibe/runtime",
+      "@@vibe/security",
+      "@@vibe/shared",
+      "@@vibe/skills",
+      "@@vibe/tools",
+      "@@vibe/tracing",
+      "@@vibe/workflows",
       "zod",
       "@standard-schema/spec",
       "@anthropic-ai/sdk",
@@ -101,9 +101,9 @@ export function externalize(id: string): boolean {
   )
 }
 
-/** Externalize node built-ins and third-party deps; bundle `vibe/*` workspace code. */
+/** Externalize node built-ins and third-party deps; bundle `@vibe/*` workspace code. */
 export function externalizeThirdParty(id: string): boolean {
-  return !id.startsWith("vibe/") && externalize(id)
+  return !id.startsWith("@vibe/") && externalize(id)
 }
 
 /**

@@ -1,5 +1,5 @@
 {
-  "name": "@frontal-labs/vibe-monorepo",
+  "name": "@@vibe/vibe-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",

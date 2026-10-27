@@ -18,7 +18,7 @@ bun add vibe/security
 ## Usage
 
 ```ts
-import { createPIIRedactor, createRateLimiter, secureTool } from "vibe/security"
+import { createPIIRedactor, createRateLimiter, secureTool } from "@vibe/security"
 
 const redact = createPIIRedactor()
 const limiter = createRateLimiter({ limit: 100, windowMs: 60_000 })

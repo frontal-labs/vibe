@@ -17,7 +17,7 @@ bun add vibe/plugin
 ## Usage
 
 ```ts
-import { createPluginHost } from "vibe/plugin"
+import { createPluginHost } from "@vibe/plugin"
 
 const host = createPluginHost()
 host.register({ name: "my-plugin", hooks: { onStart: () => {} } })

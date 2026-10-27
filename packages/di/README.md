@@ -17,7 +17,7 @@ bun add vibe/di
 ## Usage
 
 ```ts
-import { createContainer, createToken } from "vibe/di"
+import { createContainer, createToken } from "@vibe/di"
 
 const loggerToken = createToken<Logger>("logger")
 const container = createContainer()

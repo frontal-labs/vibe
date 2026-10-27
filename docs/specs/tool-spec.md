@@ -28,7 +28,7 @@ infers `TInput` from the Zod schema so the interface's generics are filled in fo
 you:
 
 ```ts
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 
 export const getWeather = defineTool({
@@ -188,7 +188,7 @@ reports a recoverable failure to the model, and lets an infrastructure failure
 propagate:
 
 ```ts
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 
 export const searchDocs = defineTool({
@@ -228,7 +228,7 @@ export const searchDocs = defineTool({
 Registering and using it:
 
 ```ts
-import { createToolRegistry } from "vibe/tools"
+import { createToolRegistry } from "@vibe/tools"
 
 const registry = createToolRegistry()
 registry.register(searchDocs)              // duplicate names are rejected

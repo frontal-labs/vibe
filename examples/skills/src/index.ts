@@ -1,6 +1,6 @@
-import { vibe } from "@frontal-labs/vibe/core"
-import { createAnthropicProvider } from "@frontal-labs/vibe/model"
-import { defineSkill, loadMarkdownSkill } from "@frontal-labs/vibe/skills"
+import { vibe } from "@@vibe/core"
+import { createAnthropicProvider } from "@@vibe/model"
+import { defineSkill, loadMarkdownSkill } from "@@vibe/skills"
 import { z } from "zod"
 
 // A "code" skill: typed, validated, and callable exactly like a tool — plus

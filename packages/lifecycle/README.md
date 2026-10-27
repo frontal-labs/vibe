@@ -17,7 +17,7 @@ bun add vibe/lifecycle
 ## Usage
 
 ```ts
-import { createLifecycle, LIFECYCLE_STATES } from "vibe/lifecycle"
+import { createLifecycle, LIFECYCLE_STATES } from "@vibe/lifecycle"
 
 const lifecycle = createLifecycle()
 lifecycle.on(LIFECYCLE_STATES.starting, () => startDb())

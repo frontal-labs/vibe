@@ -1,12 +1,12 @@
-import { createAgent } from "@frontal-labs/vibe/agent"
-import { createAnthropicProvider } from "@frontal-labs/vibe/model"
+import { createAgent } from "@@vibe/agent"
+import { createAnthropicProvider } from "@@vibe/model"
 import {
   costOf,
   createAuditLog,
   createMetrics,
   observeAgent,
-} from "@frontal-labs/vibe/observability"
-import { defineTool } from "@frontal-labs/vibe/tools"
+} from "@@vibe/observability"
+import { defineTool } from "@@vibe/tools"
 import { z } from "zod"
 
 const lookup = defineTool({

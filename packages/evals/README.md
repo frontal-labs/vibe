@@ -17,7 +17,7 @@ bun add vibe/evals
 ## Usage
 
 ```ts
-import { runEval, exactMatch } from "vibe/evals"
+import { runEval, exactMatch } from "@vibe/evals"
 
 const report = await runEval({
   case: { input: "hi", expected: "hello" },

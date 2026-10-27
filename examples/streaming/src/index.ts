@@ -1,5 +1,5 @@
-import { createAgent } from "@frontal-labs/vibe/agent"
-import { createAnthropicProvider } from "@frontal-labs/vibe/model"
+import { createAgent } from "@@vibe/agent"
+import { createAnthropicProvider } from "@@vibe/model"
 
 const agent = createAgent({ provider: createAnthropicProvider() })
 

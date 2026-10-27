@@ -17,7 +17,7 @@ bun add vibe/observability
 ## Usage
 
 ```ts
-import { createMetrics, createAuditLog, costOf } from "vibe/observability"
+import { createMetrics, createAuditLog, costOf } from "@vibe/observability"
 
 const metrics = createMetrics()
 const audit = createAuditLog([createConsoleAuditSink()])

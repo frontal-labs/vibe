@@ -1,4 +1,4 @@
-# @frontal-labs/vibe-cli
+# @vibe/vibe-cli
 
 ## 0.1.0
 

@@ -1,5 +1,5 @@
 {
-  "name": "vibe/logger",
+  "name": "@@vibe/logger",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -25,8 +25,8 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/errors": "workspace:*",
-    "vibe/shared": "workspace:*"
+    "@@vibe/errors": "workspace:*",
+    "@@vibe/shared": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",

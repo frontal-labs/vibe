@@ -1,5 +1,5 @@
 {
-  "name": "vibe/ontology",
+  "name": "@@vibe/ontology",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -25,9 +25,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/tools": "workspace:*",
+    "@@vibe/tools": "workspace:*",
     "@standard-schema/spec": "^1.1.0",
-    "vibe/errors": "workspace:*"
+    "@@vibe/errors": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",

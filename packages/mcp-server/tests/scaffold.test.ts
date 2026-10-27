@@ -15,7 +15,7 @@ test("scaffoldPackage creates convention files", () => {
     const pkg = JSON.parse(
       readFileSync(join(root, "packages", "cache", "package.json"), "utf8"),
     ) as { name?: string }
-    expect(pkg.name).toBe("vibe/cache")
+    expect(pkg.name).toBe("@@vibe/cache")
     expect(existsSync(join(root, "packages", "cache", "src", "index.ts"))).toBe(true)
     expect(existsSync(join(root, "packages", "cache", "vite.config.ts"))).toBe(true)
     expect(existsSync(join(root, "packages", "cache", "tsconfig.json"))).toBe(true)

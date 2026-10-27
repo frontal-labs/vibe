@@ -18,7 +18,7 @@ bun add vibe/adapters
 ## Usage
 
 ```ts
-import { toFetchHandler, toOpenAICompatHandler, toSseStream } from "vibe/adapters"
+import { toFetchHandler, toOpenAICompatHandler, toSseStream } from "@vibe/adapters"
 
 const handler = toFetchHandler({ agent })
 const openaiHandler = toOpenAICompatHandler({ agent })

@@ -18,7 +18,7 @@ bun add vibe/core
 ## Usage
 
 ```ts
-import { vibe, createSystem } from "vibe/core"
+import { vibe, createSystem } from "@vibe/core"
 
 const system = createSystem({ config })
 const app = vibe({ config })

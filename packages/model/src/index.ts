@@ -41,7 +41,7 @@ export type {
 } from "./types"
 export { DEFAULT_MODEL } from "./types"
 
-import { nativeAddon } from "vibe/shared"
+import { nativeAddon } from "@@vibe/shared"
 
 export function countTokens(text: string, modelFamily: string): number {
   const addon = nativeAddon()

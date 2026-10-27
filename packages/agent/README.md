@@ -18,7 +18,7 @@ bun add vibe/agent
 ## Usage
 
 ```ts
-import { createAgent, runLoop } from "vibe/agent"
+import { createAgent, runLoop } from "@vibe/agent"
 
 const agent = createAgent({ model, tools })
 const result = await runLoop({ agent, input: "Summarize this." })

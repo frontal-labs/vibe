@@ -56,7 +56,7 @@ The exact declared edges (from each `package.json`):
 | `vibe/core` | `di`, `errors`, `lifecycle`, `logger`, `plugin`, `runtime`, `shared` |
 | 🚧 `vibe/config` | `errors`, `shared` (+ types from `model`/`tools`/`plugin` for `VibeConfig`) |
 | 🚧 `vibe/build` | `errors`, `shared` (+ optional `vibe_napi` native accelerator) |
-| 🚧 `@frontal-labs/vibe-cli` | `core`, `build`, `config`, `errors`, `shared` |
+| 🚧 `@vibe/vibe-cli` | `core`, `build`, `config`, `errors`, `shared` |
 
 The native accelerator is **dev-time**: it runs at build time and is not shipped in
 the running agent. Note the `vibe_napi` reference above is *not* a Rust-to-`vibe/*`
@@ -83,7 +83,7 @@ The repo carries **two** coexisting workspaces:
 
   `Cargo.toml` workspace members are `["crates/*", "benchmarks"]`.
 - **`packages/` — a bun/Turborepo workspace (TypeScript).** The `vibe/*` framework
-  documented on this page, including the `@frontal-labs/vibe-cli` TypeScript CLI and `vibe/build`,
+  documented on this page, including the `@vibe/vibe-cli` TypeScript CLI and `vibe/build`,
   which optionally loads the `vibe_napi` `.node` addon when it is present.
 
 `cargo` builds the accelerator; `bun`/`turbo` build the framework. The
@@ -178,7 +178,7 @@ build time, it is not in the deployed agent:
   agent→tool edges itself, and calls the optional `vibe_napi` `.node` addon (backed
   by the `vibe_bundler` oxc analysis) to do that extraction faster when the native
   binary is present.
-- **`@frontal-labs/vibe-cli`** — the `vibe` command (`new`, `dev`, `build`), a TypeScript CLI
+- **`@vibe/vibe-cli`** — the `vibe` command (`new`, `dev`, `build`), a TypeScript CLI
   built on `vibe/core`, `vibe/build`, and `vibe/config`. See
   [Developer experience](../dx/00-developer-experience.md).
 

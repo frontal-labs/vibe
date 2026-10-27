@@ -17,7 +17,7 @@ out of the loop.
 
 ```ts
 import type { z } from "zod"
-import type { CancellationToken, Logger } from "vibe/runtime"
+import type { CancellationToken, Logger } from "@vibe/runtime"
 
 interface Tool<TSchema extends z.ZodTypeAny = z.ZodTypeAny> {
   readonly name: string                       // model-visible, unique in a registry
@@ -63,7 +63,7 @@ sends to the model. **The types can never drift, because there is only one schem
 
 ```ts
 import { z } from "zod"
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools"
 
 export const getWeather = defineTool({
   name: "get_weather",

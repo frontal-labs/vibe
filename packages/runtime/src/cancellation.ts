@@ -1,5 +1,5 @@
-import { cancelledError } from "vibe/errors"
-import { nativeAddon } from "vibe/shared"
+import { cancelledError } from "@@vibe/errors"
+import { nativeAddon } from "@@vibe/shared"
 
 import type { CancellationToken, CancellationTokenSource } from "./types"
 

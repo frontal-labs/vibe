@@ -1,4 +1,4 @@
-import { validationError } from "vibe/errors"
+import { validationError } from "@@vibe/errors"
 import type { Workflow, WorkflowStep } from "./types"
 
 export interface WorkflowDefinition {

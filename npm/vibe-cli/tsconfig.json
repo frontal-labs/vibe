@@ -2,7 +2,7 @@
   "extends": "../../packages/typescript-config/tsconfig.library.json",
   "compilerOptions": {
     "paths": {
-      "vibe/*": ["../../packages/*/src", "../../tools/*/src"]
+      "@vibe/*": ["../../packages/*/src", "../../tools/*/src"]
     }
   },
   "include": ["src"]

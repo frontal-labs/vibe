@@ -6,7 +6,7 @@ import {
   context as esbuildContext,
   type Metafile,
 } from "esbuild"
-import { agentsMissingError } from "vibe/errors"
+import { agentsMissingError } from "@@vibe/errors"
 
 import { discoverApp } from "./discover"
 import { toolEdges } from "./graph"

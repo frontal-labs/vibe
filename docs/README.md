@@ -12,7 +12,7 @@ projects — there is no separate source language to learn.
 
 ```ts
 // support.ts
-import { defineTool, defineAgent, createSystem } from "@frontal-labs/vibe"
+import { defineTool, defineAgent, createSystem } from "@vibe/vibe"
 import { db } from "./db"                          // your own TypeScript
 
 const getOrder = defineTool({

@@ -4,7 +4,7 @@ From nothing to a tool-using, custom-model agent — written in **plain
 TypeScript**. Vibe is a TypeScript-native agent framework: you import `vibe/*`
 APIs (`defineTool`, `defineAgent`, `createSystem`) and write ordinary `.ts`
 files. There is no separate language and no compiler — you run your app with
-`node`/`bun` (or the `@frontal-labs/vibe-cli`) and build it for production with `vibe/build`.
+`node`/`bun` (or the `@vibe/vibe-cli`) and build it for production with `vibe/build`.
 This page is meant to be read top to bottom and copy-pasted.
 
 > **Honesty first.** The runtime foundation (`System`, DI, lifecycle, plugins,
@@ -54,9 +54,9 @@ runnable system with `createSystem`.
 // support.ts
 import { z } from "zod"
 
-import { createSystem } from "vibe/core"
-import { defineAgent } from "vibe/agent"
-import { defineTool } from "vibe/tools"
+import { createSystem } from "@vibe/core"
+import { defineAgent } from "@vibe/agent"
+import { defineTool } from "@vibe/tools"
 
 import { db } from "./db" // interop: import your own TypeScript
 
@@ -139,7 +139,7 @@ Run it today and you'll see the runtime's structured startup/shutdown logs and a
 `notImplementedError` from the agent loop — proof the lifecycle and logger are
 real while the loop (`system.ask()` / agent run) is still 🚧.
 
-The `@frontal-labs/vibe-cli` (a TypeScript CLI) wraps the same flow for convenience once the
+The `@vibe/vibe-cli` (a TypeScript CLI) wraps the same flow for convenience once the
 agentic layer lands.
 
 ## 4. Swap a sub-agent's model

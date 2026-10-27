@@ -65,11 +65,11 @@ describe("createBaseConfig", () => {
     })
 
     it("returns true for vibe/* packages listed in the registry", () => {
-      expect(external("vibe/agent")).toBe(true)
-      expect(external("vibe/core")).toBe(true)
-      expect(external("vibe/shared")).toBe(true)
-      expect(external("vibe/logger")).toBe(true)
-      expect(external("vibe/config")).toBe(true)
+      expect(external("@@vibe/agent")).toBe(true)
+      expect(external("@@vibe/core")).toBe(true)
+      expect(external("@@vibe/shared")).toBe(true)
+      expect(external("@@vibe/logger")).toBe(true)
+      expect(external("@@vibe/config")).toBe(true)
     })
 
     it("returns true for known third-party dependencies", () => {
@@ -85,7 +85,7 @@ describe("createBaseConfig", () => {
     it("returns true for sub-paths of external dependencies", () => {
       expect(external("zod/errors")).toBe(true)
       expect(external("@anthropic-ai/sdk/cli")).toBe(true)
-      expect(external("vibe/agent/tools")).toBe(true)
+      expect(external("@@vibe/agent/tools")).toBe(true)
     })
 
     it("returns false for relative imports", () => {

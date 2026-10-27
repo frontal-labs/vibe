@@ -18,7 +18,7 @@ bun add vibe/config
 ## Usage
 
 ```ts
-import { loadConfig, defineConfig, mergeConfig } from "vibe/config"
+import { loadConfig, defineConfig, mergeConfig } from "@vibe/config"
 
 const config = await loadConfig("./app")
 const merged = mergeConfig(config, { observability: { enabled: true } })
