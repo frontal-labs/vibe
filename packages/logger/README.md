@@ -18,7 +18,7 @@ bun add vibe/logger
 ## Usage
 
 ```ts
-import { createLogger, createConsoleTransport, runWithLogContext } from "vibe/logger"
+import { createLogger, createConsoleTransport, runWithLogContext } from "@vibe/logger"
 
 const logger = createLogger({ transports: [createConsoleTransport()] })
 runWithLogContext({ requestId: "1" }, () => logger.info("started"))

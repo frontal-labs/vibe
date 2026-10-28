@@ -3,8 +3,10 @@ import type { HookPayloadMap } from "vibe/plugin"
 import type { AgentEvent } from "./types"
 
 /**
- * Plugin-facing hook names for the agent lifecycle. The loop emits each hook at its point in the run
- * (see `AgentHookEmitter`), and a host that wires `vibe/plugin` delivers them to registered plugins.
+ * Plugin-facing hook names for the agent lifecycle. The loop emits `AgentEvent`s
+ * (see `stream()` / `RunOptions.onEvent`); a host that wires `@vibe/plugin` maps
+ * these names to those events. Kept as a stable contract so the plugin bridge and
+ * the loop agree on vocabulary.
  */
 export const AGENT_HOOKS = {
   iteration: "agent:iteration",

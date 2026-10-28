@@ -106,7 +106,7 @@ Zod schema, and that single schema drives two consumers:
   provider sends to the model.
 
 ```ts
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools" // 🚧
 import { z } from "zod"
 
 const transfer = defineTool({
@@ -157,7 +157,7 @@ subclass with a machine-readable `ErrorCode`, so `catch` blocks branch on a type
 rather than a substring:
 
 ```ts
-import { ProviderRateLimitError, TimeoutError, VibeError } from "vibe/errors"
+import { ProviderRateLimitError, TimeoutError, VibeError } from "@vibe/errors"
 ```
 
 **Before (stringly-typed):**
@@ -195,8 +195,9 @@ return type widens to `any`, a brand stops being nominal, or a handler's args st
 its schema.
 
 ```ts
-// packages/tools/type-tests/tools.test-d.ts
-import { defineTool } from "vibe/tools"
+// packages/tools/type-tests/define-tool.test-d.ts  🚧
+import { expectAssignable, expectError } from "tsd"
+import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 
 const t = defineTool({

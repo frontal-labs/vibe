@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 
-import { configError } from "vibe/errors"
+import { configError } from "@vibe/errors"
 
 import { resolveWithin } from "./path"
 
@@ -88,7 +88,7 @@ export function scaffoldPackage(repoRoot: string, name: string): string[] {
   if (name.includes("/") || name.includes("\\") || name.trim() === "") {
     throw configError(`Invalid package name: "${name}". Use a bare name, e.g. "cache".`)
   }
-  const scoped = name.startsWith("vibe/") ? name : `vibe/${name}`
+  const scoped = name.startsWith("@vibe/") ? name : `@vibe/${name}`
   const dir = resolveWithin(repoRoot, join("packages", name))
 
   if (existsSync(dir)) {
@@ -113,9 +113,9 @@ export function scaffoldPackage(repoRoot: string, name: string): string[] {
   return created
 }
 
-const agentTs = (name: string) => `import { defineTool } from "vibe/tools"
-import { createAgent } from "vibe/agent"
-import type { ModelProvider } from "vibe/model"
+const agentTs = (name: string) => `import { defineTool } from "@vibe/tools"
+import { createAgent } from "@vibe/agent"
+import type { ModelProvider } from "@vibe/model"
 import { z } from "zod"
 
 // A self-contained agent scaffold. Wire a real provider (e.g. createAnthropicProvider)

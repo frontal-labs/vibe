@@ -1,5 +1,5 @@
 {
-  "name": "vibe/model",
+  "name": "@vibe/model",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -25,9 +25,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/di": "workspace:*",
-    "vibe/errors": "workspace:*",
-    "vibe/shared": "workspace:*",
+    "@vibe/di": "workspace:*",
+    "@vibe/errors": "workspace:*",
+    "@vibe/shared": "workspace:*",
     "@anthropic-ai/sdk": "^0.68.0"
   },
   "devDependencies": {

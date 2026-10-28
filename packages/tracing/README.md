@@ -18,7 +18,7 @@ bun add vibe/tracing
 ## Usage
 
 ```ts
-import { createTracer, createMemoryExporter, traceAgentRun } from "vibe/tracing"
+import { createTracer, createMemoryExporter, traceAgentRun } from "@vibe/tracing"
 
 const exporter = createMemoryExporter()
 const tracer = createTracer({ exporter })

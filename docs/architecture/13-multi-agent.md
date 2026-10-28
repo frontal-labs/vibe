@@ -44,7 +44,7 @@ want to bound fan-out) a `ResourceManager` concurrency limit for free.
 
 ```ts
 import { z } from "zod"
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools"
 
 function delegateTool(subAgents: Record<string, () => Agent>) {
   return defineTool({

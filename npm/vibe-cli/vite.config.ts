@@ -4,8 +4,8 @@ import { defineConfig } from "vite"
 import { createBaseViteConfig, externalizeThirdParty } from "../../tools/vite-utils"
 
 // The `vibe/*` workspace packages live in `packages/`, `tools/`, or at the repo root
-// (the umbrella `frontal-vibe` package now lives at `./vibe`, and
-// `vibe/generators` lives in `tools/generators`).
+// (the umbrella `@@vibe/vibe` package now lives at `./vibe`, and
+// `@vibe/generators` lives in `tools/generators`).
 const vibePackageDirs = [
   resolve(__dirname, "..", "..", "packages"),
   resolve(__dirname, "..", "..", "tools"),
@@ -42,7 +42,7 @@ const _external = (id: string) =>
     "https",
     "child_process",
   ].some((b) => id === b || id.startsWith(`${b}/`)) ||
-  ["vibe/generators", "chokidar", "commander", "vibe/build", "vibe/errors"].some(
+  ["@@vibe/generators", "chokidar", "commander", "@@vibe/build", "@@vibe/errors"].some(
     (d) => id === d || id.startsWith(`${d}/`),
   )
 

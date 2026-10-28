@@ -17,7 +17,7 @@ bun add vibe/devtools
 ## Usage
 
 ```ts
-import { estimateCost, formatUsage, summarizeResult } from "vibe/devtools"
+import { estimateCost, formatUsage, summarizeResult } from "@vibe/devtools"
 
 const cost = estimateCost(result)
 console.log(formatUsage(result.usage))

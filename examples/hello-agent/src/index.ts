@@ -1,5 +1,5 @@
-import { vibe } from "frontal-vibe/core"
-import { createAnthropicProvider } from "frontal-vibe/model"
+import { vibe } from "@@vibe/core"
+import { createAnthropicProvider } from "@@vibe/model"
 
 // Uses the Anthropic API — set ANTHROPIC_API_KEY in your environment.
 const provider = createAnthropicProvider()

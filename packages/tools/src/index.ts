@@ -16,7 +16,7 @@ export type {
   ToolSchema,
 } from "./types"
 
-import { nativeAddon } from "vibe/shared"
+import { nativeAddon } from "@@vibe/shared"
 
 export function validateToolInput(schema: string, input: string): void {
   const addon = nativeAddon()

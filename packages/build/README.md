@@ -17,7 +17,7 @@ bun add vibe/build
 ## Usage
 
 ```ts
-import { discoverApp, planBuild, bundleApp } from "vibe/build"
+import { discoverApp, planBuild, bundleApp } from "@vibe/build"
 
 const app = discoverApp("./app")
 const plan = planBuild(app)

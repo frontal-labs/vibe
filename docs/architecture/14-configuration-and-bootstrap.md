@@ -3,7 +3,7 @@
 > Configuration is a plain-TypeScript construct: a
 > `defineConfig` call in a `vibe.config.ts` file (or the same object passed
 > straight to `createSystem`). `vibe/config` resolves it into a `VibeConfig`
-> that bootstraps the runtime. The entry points are `frontal-vibe-cli` — `vibe dev` /
+> that bootstraps the runtime. The entry points are `@vibe/vibe-cli` — `vibe dev` /
 > `vibe build` — over an ordinary `createSystem(...)` call.
 
 The design goal is a **zero-ceremony happy path with a fully-typed escape hatch**:
@@ -18,7 +18,7 @@ configures, defined with the `vibe/*` APIs:
 
 ```ts
 // vibe.config.ts
-import { defineConfig, defineAgent, defineTool, defineModel } from "frontal-vibe"
+import { defineConfig, defineAgent, defineTool, defineModel } from "@vibe/vibe"
 import { z } from "zod"
 
 const Fast = defineModel({ id: "claude-haiku-4-5", effort: "low" })
@@ -63,7 +63,7 @@ config with other tooling, or embed the runtime in an existing app. The same
 `VibeConfig` object can go straight to `createSystem`:
 
 ```ts
-import { createSystem } from "vibe/core"
+import { createSystem } from "@vibe/core"
 
 const system = createSystem({
   name: "support-bot",
@@ -180,7 +180,7 @@ Config is progressive, not mandatory.
 
 ## Bootstrap flow — the CLI is the entry point
 
-You do not write a `vibe.boot()`. `frontal-vibe-cli` is the entry point: it resolves
+You do not write a `vibe.boot()`. `@vibe/vibe-cli` is the entry point: it resolves
 config, calls `createSystem(...)` on the runtime, and runs it.
 
 ```
@@ -217,7 +217,7 @@ The bootstrap the CLI drives is an ordinary `createSystem(resolved)` call agains
 the runtime inside an existing app rather than use the CLI:
 
 ```ts
-import { createSystem } from "vibe/core"
+import { createSystem } from "@vibe/core"
 
 const system = createSystem({
   name: "support-bot",

@@ -1,4 +1,4 @@
-import { runtimeError } from "vibe/errors"
+import { runtimeError } from "@@vibe/errors"
 import { listPackages } from "./lib/workspace"
 import type { ToolContext } from "./types"
 

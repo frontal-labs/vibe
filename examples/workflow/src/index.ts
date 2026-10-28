@@ -1,11 +1,11 @@
-import { runtimeError } from "frontal-vibe/errors"
+import { runtimeError } from "@@vibe/errors"
 import {
   createMemoryCheckpointStore,
   defineWorkflow,
   parallel,
   runWorkflow,
   step,
-} from "frontal-vibe/workflows"
+} from "@@vibe/workflows"
 
 // ── A code-first DAG: fetch → (summarize ‖ classify) → assemble ────────────────
 const triage = defineWorkflow({

@@ -1,5 +1,4 @@
-import { createFakeProvider } from "vibe/model"
-import { frameUntrustedOutput } from "vibe/tools"
+import { createFakeProvider } from "@@vibe/model"
 import { describe, expect, it } from "vitest"
 
 import { createAgent } from "../src/agent"

@@ -18,7 +18,7 @@ bun add vibe/ontology
 ## Usage
 
 ```ts
-import { defineEntity, createInMemoryOntologyStore, retrieveContext } from "vibe/ontology"
+import { defineEntity, createInMemoryOntologyStore, retrieveContext } from "@vibe/ontology"
 
 const User = defineEntity("User", { fields: { name: "string" } })
 const store = createInMemoryOntologyStore()

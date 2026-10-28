@@ -1,4 +1,4 @@
-import { pluginConflictError, pluginNotFoundError } from "vibe/errors"
+import { pluginConflictError, pluginNotFoundError } from "@@vibe/errors"
 
 import { createPluginHooks } from "./hooks"
 import type { HookName, Plugin, PluginHooks } from "./types"

@@ -32,7 +32,7 @@ fn imports_finds_relative_imports() {
 fn imports_finds_named_and_default_imports() {
     let source = r#"
         import { z } from "zod"
-        import { createAgent, type Agent } from "vibe/agent"
+        import { createAgent, type Agent } from "@vibe/agent"
         import getOrder from "../tools/get-order"
     "#;
     let result = imports(source);
@@ -46,8 +46,8 @@ fn imports_finds_named_and_default_imports() {
         .iter()
         .any(|(imported, local)| imported == "z" && local == "z"));
 
-    // named imports from "vibe/agent"
-    let agent = result.iter().find(|i| i.source == "vibe/agent").unwrap();
+    // named imports from "@vibe/agent"
+    let agent = result.iter().find(|i| i.source == "@vibe/agent").unwrap();
     assert!(agent
         .named
         .iter()
@@ -64,7 +64,7 @@ fn imports_finds_named_and_default_imports() {
 #[test]
 fn tool_edges_finds_tool_imports_matching_marker() {
     let source = r#"
-        import { createAgent } from "vibe/agent"
+        import { createAgent } from "@vibe/agent"
         import getOrder from "../tools/get-order"
         import lookup from "../tools/lookup"
         import { z } from "zod"

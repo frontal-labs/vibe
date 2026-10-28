@@ -1,5 +1,5 @@
 {
-  "name": "frontal-vibe-cli",
+  "name": "@vibe/cli",
   "version": "0.1.0",
   "type": "module",
   "bin": {

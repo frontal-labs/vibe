@@ -1,5 +1,5 @@
 {
-  "name": "vibe/evals",
+  "name": "@vibe/evals",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -25,16 +25,15 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/errors": "workspace:*",
-    "vibe/shared": "workspace:*"
+    "@vibe/shared": "workspace:*"
   },
   "devDependencies": {
     "tsd": "^0.31.2",
-    "vibe/agent": "workspace:*",
-    "vibe/governance": "workspace:*",
-    "vibe/memory": "workspace:*",
-    "vibe/model": "workspace:*",
-    "vibe/tools": "workspace:*",
+    "@vibe/agent": "workspace:*",
+    "@vibe/governance": "workspace:*",
+    "@vibe/memory": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/tools": "workspace:*",
     "vite": "^6.0.0",
     "vitest": "^4.1.11",
     "zod": "^4.4.3"

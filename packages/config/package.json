@@ -1,5 +1,5 @@
 {
-  "name": "vibe/config",
+  "name": "@vibe/config",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -25,14 +25,14 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "vibe/agent": "workspace:*",
-    "vibe/errors": "workspace:*",
-    "vibe/governance": "workspace:*",
-    "vibe/model": "workspace:*",
-    "vibe/ontology": "workspace:*",
-    "vibe/skills": "workspace:*",
-    "vibe/tools": "workspace:*",
-    "vibe/workflows": "workspace:*",
+    "@vibe/agent": "workspace:*",
+    "@vibe/errors": "workspace:*",
+    "@vibe/governance": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/ontology": "workspace:*",
+    "@vibe/skills": "workspace:*",
+    "@vibe/tools": "workspace:*",
+    "@vibe/workflows": "workspace:*",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {

@@ -18,7 +18,7 @@ bun add vibe/memory
 ## Usage
 
 ```ts
-import { createConversation, buildRequest } from "vibe/memory"
+import { createConversation, buildRequest } from "@vibe/memory"
 
 const convo = createConversation()
 convo.add("user", "hello")

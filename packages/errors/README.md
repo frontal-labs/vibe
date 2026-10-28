@@ -18,7 +18,7 @@ bun add vibe/errors
 ## Usage
 
 ```ts
-import { toolError, formatDiagnostic, ErrorCode } from "vibe/errors"
+import { toolError, formatDiagnostic, ErrorCode } from "@vibe/errors"
 
 throw toolError("call failed", { code: ErrorCode.TOOL_FAILED })
 console.log(formatDiagnostic(err))

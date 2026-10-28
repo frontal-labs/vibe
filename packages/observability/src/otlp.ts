@@ -1,6 +1,4 @@
-import { createHash } from "node:crypto"
-
-/** The span shape this exporter reads — structurally satisfied by `vibe/tracing`. */
+/** The span shape this exporter reads — structurally satisfied by `@vibe/tracing`. */
 export interface SpanLike {
   readonly id: string
   /** Trace id shared by a run's spans. Defaults to the span's own id when absent. */

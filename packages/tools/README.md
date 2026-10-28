@@ -18,7 +18,7 @@ bun add vibe/tools
 ## Usage
 
 ```ts
-import { defineTool, createToolRegistry, runToolCall } from "vibe/tools"
+import { defineTool, createToolRegistry, runToolCall } from "@vibe/tools"
 
 const getWeather = defineTool({ name: "getWeather", input: { city: "string" }, handler: async ({ city }) => `sunny in ${city}` })
 const registry = createToolRegistry([getWeather])

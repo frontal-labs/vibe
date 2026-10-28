@@ -1,22 +1,22 @@
-# frontal-vibe
+# @vibe/vibe
 
 The barrel package for **Vibe** — a TypeScript framework for building reliable enterprise agentic
 systems, by [Frontal](https://frontal.dev).
 
-Install once and import everything from `frontal-vibe` or its subpaths, instead of the individual
+Install once and import everything from `@vibe/vibe` or its subpaths, instead of the individual
 `vibe/*` packages.
 
 ```bash
-npm install frontal-vibe
-# or: bun add frontal-vibe / pnpm add frontal-vibe
+npm install @vibe/vibe
+# or: bun add @vibe/vibe / pnpm add @vibe/vibe
 ```
 
 ## Quick start
 
 ```ts
-import { createAgent } from "frontal-vibe/agent"
-import { createAnthropicProvider } from "frontal-vibe/model"
-import { defineTool } from "frontal-vibe/tools"
+import { createAgent } from "@vibe/agent"
+import { createAnthropicProvider } from "@vibe/model"
+import { defineTool } from "@vibe/tools"
 import { z } from "zod"
 
 const getOrder = defineTool({
@@ -40,7 +40,7 @@ console.log(result.text)
 
 Everything is available from a subpath, so you only pull in what you use:
 
-`frontal-vibe/agent` · `/tools` · `/model` · `/memory` · `/core` · `/runtime` · `/config` ·
+`@vibe/agent` · `/tools` · `/model` · `/memory` · `/core` · `/runtime` · `/config` ·
 `/workflows` · `/skills` · `/ontology` · `/governance` · `/security` · `/observability` ·
 `/evals` · `/plugin` · `/di` · `/adapters` · `/tracing` · `/errors` · `/logger` · `/deploy` ·
 `/devtools`

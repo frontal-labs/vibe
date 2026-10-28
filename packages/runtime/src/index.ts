@@ -32,7 +32,7 @@ export type {
   TaskId,
 } from "./types"
 
-import { nativeAddon } from "vibe/shared"
+import { nativeAddon } from "@@vibe/shared"
 
 function generateExecutionId(): string {
   const addon = nativeAddon()
@@ -67,6 +67,6 @@ export type {
   JsNativeExecutionResult,
   JsNativeRetryPolicy,
   NativeAddon,
-} from "vibe/shared"
-export { nativeAddon } from "vibe/shared"
+} from "@@vibe/shared"
+export { nativeAddon } from "@@vibe/shared"
 export { generateCheckpointId, generateExecutionId, generateTaskId }

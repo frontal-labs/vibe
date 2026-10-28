@@ -1,5 +1,5 @@
 {
-  "name": "vibe/mcp-server",
+  "name": "@vibe/mcp-server",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -31,16 +31,16 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.32.0",
-    "vibe/agent": "workspace:*",
-    "vibe/core": "workspace:*",
-    "vibe/errors": "workspace:*",
-    "vibe/logger": "workspace:*",
-    "vibe/memory": "workspace:*",
-    "vibe/model": "workspace:*",
-    "vibe/runtime": "workspace:*",
-    "vibe/shared": "workspace:*",
-    "vibe/tools": "workspace:*",
+    "@modelcontextprotocol/sdk": "1.31.0",
+    "@vibe/agent": "workspace:*",
+    "@vibe/core": "workspace:*",
+    "@vibe/errors": "workspace:*",
+    "@vibe/logger": "workspace:*",
+    "@vibe/memory": "workspace:*",
+    "@vibe/model": "workspace:*",
+    "@vibe/runtime": "workspace:*",
+    "@vibe/shared": "workspace:*",
+    "@vibe/tools": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

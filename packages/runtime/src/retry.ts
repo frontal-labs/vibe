@@ -1,5 +1,5 @@
-import { cancelledError, timeoutError } from "vibe/errors"
-import { nativeAddon } from "vibe/shared"
+import { cancelledError, timeoutError } from "@@vibe/errors"
+import { nativeAddon } from "@@vibe/shared"
 
 import type { CancellationToken, RetryPolicy } from "./types"
 

@@ -18,7 +18,7 @@ bun add vibe/runtime
 ## Usage
 
 ```ts
-import { createRuntime, executeWithRetry, defaultRetryPolicy } from "vibe/runtime"
+import { createRuntime, executeWithRetry, defaultRetryPolicy } from "@vibe/runtime"
 
 const runtime = createRuntime()
 const out = await executeWithRetry(() => doWork(), defaultRetryPolicy)

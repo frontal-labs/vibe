@@ -18,7 +18,7 @@ bun add vibe/skills
 ## Usage
 
 ```ts
-import { defineSkill, createSkillRegistry } from "vibe/skills"
+import { defineSkill, createSkillRegistry } from "@vibe/skills"
 
 const skill = defineSkill({ name: "summarize", description: "Summarize text" })
 const registry = createSkillRegistry()

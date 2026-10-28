@@ -24,7 +24,7 @@ and the compiler is on your side the whole way.**
 The happy path is a single expression:
 
 ```ts
-import { vibe } from "vibe/core"
+import { vibe } from "@vibe/core"
 
 const system = vibe.system({ name: "support-bot" })
 await system.start()
@@ -62,7 +62,7 @@ to **describe a thing once and infer the rest**. The canonical example is a tool
 Schema *and* the static type of your handler's arguments.
 
 ```ts
-import { defineTool } from "vibe/tools"
+import { defineTool } from "@vibe/tools" // 🚧
 import { z } from "zod"
 
 const getWeather = defineTool({
@@ -89,7 +89,7 @@ machine-readable `ErrorCode`, so retry logic, telemetry, and user messaging can 
 branch on the same value:
 
 ```ts
-import { ProviderRateLimitError, VibeError } from "vibe/errors"
+import { ProviderRateLimitError, VibeError } from "@vibe/errors"
 
 try {
   await system.ask("…")
@@ -134,8 +134,8 @@ The layers between are acyclic and independently installable, so you can take a
 single piece to solve a single problem:
 
 ```ts
-import { retry } from "vibe/runtime"   // just the durable-execution primitives
-import { createContainer } from "vibe/di" // just the DI container
+import { retry } from "@vibe/runtime"   // just the durable-execution primitives
+import { createContainer } from "@vibe/di" // just the DI container
 ```
 
 You pay only for what you import. The [package topology](../architecture/02-package-topology.md)

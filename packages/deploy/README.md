@@ -18,7 +18,7 @@ bun add vibe/deploy
 ## Usage
 
 ```ts
-import { deployPlan, toVercelHandler, generateDockerfile } from "vibe/deploy"
+import { deployPlan, toVercelHandler, generateDockerfile } from "@vibe/deploy"
 
 const plan = deployPlan(agents, { target: "vercel" })
 const handler = toVercelHandler(plan)
